@@ -1,0 +1,15 @@
+using System;
+using BankingSystem.src.BankingSystem.Domain.Entities;
+namespace BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
+
+public interface IAccountRepository {
+
+    Task<Account?> GetByIdAsync(Guid accountId);
+    Task<Account?> GetByAccountNumberAsync(string accountNumber);
+    Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId);
+    Task<IEnumerable<Account>> GetAllAsync();
+    Task AddAsync(Account account);
+    Task UpdateAsync( Account account);
+    Task DeleteAsync(Account account);
+
+}

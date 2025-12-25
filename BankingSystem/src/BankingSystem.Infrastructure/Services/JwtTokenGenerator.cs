@@ -20,7 +20,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public (string Token, DateTime ExpiresAt) Generate(User user)
     {
-        var expiresAt = DateTime.UtcNow.AddDays(8);
+        var expiresAt = DateTime.UtcNow.AddHours(8);
 
         var claims = new[]
         {

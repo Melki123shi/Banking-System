@@ -336,3 +336,4 @@
 /home/melki/Desktop/Banking-System/BankingSystem/obj/Debug/net9.0/BankingSystem.pdb
 /home/melki/Desktop/Banking-System/BankingSystem/obj/Debug/net9.0/BankingSystem.genruntimeconfig.cache
 /home/melki/Desktop/Banking-System/BankingSystem/obj/Debug/net9.0/ref/BankingSystem.dll
+/home/melki/Desktop/Banking-System/BankingSystem/obj/Debug/net9.0/BankingSystem.sourcelink.json

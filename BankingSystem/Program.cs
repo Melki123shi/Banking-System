@@ -5,6 +5,7 @@ using System.Text;
 
 using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
+using BankingSystem.src.BankingSystem.Application.Interfaces.Services.Auth;
 using BankingSystem.src.BankingSystem.Application.Services;
 using BankingSystem.src.BankingSystem.Infrastructure.Persistence;
 using BankingSystem.src.BankingSystem.Infrastructure.Repositories;
@@ -62,6 +63,8 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();

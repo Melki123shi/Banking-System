@@ -13,6 +13,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,6 +58,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.Property(t => t.Status)
                   .HasConversion<string>()
                   .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.Property(rt => rt.Id)
+                  .ValueGeneratedOnAdd();
+            entity.Property(rt => rt.IsRevoked)
+                  .HasConversion<string>();
         });
 
         // Account Number must be unique

@@ -33,7 +33,6 @@
     <Folder Include="src/BankingSystem.Application/Mappings/" />
     <Folder Include="src/BankingSystem.Application/UseCases/" />
     <Folder Include="src/BankingSystem.Application/Validators/" />
-    <Folder Include="src/BankingSystem.Infrastructure/Repositories/" />
   </ItemGroup>
 
 </Project>

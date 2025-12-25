@@ -20,6 +20,8 @@ public class UserManagementService : IUserManagementService
 
     public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest createUserRequest)
     {
+        if (await _userRepository.PhoneNumberExistsAsync(createUserRequest.PhoneNumber))
+            throw new InvalidOperationException("Phone number already exists");
         var user = new User(
             createUserRequest.Name,
             createUserRequest.PhoneNumber,

@@ -8,7 +8,7 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var hasAuthorize =
-            context.MethodInfo.DeclaringType.GetCustomAttribute<AuthorizeAttribute>() != null ||
+            context.MethodInfo.DeclaringType!.GetCustomAttribute<AuthorizeAttribute>() != null ||
             context.MethodInfo.GetCustomAttribute<AuthorizeAttribute>() != null;
 
         if (!hasAuthorize) return;

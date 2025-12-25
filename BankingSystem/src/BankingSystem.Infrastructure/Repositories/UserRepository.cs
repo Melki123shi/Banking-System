@@ -25,6 +25,13 @@ public class UserRepository : IUserRepository
         return await _dbContext.Users.ToListAsync();
     }
 
+    public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
+{
+    return await _dbContext.Users
+        .AnyAsync(u => u.PhoneNumber == phoneNumber);
+}
+
+
     public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
     {
         return await _dbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);

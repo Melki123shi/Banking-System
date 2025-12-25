@@ -1,3 +1,5 @@
 namespace BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 
-public record class LoginResponse(string Token, DateTime ExpiresAt);
+public record class LoginResponse(string AccessToken,
+    DateTime AccessTokenExpiresAt,
+    string RefreshToken);

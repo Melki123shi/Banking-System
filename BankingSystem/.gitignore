@@ -1,0 +1,6 @@
+# Local database files
+.db/
+*.db
+
+# Editor settings (share only if team wants common settings)
+.vscode/

@@ -27,7 +27,7 @@ const router = createBrowserRouter([
           {
             path: "/admin",
             element: (
-              <RoleRoute role="admin">
+              <RoleRoute role="Admin">
                 <AdminDashboard />
               </RoleRoute>
             ),

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { jwtDecode } from "jwt-decode";
 import { Card, Image, Form, Input, message, Typography, Button } from "antd";
 import LogoImage from "@/assets/logo.png";
 import { useEffect } from "react";
 import { useLogin } from "@/hooks/useAuth";
-import { useCurrentUser } from "@/hooks/useUser";
 import { PhoneOutlined, LockOutlined } from "@ant-design/icons";
+import { useAuthStore } from "@/stores/authStore";
 
 const { Title, Text } = Typography;
 
@@ -15,38 +16,45 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const loginMutation = useLogin();
-  const { data: user } = useCurrentUser();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
-  /* ------------------ Navigate once user is loaded ------------------ */
   useEffect(() => {
-    if (!user) return;
+    if (!accessToken) return;
 
-    if (user.role === "admin") {
-      navigate("/admin", { replace: true });
-    } else {
-      navigate("/", { replace: true });
+    try {
+      const decoded = jwtDecode<any>(accessToken);
+      const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded.role;
+
+      if (role === "Admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    } catch (error) {
+      console.error("Invalid token", error);
     }
-  }, [user, navigate]);
+  }, [accessToken, navigate]);
 
   const onFinish = (values: { phoneNumber: string; password: string }) => {
     setLoading(true);
     loginMutation.mutate(values, {
       onError: () => {
         message.error("Invalid phone number or password");
+        setLoading(false);
       },
       onSuccess: () => {
         message.success("Login successful");
+        setLoading(false);
       },
     });
-    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-135 from-[#1a1a1a] to-[#2d2d2d]">
+    <div className="min-h-screen flex items-center justify-center">
       <Card
         style={{
           borderColor: "#01305c",
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
+          // backgroundColor: "rgba(0, 0, 0, 0.3)",
         }}
         className="w-full max-w-md p-8 shadow-lg"
       >
@@ -57,13 +65,15 @@ const LoginPage: React.FC = () => {
             style={{
               margin: 0,
               marginBottom: 8,
-              color: "#cae3fb",
+              color: "#41e1fb",
             }}
-            className="text-xl font-medium text-[#cae3fb] px-7"
+            className="text-xl font-medium text-[#143d64] px-7"
           >
             Welcome Back <br />
           </Title>
-          <Text style={{ color: "#ccc" }}>we are happy to see you again! 😊</Text>
+          <Text style={{ color: "#333" }}>
+            we are happy to see you again! 😊
+          </Text>
         </div>
 
         <Form
@@ -76,7 +86,7 @@ const LoginPage: React.FC = () => {
           size="large"
         >
           <Form.Item
-            name="phone"
+            name="phoneNumber"
             rules={[
               {
                 required: true,
@@ -87,7 +97,7 @@ const LoginPage: React.FC = () => {
             <Input
               prefix={<PhoneOutlined />}
               placeholder="Phone Number"
-              style={{backgroundColor: "transparent", color: "#ddd"} }
+              // style={{ backgroundColor: "transparent", color: "#ddd" }}
             />
           </Form.Item>
 
@@ -103,20 +113,31 @@ const LoginPage: React.FC = () => {
             <Input.Password
               prefix={<LockOutlined />}
               placeholder="Password"
-              style={{backgroundColor: "transparent", color: "#fff"} }
-
+              // style={{ backgroundColor: "transparent", color: "#fff" }}
             />
           </Form.Item>
           <br />
 
           <Form.Item>
-            <Button style={{ backgroundColor: "#01305c", borderColor: "#01305c", color: "#cae3fb" }} htmlType="submit" block loading={loading}>
+            <Button
+              style={{
+                backgroundColor: "#01305c",
+                borderColor: "#01305c",
+                color: "#cae3fb",
+              }}
+              htmlType="submit"
+              block
+              loading={loading}
+            >
               Sign In
             </Button>
           </Form.Item>
 
           <div className="text-center text-xs text-slate-400">
-            <p>Demo: User (1234567890 / user), Admin (admin / admin)</p>
+            <p>
+              Demo: Customer (1234567890 / user), <br /> Admin (+255675757575 /
+              adam@1234)
+            </p>
           </div>
         </Form>
       </Card>

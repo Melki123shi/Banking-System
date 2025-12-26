@@ -1,45 +1,60 @@
 import { create } from "zustand";
 import type { Account } from "@/entities/account";
 
+type AccountStatus = Account["status"];
+
 type AccountState = {
-  accounts: Account[] | [];
+  accounts: Account[];
+
+  setAccounts: (accounts: Account[]) => void;
   createAccount: (account: Account) => void;
+
   updateAccountStatus: (
     accountId: string,
-    status: "OPEN" | "CLOSED" | "FROZEN"
+    status: AccountStatus
   ) => void;
-  depositMoney: (userId: string, amount: number) => void;
-  withdrawMoney: (userId: string, amount: number) => void;
+
+  depositMoney: (accountId: string, amount: number) => void;
+  withdrawMoney: (accountId: string, amount: number) => void;
 };
 
 export const useAccountStore = create<AccountState>((set) => ({
   accounts: [],
-  createAccount: (account: Account) =>
-    set((state) => ({ accounts: [...state.accounts, account] })),
-  updateAccountStatus: (
-    accountId: string,
-    status: "OPEN" | "CLOSED" | "FROZEN"
-  ) =>
+
+  setAccounts: (accounts) => set({ accounts }),
+
+  createAccount: (account) =>
+    set((state) => ({
+      accounts: [...state.accounts, account],
+    })),
+
+  updateAccountStatus: (accountId, status) =>
     set((state) => ({
       accounts: state.accounts.map((account) =>
-        account.id === accountId ? { ...account, status } : account
+        account.id === accountId
+          ? { ...account, status }
+          : account
       ),
     })),
-  depositMoney: (userId: string, amount: number) =>
+
+  depositMoney: (accountId, amount) =>
     set((state) => ({
       accounts: state.accounts.map((account) =>
-        account.userId === userId
+        account.id === accountId
           ? { ...account, balance: account.balance + amount }
           : account
       ),
     })),
-  withdrawMoney(userId, amount) {
+
+  withdrawMoney: (accountId, amount) =>
     set((state) => ({
       accounts: state.accounts.map((account) =>
-        account.userId === userId
-          ? { ...account, balance: account.balance - amount }
+        account.id === accountId
+          ? {
+              ...account,
+              balance: Math.max(0, account.balance - amount),
+            }
           : account
       ),
-    }));
-  },
+    })),
 }));

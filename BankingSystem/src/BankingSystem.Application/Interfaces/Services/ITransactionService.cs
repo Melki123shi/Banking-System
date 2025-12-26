@@ -6,7 +6,7 @@ public interface ITransactionService
 {
     Task<TransactionDetailDto> GetTransactionByIdAsync(Guid transactionId);
     Task<IEnumerable<TransactionDetailDto>> GetTransactionsByAccountIdAsync(Guid accountId);
-    Task<IEnumerable<TransactionDetailDto>> GetAllTransactionsAsync(); //! Paginated implementation to be added in the future
+    Task<IEnumerable<TransactionDetailDto>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize);
     Task<TransactionDetailDto> RecordDepositAsync(Guid accountId, DepositRequestDto depositRequestDto);
     Task<TransactionDetailDto> RecordWithdrawAsync(Guid accountId, WithdrawRequestDto withdrawRequestDto);
     Task<TransactionDetailDto> RecordTransferAsync(Guid senderAccountId, TransferRequestDto transferRequestDto);

@@ -1,9 +1,12 @@
+import type {Account} from "./account";
+
 export interface User {
     id: string;
     name: string;
     phoneNumber: string;
     isActive: boolean;
-    role: 'admin' | 'user';
-    createdAt?: Date;
-    updatedAt?: Date;
+    accounts: Account[];
+    role: 'Admin' | 'Customer';
+    createdAt?: string;
+    updatedAt?: string;
 }

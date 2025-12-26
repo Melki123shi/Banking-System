@@ -9,7 +9,7 @@ public static class TransactionDetailMapping
         return new TransactionDetailDto(
             transaction.Id,
             transaction.TransactionId,
-            transaction.Description,
+            transaction.Description!,
             transaction.Type,
             transaction.Amount,
             transaction.Status,

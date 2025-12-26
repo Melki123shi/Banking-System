@@ -1,22 +1,67 @@
 import { apiClient as api } from "@/lib/axios";
 import type { Account } from "@/entities/account";
+import type { User } from "@/entities/user";
+
+const basePath = "/admin/accounts";
 
 export const accountService = {
   createAccount: async (accountData: Partial<Account>): Promise<Account> => {
-    const response = await api.post<Account>("/accounts", accountData);
+    const response = await api.post<Account>(`${basePath}`, accountData);
+    if (response.status === 400) throw new Error("Bad Request");
     return response.data;
   },
+  getAccounts: async (): Promise<Account[]> => {
+    const response = await api.get<Account[]>(`${basePath}`);
+    return response.data;
+  },
+
+  getUserByAccountId: async (accountId: string): Promise<User | null> => {
+    const response = await api.get<User | null>(`${basePath}/${accountId}/user`);
+    return response.data;
+  },
+
   getAccountsByUserId: async (userId: string): Promise<Account[]> => {
-    const response = await api.get<Account[]>(`/accounts/user/${userId}`);
+    const response = await api.get<Account[]>(`${basePath}/user/${userId}`);
     return response.data;
   },
-  updateAccountStatus: async (
-    accountId: string,
-    status: "OPEN" | "CLOSED" | "FROZEN"
-  ): Promise<Account> => {
-    const response = await api.patch<Account>(`/accounts/${accountId}/status`, {
-      status,
+  getAccountById: async (accountId: string): Promise<Account> => {
+    const response = await api.get<Account>(`${basePath}/${accountId}`);
+    return response.data;
+  },
+  deleteAccount: async (accountId: string): Promise<void> => {
+    await api.delete(`${basePath}/${accountId}`);
+  },
+  withdraw: async (accountId: string, amount: number): Promise<Account> => {
+    const response = await api.post<Account>(`${basePath}/${accountId}/withdraw`, {
+      amount,
     });
     return response.data;
   },
+  deposit: async (accountId: string, amount: number): Promise<Account> => {
+    const response = await api.post<Account>(`${basePath}/${accountId}/deposit`, {
+      amount,
+    });
+    return response.data;
+  },
+  transfer: async (
+    fromAccountId: string,
+    toAccountId: string,
+    amount: number
+  ): Promise<void> => {
+    await api.post(`${basePath}/${fromAccountId}/transfer`, {
+      fromAccountId,
+      toAccountId,
+      amount,
+    });
+  },
+
+  // updateAccountStatus: async (
+  //   accountId: string,
+  //   status: "Open" | "Closed" | "Frozen"
+  // ): Promise<Account> => {
+  //   const response = await api.patch<Account>(`/accounts/${accountId}/status`, {
+  //     status,
+  //   });
+  //   return response.data;
+  // },
 };

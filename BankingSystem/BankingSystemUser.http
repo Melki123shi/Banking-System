@@ -1,9 +1,9 @@
 @BankingSystem_HostAddress = http://localhost:5274
-@Admin_AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODU5ZDk4OC00NDM1LTQ4MzUtYjczMi1lMmQyNjEzYjgyNDEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsInBob25lIjoiKzI1NTY3NTc1NzU3NSIsImV4cCI6MTc2NjY1NTk1MiwiaXNzIjoiQmFua2luZ1N5c3RlbSIsImF1ZCI6IkJhbmtpbmdTeXN0ZW1Vc2VycyJ9.4jYHVVPhZsbt7yFPAqkpz_AcTx6Xz4aQfHkpnNWVZSo
+@Admin_AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODU5ZDk4OC00NDM1LTQ4MzUtYjczMi1lMmQyNjEzYjgyNDEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsInBob25lIjoiKzI1NTY3NTc1NzU3NSIsImV4cCI6MTc2NjY4NzUyNSwiaXNzIjoiQmFua2luZ1N5c3RlbSIsImF1ZCI6IkJhbmtpbmdTeXN0ZW1Vc2VycyJ9.y_c26TlCNchlvZ_3jb2YPLBidSsSDKPnx2r-yaMnpBc
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODU5ZDk4OC00NDM1LTQ4MzUtYjczMi1lMmQyNjEzYjgyNDEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsInBob25lIjoiKzI1NTY3NTc1NzU3NSIsImV4cCI6MTc2NjY1NTk1MiwiaXNzIjoiQmFua2luZ1N5c3RlbSIsImF1ZCI6IkJhbmtpbmdTeXN0ZW1Vc2VycyJ9.4jYHVVPhZsbt7yFPAqkpz_AcTx6Xz4aQfHkpnNWVZSo
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/users
+GET {{BankingSystem_HostAddress}}/api/admin/users?pageNumber=1&pageSize=10
 Authorization: Bearer {{Admin_AccessToken}}
 Accept: application/json
 
@@ -52,3 +52,10 @@ Content-Type: application/json
 
 ########################################## Account Management APIs ##########################################
 POST {{BankingSystem_HostAddress}}/api/accounts
+
+###
+DELETE {{BankingSystem_HostAddress}}/api/admin/users/0859D988-4435-4835-B732-E2D2613B8241
+
+
+###
+GET {{BankingSystem_HostAddress}}/api/admin/accounts/7a6ab6d0-2997-41aa-8eef-177e957c9cd5/user

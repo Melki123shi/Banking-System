@@ -8,6 +8,10 @@ public interface IUserRepository
     Task<User?> GetUserByPhoneNumberAsync(string phoneNumber);
     Task AddAsync(User user);
     Task<IEnumerable<User>> GetAllUsersAsync();
+    Task<(IEnumerable<User> Users, int TotalCount)> GetPaginatedCustomersAsync(
+        int pageNumber,
+        int pageSize
+    );
     Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task UpdateAsync(User user);
     Task DeleteAsync(User user);

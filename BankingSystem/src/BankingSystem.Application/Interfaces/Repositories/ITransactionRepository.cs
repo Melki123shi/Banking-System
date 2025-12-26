@@ -6,7 +6,7 @@ public interface ITransactionRepository
 {
     Task<Transaction?> GetTransactionByIdAsync(Guid transactionId);
     Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId);
-    Task<IEnumerable<Transaction>> GetAllTransactionsAsync();
+    Task<IEnumerable<Transaction>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize);
     Task AddAsync(Transaction transaction);
     Task UpdateAsync(Transaction transaction);
     Task DeleteAsync(Transaction transaction);

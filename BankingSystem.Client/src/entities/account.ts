@@ -1,8 +1,14 @@
+import type { User } from "./user";
+
 export interface Account {
     id: string;
     userId: string;
+    user?: User;
+    userName: string;
     accountNumber: string;
-    accountType: 'Checking' | 'Savings' | 'Credit' | 'Business';
+    type: 'Checking' | 'Savings' | 'Credit' | 'Business';
     balance: number;
-    status: 'ACTIVE'| 'INACTIVE' | 'CLOSED' | 'FROZEN';
+    status: 'Active'| 'Inactive' | 'Closed' | 'Frozen';
+    createdAt: string;
+    updatedAt?: string;
 }

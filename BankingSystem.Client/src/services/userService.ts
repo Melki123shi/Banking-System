@@ -1,21 +1,42 @@
 import { apiClient as api } from "@/lib/axios";
 import type { User } from "@/entities/user";
 
-export const userSerivce = {
-  getUsers: async (): Promise<User[]> => {
-    const response = await api.get<User[]>("/users");
+const basePath = "/admin/users";
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+export const userService = {
+  // Matches [HttpGet] in AdminUsersController
+  getPaginatedUsers: async (
+    pageNumber: number,
+    pageSize: number
+  ): Promise<PaginatedResponse<User>> => {
+    const response = await api.get<PaginatedResponse<User>>(
+      `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    );
     return response.data;
   },
-  createUser: async (
-    userData: Pick<User, "name" | "phoneNumber" | "password">
-  ): Promise<User> => {
-    const response = await api.post<User>("/auth/signup", userData);
+
+  // Matches [HttpPost("register")]
+  createUser: async (userData: any): Promise<User> => {
+    const response = await api.post<User>(`${basePath}/register`, userData);
     return response.data;
   },
-  getCurrentUser: async (token: string): Promise<User> => {
-    const response = await api.get<User>("/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+
+  // Matches [HttpPut("{id}")]
+  updateUser: async (id: string, data: any) => {
+    console.log("called ....")
+    const res = await api.put(`/admin/users/${id}`, data);
+    console.log(res);
+
+  },
+  // Matches [HttpDelete("{id}")]
+  RemoveUser: async (id: string) => {
+    await api.delete(`/admin/users/${id}`);
   },
 };

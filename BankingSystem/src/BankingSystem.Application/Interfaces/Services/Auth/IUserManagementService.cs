@@ -1,6 +1,6 @@
 using System;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
-
+using BankingSystem.src.BankingSystem.Application.DTOs;
 namespace BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 
 public interface IUserManagementService
@@ -8,8 +8,10 @@ public interface IUserManagementService
 {
     Task<CreateUserResponse> CreateUserAsync(CreateUserRequest createUserRequest);
     Task<UserDetailsResponse> GetUserDetailsAsync(Guid userId);
-    // To be updated to support pagination in the future
-    Task<IEnumerable<UserDetailsResponse>> GetAllUsersAsync();
+    Task<PaginatedResponseDto<UserDetailsResponse>> GetPaginatedCustomersAsync(
+        int pageNumber,
+        int pageSize
+    );
     Task UpdateUserAsync(Guid id, UpdateUserRequest updateUserRequest);
     Task DeleteUserAsync(Guid userId);
 }

@@ -25,11 +25,29 @@ public class UserRepository : IUserRepository
         return await _dbContext.Users.ToListAsync();
     }
 
+    public async Task<(IEnumerable<User> Users, int TotalCount)> GetPaginatedCustomersAsync(
+    int pageNumber,
+    int pageSize)
+    {
+        var query = _dbContext.Users.AsQueryable().Where(u => u.Role.ToString() == "Customer");
+
+        var totalCount = await query.CountAsync();
+
+        var users = await query
+            .Where(u => u.Role.ToString() == "Customer")
+            .OrderBy(u => u.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (users, totalCount);
+    }
+
     public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
-{
-    return await _dbContext.Users
-        .AnyAsync(u => u.PhoneNumber == phoneNumber);
-}
+    {
+        return await _dbContext.Users
+            .AnyAsync(u => u.PhoneNumber == phoneNumber);
+    }
 
 
     public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)

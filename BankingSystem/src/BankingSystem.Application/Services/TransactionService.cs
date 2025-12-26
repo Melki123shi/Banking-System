@@ -39,9 +39,9 @@ public class TransactionService : ITransactionService
         return transactions.Select(transaction => transaction.ToDto());
     }
 
-    public async Task<IEnumerable<TransactionDetailDto>> GetAllTransactionsAsync()
+    public async Task<IEnumerable<TransactionDetailDto>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize)
     {
-        var transactions = await _transactionRepository.GetAllTransactionsAsync();
+        var transactions = await _transactionRepository.GetPaginatedTransactionsAsync(pageNumber, pageSize);
         return transactions.Select(transaction => transaction.ToDto());
     }
 

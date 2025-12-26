@@ -5,11 +5,12 @@ using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
 using BankingSystem.src.BankingSystem.Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 namespace BankingSystem.src.BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/admin")]
-[Authorize(Roles = "Admin")]
+// [Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
     private readonly IAccountService _accountService;
@@ -76,6 +77,13 @@ public class AdminController : ControllerBase
         return CreatedAtAction(nameof(GetAccountById), new { accountId = account.Id }, account);
     }
 
+    [HttpGet("accounts/{accountId}/user")]
+    public async Task<ActionResult<UserDetailsResponse>> GetUserByAccountId(Guid accountId)
+    {
+        var users = await _accountService.GetUserByAccountIdAsync(accountId);
+        return Ok(users);
+    }
+
 
     [HttpDelete("accounts/{accountId}")]
     public async Task<IActionResult> DeleteAccount(Guid accountId)
@@ -99,11 +107,11 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("transactions")]
-    public async Task<ActionResult<IEnumerable<TransactionDetailDto>>> GetAllTransactions()
+    public async Task<ActionResult<IEnumerable<TransactionDetailDto>>> GetPaginatedTransactionsAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
-        var transactions = await _transactionService.GetAllTransactionsAsync();
+        var transactions = await _transactionService.GetPaginatedTransactionsAsync(pageNumber, pageSize);
         return Ok(transactions);
-    }   
+    } 
 
     [HttpPost("accounts/{accountId}/withdraw")]
     public async Task<IActionResult> Withdraw(Guid accountId, [FromBody] WithdrawRequestDto withdrawRequestDto)

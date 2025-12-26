@@ -29,9 +29,14 @@ public class TransactionRepository : ITransactionRepository
                     .AsNoTracking()
                     .ToListAsync();
     }
-    public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
+    public async Task<IEnumerable<Transaction>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize)
     {
-        return await _dbContext.Transactions.AsNoTracking().ToListAsync();
+        return await _dbContext.Transactions
+                    .OrderByDescending(t => t.CompletedAt)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .AsNoTracking()
+                    .ToListAsync();
     }
 
     public async Task AddAsync(Transaction transaction)

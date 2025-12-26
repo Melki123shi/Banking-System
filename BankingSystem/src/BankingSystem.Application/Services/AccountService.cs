@@ -4,6 +4,7 @@ using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.Mappings;
+using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
 public class AccountService : IAccountService
@@ -17,7 +18,6 @@ public class AccountService : IAccountService
         _userRepository = userRepository;
     }
 
-    //! Account owner may not be an application owner must be handler later
     public async Task<AccountResponseDto> CreateAccountAsync(CreateAccountRequestDto CreateAccountRequestDto)
     {
         User? user = await _userRepository.GetUserByIdAsync(CreateAccountRequestDto.UserId);
@@ -45,6 +45,16 @@ public class AccountService : IAccountService
         return account.ToDto();
     }
 
+    public async Task<UserDetailsResponse> GetUserByAccountIdAsync(Guid accountId)
+    {
+        User? user = await _accountRepository.GetUserByAccountIdAsync(accountId);
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found for the given account number");
+        }
+        return user.ToDto();
+    }
+
     public async Task<AccountResponseDto> GetAccountByIdAsync(Guid accountId)
     {
         Account? account = await _accountRepository.GetByIdAsync(accountId);
@@ -67,8 +77,29 @@ public class AccountService : IAccountService
     public async Task<IEnumerable<AccountResponseDto>> GetAllAccountsAsync()
     {
         var accounts = await _accountRepository.GetAllAsync();
-        return accounts.Select(account => account.ToDto());
 
+        var tasks = accounts.Select(async account =>
+        {
+            var user = await _userRepository.GetUserByIdAsync(account.UserId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found for the given account number");
+            }
+
+            return new AccountResponseDto(
+                account.Id,
+                account.UserId,
+                user.Name,
+                account.AccountNumber,
+                account.Type.ToString(),
+                account.Balance,
+                account.Status.ToString(),
+                account.CreatedAt,
+                account.UpdatedAt
+            );
+        });
+
+        return await Task.WhenAll(tasks);
     }
 
     public async Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId)
@@ -167,7 +198,7 @@ public class AccountService : IAccountService
         Account? fromAccount = await _accountRepository.GetByIdAsync(senderAccountId);
         if (fromAccount == null)
             throw new InvalidOperationException("Sender account not found");
-        
+
         else if (toAccount == null)
             throw new InvalidOperationException("Receiver account not found");
 

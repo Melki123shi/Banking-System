@@ -1,5 +1,6 @@
 using System;
 using BankingSystem.src.BankingSystem.Application.DTOs.Account;
+using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 namespace BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 
 public interface IAccountService
@@ -7,6 +8,8 @@ public interface IAccountService
     Task<AccountResponseDto> CreateAccountAsync(CreateAccountRequestDto CreateAccountRequestDto);
     Task<AccountResponseDto> GetAccountByIdAsync(Guid accountId);
     Task<AccountResponseDto> GetAccountByAccountNumberAsync(string accountNumber);
+
+    Task<UserDetailsResponse> GetUserByAccountIdAsync(Guid accountId);
 
     //! Paginated implementation to be added in the future
     Task<IEnumerable<AccountResponseDto>> GetAllAccountsAsync();

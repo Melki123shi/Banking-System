@@ -3,6 +3,9 @@ using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 using BankingSystem.src.BankingSystem.Domain.Entities;
+using BankingSystem.src.BankingSystem.Application.Interfaces;
+using BankingSystem.src.BankingSystem.Application.Mappings;
+using BankingSystem.src.BankingSystem.Application.DTOs;
 
 
 namespace BankingSystem.src.BankingSystem.Infrastructure.Services;
@@ -39,33 +42,31 @@ public class UserManagementService : IUserManagementService
         );
     }
 
-    public async Task<IEnumerable<UserDetailsResponse>> GetAllUsersAsync()
+    public async Task<PaginatedResponseDto<UserDetailsResponse>> GetPaginatedCustomersAsync(
+    int pageNumber,
+    int pageSize)
     {
-        var users = await _userRepository.GetAllUsersAsync();
-        return users.Select(user => new UserDetailsResponse(
-            user.Id,
-            user.Name,
-            user.PhoneNumber,
-            user.Role,
-            user.IsActive,
-            user.CreatedAt,
-            user.UpdatedAt
-        ));
+        var pagedUsers = await _userRepository.GetPaginatedCustomersAsync(
+            pageNumber,
+            pageSize
+        );
+
+        return new PaginatedResponseDto<UserDetailsResponse>
+        {
+            Items = pagedUsers.Users.Select(user => user.ToDto()),
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = pagedUsers.TotalCount
+        };
     }
+
 
     public async Task<UserDetailsResponse> GetUserDetailsAsync(Guid userId)
     {
         User? user = await _userRepository.GetUserByIdAsync(userId);
-        return new UserDetailsResponse(
-            user!.Id,
-            user.Name,
-            user.PhoneNumber,
-            user.Role,
-            user.IsActive,
-            user.CreatedAt,
-            user.UpdatedAt
-        );
+        return user!.ToDto();
     }
+
 
     public async Task UpdateUserAsync(Guid id, UpdateUserRequest updateUserRequest)
     {

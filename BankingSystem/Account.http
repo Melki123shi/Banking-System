@@ -15,7 +15,7 @@ Content-Type: application/json
 
 {
     "UserId": "0859d988-4435-4835-b732-e2d2613b8241",
-    "AccountNumber": "ACC1234536789",
+    "AccountNumber": "AC1t353678h9",
     "Balance": 5000.00,
     "AccountType": "Savings",
     "Status": "active"
@@ -32,7 +32,7 @@ Content-Type: application/json
 # }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/transactions
+GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=1&pageSize=4
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###

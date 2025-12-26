@@ -1,46 +1,57 @@
-import { useAuthStore } from "@/stores/authStore";
-import { useUserStore } from "@/stores/userStore";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { userSerivce } from "@/services/userService";
-import { useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { userService } from "@/services/userService";
+import { accountService } from "@/services/accountService";
 
-export const useCurrentUser = () => {
-    const token = useAuthStore((state) => state.token);
-    const setCurrentUser = useUserStore((state) => state.setCurrentUser);
+export interface PaginatedResponse<T> {
+  items: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+}
 
-    const query = useQuery({
-        queryKey: ['currentUser', token],
-        queryFn: () => userSerivce.getCurrentUser(token!),
-        enabled: !!token,   
-        staleTime: 1000 * 60 * 5,
-        
-        
-    })
-
-    // sync user state with store
-    useEffect(() => {
-        if (query.data) {
-            setCurrentUser(query.data);
-        }
-    }, [query.data, setCurrentUser]); 
-    
-    return query;
+export const useGetUsers = (pageNumber: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ["users", pageNumber, pageSize],
+    queryFn: () => userService.getPaginatedUsers(pageNumber, pageSize),
+    retry: false,
+    placeholderData: (previousData) => previousData
+  });
 };
 
-export const useGetUsers = () => {
-    return useQuery({
-        queryKey: ['users'],
-        queryFn: () => userSerivce.getUsers(),
-        staleTime: 1000 * 60 * 5,
-    })
+export const useGetUserByAccountId = (accountId?: string) => {
+  return useQuery({
+    queryKey: ["user", accountId],
+    queryFn: () => {
+      if (!accountId) throw new Error("Account ID required");
+      return accountService.getUserByAccountId(accountId);
+    },
+    enabled: !!accountId,
+  });
 };
 
 export const useCreateUser = () => {
-    return useMutation({
-        mutationFn: userSerivce.createUser,
-        onSuccess: (user) => {
-            const setCurrentUser = useUserStore((state) => state.setCurrentUser);
-            setCurrentUser(user);
-        }
-    })
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userService.createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userService.RemoveUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+};
+
+export const useUpdateUser = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      userService.updateUser(id, data),
+  });
 }

@@ -27,6 +27,14 @@ public class AccountRepository : IAccountRepository
             .FirstOrDefaultAsync(a => a.Id == accountId);
     }
 
+    public async Task<User?> GetUserByAccountIdAsync(Guid accountId)
+    {
+        var account =  await _dbContext.Accounts
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.Id == accountId);
+        return account?.User;
+    }
+
     public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
     {
         return await _dbContext.Accounts

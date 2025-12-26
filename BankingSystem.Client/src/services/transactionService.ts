@@ -2,17 +2,10 @@ import { apiClient as api } from "@/lib/axios";
 import type { Transaction } from "@/entities/transaction";
 
 export const transactionService = {
-  getTransactions: async (): Promise<Transaction[]> => {
-    const response = await api.get<Transaction[]>("/transactions");
-    return response.data;
-  },
-  createTransaction: async (
-    transactionData: Partial<Transaction>
-  ): Promise<Transaction> => {
-    const response = await api.post<Transaction>(
-      "/transactions",
-      transactionData
-    );
+  getPaginatedTransactions: async (pageNumber: number, pageSize: number ): Promise<Transaction[]> => {
+        console.log("endpoint called ..., account", pageNumber, pageSize);
+        const response = await api.get<Transaction[]>("/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize);
+        console.log("re ----", response)
     return response.data;
   },
   getTransactionsByUserId: async (userId: string): Promise<Transaction[]> => {

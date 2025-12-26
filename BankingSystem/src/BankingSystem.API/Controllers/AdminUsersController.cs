@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
+using BankingSystem.src.BankingSystem.Application.DTOs;
 
 namespace BankingSystem.src.BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/admin/users")]
-[Authorize(Roles = "Admin")]
+//[Authorize(Roles = "Admin")]
 public class AdminUsersController : ControllerBase
 {
     private readonly IUserManagementService _userService;
@@ -26,9 +27,9 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserDetailsResponse>>> GetAllUsers()
+    public async Task<ActionResult<PaginatedResponseDto<UserDetailsResponse>>> GetPaginatedUsers(int pageNumber, int pageSize)
     {
-        var response = await _userService.GetAllUsersAsync();
+        var response = await _userService.GetPaginatedCustomersAsync(pageNumber, pageSize);
         return Ok(response);
     }
 

@@ -35,10 +35,12 @@ public class AccountRepository : IAccountRepository
         return account?.User;
     }
 
-    public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<Account>> GetPaginatedByUserIdAsync(Guid userId, int pageNumber, int pageSize)
     {
         return await _dbContext.Accounts
             .Where(a => a.UserId == userId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
     }
 
@@ -47,9 +49,12 @@ public class AccountRepository : IAccountRepository
         return await _dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
     }
 
-    public async Task<IEnumerable<Account>> GetAllAsync()
+    public async Task<IEnumerable<Account>> GetPaginatedAsync(int pageNumber, int pageSize)
     {
-        return await _dbContext.Accounts.ToListAsync();
+        return await _dbContext.Accounts
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     public async Task UpdateAsync(Account account)

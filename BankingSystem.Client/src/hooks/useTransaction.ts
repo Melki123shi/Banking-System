@@ -3,12 +3,12 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { transactionService } from "@/services/transactionService";
 import { useEffect } from "react";
 
-export const useGetTransactions = () => {
+export const useGetPaginatedTransactions = (pageNumber: number, pageSize: number) => {
   const setTransactions = useTransactionStore((state) => state.setTransactions);
 
   const query = useQuery({
-    queryKey: ["transactions"],
-    queryFn: async () => transactionService.getTransactions(),
+    queryKey: ["transactions", pageNumber, pageSize],
+    queryFn: async () => transactionService.getPaginatedTransactions(pageNumber, pageSize),
     staleTime: 1000 * 60 * 5,
   });
   useEffect(() => {
@@ -19,22 +19,22 @@ export const useGetTransactions = () => {
   return query;
 };
 
-export const useCreateTransaction = () => {
-  const addTransaction = useTransactionStore((state) => state.addTransaction);
+// export const useCreateTransaction = () => {
+//   const addTransaction = useTransactionStore((state) => state.addTransaction);
 
-  return useMutation({
-    mutationFn: transactionService.createTransaction,
-    onSuccess: (transaction) => {
-      addTransaction(transaction);
-    },
-  });
-};
+//   return useMutation({
+//     mutationFn: transactionService.createTransaction,
+//     onSuccess: (transaction) => {
+//       addTransaction(transaction);
+//     },
+//   });
+// };
 
-export const useGetUserTransactions = (userId: string) => {
-  return useQuery({
-    queryKey: ["userTransactions", userId],
-    queryFn: async () => transactionService.getTransactionsByUserId(userId),
-    enabled: !!userId,
-    staleTime: 1000 * 60 * 5,
-  });
-};
+// export const useGetUserTransactions = (userId: string) => {
+//   return useQuery({
+//     queryKey: ["userTransactions", userId],
+//     queryFn: async () => transactionService.getTransactionsByUserId(userId),
+//     enabled: !!userId,
+//     staleTime: 1000 * 60 * 5,
+//   });
+// };

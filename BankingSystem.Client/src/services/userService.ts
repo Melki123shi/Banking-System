@@ -30,9 +30,9 @@ export const userService = {
 
   // Matches [HttpPut("{id}")]
   updateUser: async (id: string, data: any) => {
-    console.log("called ....")
+    // console.log("called ....")
     const res = await api.put(`/admin/users/${id}`, data);
-    console.log(res);
+    // console.log(res);
 
   },
   // Matches [HttpDelete("{id}")]

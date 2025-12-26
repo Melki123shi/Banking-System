@@ -74,9 +74,9 @@ public class AccountService : IAccountService
         }
         return account.ToDto();
     }
-    public async Task<IEnumerable<AccountResponseDto>> GetAllAccountsAsync()
+    public async Task<IEnumerable<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize)
     {
-        var accounts = await _accountRepository.GetAllAsync();
+        var accounts = await _accountRepository.GetPaginatedAsync(pageNumber, pageSize);
 
         var tasks = accounts.Select(async account =>
         {
@@ -102,9 +102,9 @@ public class AccountService : IAccountService
         return await Task.WhenAll(tasks);
     }
 
-    public async Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<AccountResponseDto>> GetPaginatedAccountsByUserIdAsync(Guid userId, int pageNumber, int pageSize)
     {
-        var accounts = await _accountRepository.GetByUserIdAsync(userId);
+        var accounts = await _accountRepository.GetPaginatedByUserIdAsync(userId, pageNumber, pageSize);
         return accounts.Select(account => account.ToDto());
     }
 

@@ -13,7 +13,6 @@ export function RoleRoute({
   const accessToken = useAuthStore((state) => state.accessToken);
   const decoded = jwtDecode<any>(accessToken!);
   const decodedRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded.role;
-  console.log(decodedRole, '----------------------')
 
   if (decodedRole !== role) {
     return <Navigate to="/" replace />;

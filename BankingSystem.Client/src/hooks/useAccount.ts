@@ -1,48 +1,39 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import type { Account } from "@/entities/account";
 import { accountService } from "@/services/accountService";
-import { useAccountStore } from "@/stores/accountStore";
-import { useEffect } from "react";
-import { useUserStore } from "@/stores/userStore";
 
-export const useGetAccounts = () => {
-    const setAccounts = useAccountStore((s) => s.setAccounts);
-
-    const query = useQuery<Account[]>({
-        queryKey: ["accounts"],
-        queryFn: accountService.getAccounts,
-    });
-
-    /* ✅ handle side effects here */
-    useEffect(() => {
-        if (query.isSuccess) {
-            setAccounts(query.data);
-        }
-
-        if (query.isError) {
-            message.error("Failed to fetch accounts");
-        }
-    }, [query.isSuccess, query.isError, query.data, setAccounts]);
-
-    
-
-    return query;
-}
-
-
+export const useGetAccounts = (pageNumber: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ["accounts", pageNumber, pageSize],
+    queryFn: () => accountService.getPaginatedAccounts(pageNumber, pageSize),
+    retry: false,
+    placeholderData: (previousData) => previousData,
+  });
+};
 
 /* ----------------------------------------
    Get Accounts By User ID
 ----------------------------------------- */
-export const useGetAccountsByUserId = (userId?: string) => {
-  return useQuery<Account[]>({
-    queryKey: ["accounts", userId],
+export const useGetAccountsByUserId = (
+  userId?: string,
+  pageNumber?: number,
+  pageSize?: number
+) => {
+  // console.log("debuggin>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");  console.log(userId, pageNumber, pageSize)
+;  return useQuery<Account[]>({
+    queryKey: ["accounts", userId, pageNumber, pageSize],
     queryFn: () => {
+      // console.log("called")
       if (!userId) return Promise.resolve([]);
-      return accountService.getAccountsByUserId(userId);
+      // console.log("Fetching accounts for user:", userId, "with pageNumber:", pageNumber, "and pageSize:", pageSize);
+      return accountService.getPaginatedAccountsByUserId(
+        userId,
+        pageNumber!,
+        pageSize!
+      );
     },
-    enabled: !!userId,
+    enabled: !!userId && pageNumber !== undefined && pageSize !== undefined,
   });
 };
 
@@ -64,20 +55,11 @@ export const useGetAccountById = (accountId?: string) => {
    Create Account
 ----------------------------------------- */
 export const useCreateAccount = () => {
-  const createAccount = useAccountStore((s) => s.createAccount);
-  const user = useUserStore((s) => s.selectedUser);
-
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: Partial<Account>) =>
-      accountService.createAccount(payload),
-
-    onSuccess: (account) => {
-      createAccount(account);
-      message.success("Account created successfully");
-    },
-
-    onError: () => {
-      message.error("Failed to create account");
+    mutationFn: accountService.createAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
   });
 };
@@ -86,9 +68,6 @@ export const useCreateAccount = () => {
    Deposit Money
 ----------------------------------------- */
 export const useDepositMoney = () => {
-  const updateAccount = useAccountStore((s) => s.updateAccountStatus);
-  const depositMoney = useAccountStore((s) => s.depositMoney);
-
   return useMutation({
     mutationFn: ({
       accountId,
@@ -97,12 +76,9 @@ export const useDepositMoney = () => {
       accountId: string;
       amount: number;
     }) => accountService.deposit(accountId, amount),
-
-    onSuccess: (updatedAccount) => {
-      depositMoney(updatedAccount.id, updatedAccount.balance);
+    onSuccess: () => {
       message.success("Deposit successful");
     },
-
     onError: () => {
       message.error("Deposit failed");
     },
@@ -113,8 +89,6 @@ export const useDepositMoney = () => {
    Withdraw Money
 ----------------------------------------- */
 export const useWithdrawMoney = () => {
-  const withdrawMoney = useAccountStore((s) => s.withdrawMoney);
-
   return useMutation({
     mutationFn: ({
       accountId,
@@ -123,12 +97,9 @@ export const useWithdrawMoney = () => {
       accountId: string;
       amount: number;
     }) => accountService.withdraw(accountId, amount),
-
-    onSuccess: (updatedAccount) => {
-      withdrawMoney(updatedAccount.id, updatedAccount.balance);
+    onSuccess: () => {
       message.success("Withdrawal successful");
     },
-
     onError: () => {
       message.error("Withdrawal failed");
     },
@@ -148,8 +119,7 @@ export const useTransferMoney = () => {
       fromAccountId: string;
       toAccountId: string;
       amount: number;
-    }) =>
-      accountService.transfer(fromAccountId, toAccountId, amount),
+    }) => accountService.transfer(fromAccountId, toAccountId, amount),
 
     onSuccess: () => {
       message.success("Transfer completed");
@@ -165,18 +135,12 @@ export const useTransferMoney = () => {
    Delete Account
 ----------------------------------------- */
 export const useDeleteAccount = () => {
-  const setAccounts = useAccountStore((s) => s.setAccounts);
-  const accounts = useAccountStore((s) => s.accounts);
-
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (accountId: string) =>
-      accountService.deleteAccount(accountId),
-
-    onSuccess: (_, accountId) => {
-      setAccounts(accounts.filter((a) => a.id !== accountId));
-      message.success("Account deleted");
+    mutationFn: (accountId: string) => accountService.deleteAccount(accountId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
-
     onError: () => {
       message.error("Failed to delete account");
     },

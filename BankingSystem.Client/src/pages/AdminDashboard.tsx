@@ -8,7 +8,7 @@ export function AdminDashboard() {
     <>
     <UserComponent />
     <AccountComponent />
-    {/* <TransactionComponent /> */}
+    <TransactionComponent />
     </>
   );
 }

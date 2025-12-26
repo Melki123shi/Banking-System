@@ -3,9 +3,7 @@ import type { Transaction } from "@/entities/transaction";
 
 export const transactionService = {
   getPaginatedTransactions: async (pageNumber: number, pageSize: number ): Promise<Transaction[]> => {
-        console.log("endpoint called ..., account", pageNumber, pageSize);
         const response = await api.get<Transaction[]>("/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize);
-        console.log("re ----", response)
     return response.data;
   },
   getTransactionsByUserId: async (userId: string): Promise<Transaction[]> => {

@@ -14,7 +14,7 @@ export const useGetUsers = (pageNumber: number, pageSize: number) => {
     queryKey: ["users", pageNumber, pageSize],
     queryFn: () => userService.getPaginatedUsers(pageNumber, pageSize),
     retry: false,
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
   });
 };
 
@@ -50,8 +50,16 @@ export const useDeleteUser = () => {
 };
 
 export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       userService.updateUser(id, data),
+
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["user", variables.id],
+      });
+    },
   });
-}
+};

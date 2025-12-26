@@ -1,17 +1,40 @@
 import { apiClient as api } from "@/lib/axios";
 import type { Account } from "@/entities/account";
 import type { User } from "@/entities/user";
+import { AxiosError } from "axios";
 
 const basePath = "/admin/accounts";
 
+type CreateAccountRequest = {
+  accountNumber: string;
+  userId: string;
+  accountType: string;
+  initialBalance: number;
+};
+
 export const accountService = {
   createAccount: async (accountData: Partial<Account>): Promise<Account> => {
-    const response = await api.post<Account>(`${basePath}`, accountData);
-    if (response.status === 400) throw new Error("Bad Request");
-    return response.data;
+    try {
+      const response = await api.post<Account>(
+        "/admin/accounts",
+        accountData
+      );
+      return response.data;
+    } catch (error) {
+      const err = error as AxiosError<any>;
+
+      // Log backend validation errors
+      console.error("Create account error:", err.response?.data);
+
+      throw new Error(
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Failed to create account"
+      );
+    }
   },
-  getAccounts: async (): Promise<Account[]> => {
-    const response = await api.get<Account[]>(`${basePath}`);
+  getPaginatedAccounts: async (pageNumber: number, pageSize: number): Promise<Account[]> => {
+    const response = await api.get<Account[]>(`${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     return response.data;
   },
 
@@ -20,8 +43,10 @@ export const accountService = {
     return response.data;
   },
 
-  getAccountsByUserId: async (userId: string): Promise<Account[]> => {
-    const response = await api.get<Account[]>(`${basePath}/user/${userId}`);
+  getPaginatedAccountsByUserId: async (userId: string, pageNumber: number, pageSize: number): Promise<Account[]> => {
+    // console.log("................")
+    const response = await api.get<Account[]>(`${basePath}/user/${userId}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    // console.log(response);
     return response.data;
   },
   getAccountById: async (accountId: string): Promise<Account> => {

@@ -1,32 +1,88 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAccountStore } from "@/stores/accountStore";
-import { useGetAccounts } from "@/hooks/useAccount";
+import { useDeleteAccount, useGetAccounts } from "@/hooks/useAccount";
 import { DataTable } from "@/components/DataTable";
-import { Layout, Card, Statistic, Tag, Row, Col, message } from "antd";
+import {
+  Layout,
+  Card,
+  Statistic,
+  Tag,
+  Row,
+  Col,
+  message,
+  Button,
+  Form,
+} from "antd";
 import {
   DollarOutlined,
   CreditCardOutlined,
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
+import ConfirmationModal from "../ConfirmationModal";
 
 const AccountComponent = () => {
-  const { accounts } = useAccountStore();
-  const { isLoading } = useGetAccounts(); // fetch on mount
-  const getAccountsMutation = useGetAccounts();
+  const pageNumber = 1;
+  const pageSize = 10;
+  const { data: accounts,  isLoading, refetch } = useGetAccounts(pageNumber, pageSize);
+  const setSelectedAccount = useAccountStore((state) => state.setSelectedAccount);
 
-  const handleGetAccounts = async () => {
+  const deleteUserMutation = useDeleteAccount();
+
+  const [isUpdateAccountModalOpen, setIsUpdateAccountModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const [updateAccountForm] = Form.useForm();
+  const [pendingDeleteAccountId, setPendingDeleteAccountId] = useState<string | null>(
+    null
+  );
+
+  /** ---------- Handlers ---------- **/
+
+  const openDeleteConfirm = (accountId: string) => {
+    setPendingDeleteAccountId(accountId);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!pendingDeleteAccountId) return;
     try {
-      await getAccountsMutation.refetch();
-      message.success("Accounts fetched successfully");
+      await deleteUserMutation.mutateAsync(pendingDeleteAccountId);
+      message.success("User deleted successfully");
+      refetch();
     } catch {
-      message.error("Failed to fetch accounts");
+      message.error("Failed to delete account");
+    } finally {
+      setIsConfirmModalOpen(false);
+      setPendingDeleteAccountId(null);
     }
   };
 
-  useEffect(() => {
-    handleGetAccounts();
-  }, []);
-
   const accountColumns = [
+    {
+      title: "",
+      render: (_: any, record: any) => (
+        <div className="flex gap-2">
+          <EditOutlined
+            onClick={() => {
+              setSelectedAccount(record);
+              // console.log("clicked")
+              updateAccountForm.setFieldsValue({
+                accountNumber: record.accountNumber,
+                userName: record.userName,
+                accountType: record.accountType,
+                balance: record.balance,
+                status: record.status,
+              });
+              setIsUpdateAccountModalOpen(true);
+            }}
+          />
+
+          <DeleteOutlined onClick={() => openDeleteConfirm(record.id)} />
+        </div>
+      ),
+    },
     {
       title: "Account No.",
       dataIndex: "accountNumber",
@@ -66,6 +122,12 @@ const AccountComponent = () => {
 
         return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt: string) => new Date(createdAt).toLocaleString(),
     },
   ];
 
@@ -108,6 +170,14 @@ const AccountComponent = () => {
             rowKey="id"
           />
         </Card>
+
+        {/* Confirmation Modal */}
+        <ConfirmationModal
+          open={isConfirmModalOpen}
+          text="Are you sure you want to delete this user?"
+          onSucess={handleDeleteAccount}
+          onCancel={() => setIsConfirmModalOpen(false)}
+        />
       </Layout.Content>
     </Layout>
   );

@@ -7,8 +7,8 @@ interface Props {
 
 const UserAccounts = ({ userId }: Props) => {
   const { data, isLoading } = useGetAccountsByUserId(userId);
-
-  // console.log(data, data?.length)
+  // console.log("-------------------->>>>>>>>>>");
+  // console.log(data, data?.length);
 
   if (isLoading) {
     return <Spin size="small" />;

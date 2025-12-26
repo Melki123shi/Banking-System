@@ -69,7 +69,7 @@ const UserComponent = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleDeleteUser = async () => {
     if (!pendingDeleteUserId) return;
     try {
       await deleteUserMutation.mutateAsync(pendingDeleteUserId);
@@ -368,7 +368,7 @@ const UserComponent = () => {
         <ConfirmationModal
           open={isConfirmModalOpen}
           text="Are you sure you want to delete this user?"
-          onSucess={handleConfirmDelete}
+          onSucess={handleDeleteUser}
           onCancel={() => setIsConfirmModalOpen(false)}
         />
       </Layout.Content>

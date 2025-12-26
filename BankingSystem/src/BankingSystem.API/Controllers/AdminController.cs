@@ -33,8 +33,8 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("accounts")]
-    public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetAccounts(
-    [FromQuery] string? accountNumber)
+    public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetPaginatedAccounts(
+    [FromQuery] string? accountNumber, [FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
         if (!string.IsNullOrWhiteSpace(accountNumber))
         {
@@ -47,15 +47,15 @@ public class AdminController : ControllerBase
             return Ok(new[] { account });
         }
 
-        var accounts = await _accountService.GetAllAccountsAsync();
+        var accounts = await _accountService.GetPaginatedAccountsAsync(pageNumber, pageSize);
         return Ok(accounts);
     }
 
 
     [HttpGet("accounts/user/{userId}")]
-    public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetAccountsByUserId(Guid userId)
+    public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetPaginatedAccountsByUserId(Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
-        var accounts = await _accountService.GetAccountsByUserIdAsync(userId);
+        var accounts = await _accountService.GetPaginatedAccountsByUserIdAsync(userId, pageNumber, pageSize);
         return Ok(accounts);
     }
 

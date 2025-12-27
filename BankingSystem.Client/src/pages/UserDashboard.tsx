@@ -30,7 +30,6 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import { useUserStore } from "../stores/userStore";
 import { useAccountStore } from "@/stores/accountStore";
-import { useTransactionStore } from "../stores/transactionStore";
 import { useNavigate } from "react-router";
 
 const { Header, Sider, Content } = Layout;
@@ -41,8 +40,7 @@ export function UserDashboard() {
   const { user, logout } = useAuthStore();
   const { users } = useUserStore();
   const { withdrawMoney, depositMoney } = useAccountStore();
-  const { transactions, addTransaction, getUserTransactions } =
-    useTransactionStore();
+
   const [transferModalVisible, setTransferModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [form] = Form.useForm();

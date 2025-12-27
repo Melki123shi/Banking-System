@@ -2,6 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import type { Account } from "@/entities/account";
 import { accountService } from "@/services/accountService";
+import type { AxiosError } from "axios";
+
+type ValidationErrorResponse = {
+  title?: string;
+  errors?: Record<string, string[]>;
+};
 
 export const useGetAccounts = (pageNumber: number, pageSize: number) => {
   return useQuery({
@@ -68,6 +74,7 @@ export const useCreateAccount = () => {
    Deposit Money
 ----------------------------------------- */
 export const useDepositMoney = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       accountId,
@@ -77,6 +84,7 @@ export const useDepositMoney = () => {
       amount: number;
     }) => accountService.deposit(accountId, amount),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
       message.success("Deposit successful");
     },
     onError: () => {
@@ -89,6 +97,7 @@ export const useDepositMoney = () => {
    Withdraw Money
 ----------------------------------------- */
 export const useWithdrawMoney = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       accountId,
@@ -98,6 +107,8 @@ export const useWithdrawMoney = () => {
       amount: number;
     }) => accountService.withdraw(accountId, amount),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
       message.success("Withdrawal successful");
     },
     onError: () => {
@@ -110,23 +121,36 @@ export const useWithdrawMoney = () => {
    Transfer Money
 ----------------------------------------- */
 export const useTransferMoney = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       fromAccountId,
-      toAccountId,
+      toAccountNumber,
       amount,
+      description
     }: {
       fromAccountId: string;
-      toAccountId: string;
+      toAccountNumber: string;
       amount: number;
-    }) => accountService.transfer(fromAccountId, toAccountId, amount),
+      description: string;
+    }) =>
+      accountService.transfer(fromAccountId, toAccountNumber, amount, description),
 
     onSuccess: () => {
-      message.success("Transfer completed");
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
+    //! Error handling for validation errors
 
-    onError: () => {
-      message.error("Transfer failed");
+    onError: (error: AxiosError<ValidationErrorResponse>) => {
+      const validationErrors = error.response?.data?.errors;
+
+      // Grab the first validation error message
+      const firstErrorMessage = validationErrors
+        ? Object.values(validationErrors).flat()[0]
+        : null;
+      console.log("errroooooooooorrrrooooooo", validationErrors, firstErrorMessage)
     },
   });
 };
@@ -139,6 +163,7 @@ export const useDeleteAccount = () => {
   return useMutation({
     mutationFn: (accountId: string) => accountService.deleteAccount(accountId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError: () => {

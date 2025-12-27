@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTransactionStore } from "@/stores/transactionStore";
 import { useGetPaginatedTransactions } from "@/hooks/useTransaction";
 import { DataTable } from "@/components/DataTable";
 import { Layout, Card, Statistic, Tag, Row, Col, message } from "antd";
@@ -10,10 +9,9 @@ import {
 } from "@ant-design/icons";
 
 const TransactionComponent = () => {
-  const { transactions } = useTransactionStore();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const {data, isLoading, refetch} = useGetPaginatedTransactions(pageNumber, pageSize);
+  const {data: transactions, isLoading, refetch} = useGetPaginatedTransactions(pageNumber, pageSize);
 
   const transactionColumns = [
     {
@@ -25,13 +23,14 @@ const TransactionComponent = () => {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (id?: string) => id ?? "—",
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
       render: (type: string) => (
-        <Tag color={type === "Credit" ? "green" : "red"}>{type}</Tag>
+        <Tag color={type === "Deposit" ? "green" : type === "Transfer" ? "gold" : "red"}>{type}</Tag>
       ),
     },
     {
@@ -40,7 +39,7 @@ const TransactionComponent = () => {
       key: "amount",
       render: (amount: number, record: any) => (
         <span>
-          {record.type === "Debit" ? "-" : "+"}${amount.toLocaleString()}
+          {record.type === "Deposit" ? "+" : "-"} ${amount.toLocaleString()}
         </span>
       ),
     },

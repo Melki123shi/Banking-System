@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccountStore } from "@/stores/accountStore";
 import { useDeleteAccount, useGetAccounts } from "@/hooks/useAccount";
 import { DataTable } from "@/components/DataTable";
@@ -12,31 +12,53 @@ import {
   message,
   Button,
   Form,
+  Modal,
+  Input,
+  InputNumber,
 } from "antd";
 import {
   DollarOutlined,
   CreditCardOutlined,
-  PlusOutlined,
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import ConfirmationModal from "../ConfirmationModal";
+import { useDepositMoney } from "@/hooks/useAccount";
+import { useWithdrawMoney } from "@/hooks/useAccount";
+import { useTransferMoney } from "@/hooks/useAccount";
 
 const AccountComponent = () => {
   const pageNumber = 1;
   const pageSize = 10;
-  const { data: accounts,  isLoading, refetch } = useGetAccounts(pageNumber, pageSize);
-  const setSelectedAccount = useAccountStore((state) => state.setSelectedAccount);
+  const {
+    data: accounts,
+    isLoading,
+    refetch,
+  } = useGetAccounts(pageNumber, pageSize);
+  const { error } = useTransferMoney();
+  const setSelectedAccount = useAccountStore(
+    (state) => state.setSelectedAccount
+  );
 
   const deleteUserMutation = useDeleteAccount();
+  const withdrawMoneyMutation = useWithdrawMoney();
+  const depositMoneyMutation = useDepositMoney();
+  const transferMoneyMutation = useTransferMoney();
 
-  const [isUpdateAccountModalOpen, setIsUpdateAccountModalOpen] = useState(false);
+  const [isUpdateAccountModalOpen, setIsUpdateAccountModalOpen] =
+    useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const [updateAccountForm] = Form.useForm();
-  const [pendingDeleteAccountId, setPendingDeleteAccountId] = useState<string | null>(
-    null
-  );
+  const [depositForm] = Form.useForm();
+  const [withdrawForm] = Form.useForm();
+  const [transferForm] = Form.useForm();
+  const [pendingDeleteAccountId, setPendingDeleteAccountId] = useState<
+    string | null
+  >(null);
 
   /** ---------- Handlers ---------- **/
 
@@ -56,6 +78,65 @@ const AccountComponent = () => {
     } finally {
       setIsConfirmModalOpen(false);
       setPendingDeleteAccountId(null);
+    }
+  };
+
+  const handleDepositMoney = async (values: any) => {
+    const selectedAccount = useAccountStore.getState().selectedAccount;
+    if (!selectedAccount) {
+      message.error("No account selected");
+      return;
+    }
+    try {
+      await depositMoneyMutation.mutateAsync({
+        accountId: selectedAccount.id,
+        amount: values.amount,
+      });
+      message.success("Money deposited successfully");
+      setIsDepositModalOpen(false);
+      depositForm.resetFields();
+    } catch {
+      message.error("Failed to deposit money");
+    }
+  };
+
+  const handleWithdrawMoney = async (values: any) => {
+    const selectedAccount = useAccountStore.getState().selectedAccount;
+    if (!selectedAccount) {
+      message.error("No account selected");
+      return;
+    }
+    try {
+      await withdrawMoneyMutation.mutateAsync({
+        accountId: selectedAccount.id,
+        amount: values.amount,
+      });
+      message.success("Money withdrawn successfully");
+      setIsWithdrawModalOpen(false);
+      withdrawForm.resetFields();
+    } catch {
+      message.error("Failed to withdraw money");
+    }
+  };
+
+  const handleTransferMoney = async (values: any) => {
+    const selectedAccount = useAccountStore.getState().selectedAccount;
+    if (!selectedAccount) {
+      message.error("No account selected");
+      return;
+    }
+    try {
+      await transferMoneyMutation.mutateAsync({
+        fromAccountId: selectedAccount.id,
+        toAccountNumber: values.toAccountNumber,
+        amount: values.amount,
+        description: values.description
+      });
+      message.success("Money transferred successfully");
+      setIsTransferModalOpen(false);
+      transferForm.resetFields();
+    } catch {
+      message.error(error?.message || "Failed to transfer money");
     }
   };
 
@@ -98,7 +179,18 @@ const AccountComponent = () => {
       title: "Type",
       dataIndex: "accountType",
       key: "accountType",
-      render: (type: string) => <Tag color="blue">{type?.toUpperCase()}</Tag>,
+      render: (type: string) => {
+        const color =
+          type === "Savings"
+            ? "green"
+            : type === "Credit"
+            ? "orange"
+            : type === "Checking"
+            ? "blue"
+            : "default";
+
+        return <Tag color={color}>{type?.toUpperCase()}</Tag>;
+      },
     },
     {
       title: "Balance",
@@ -112,11 +204,11 @@ const AccountComponent = () => {
       key: "status",
       render: (status: string) => {
         const color =
-          status === "Active"
+          status === "active"
             ? "green"
-            : status === "Frozen"
+            : status === "frozen"
             ? "orange"
-            : status === "Closed"
+            : status === "inactive"
             ? "red"
             : "default";
 
@@ -128,6 +220,42 @@ const AccountComponent = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (createdAt: string) => new Date(createdAt).toLocaleString(),
+    },
+    {
+      title: "",
+      dataIndex: "actions",
+      key: "actions",
+      render: (_: any, record: any) => (
+        <div className="flex gap-3">
+          <Button
+            color="green"
+            onClick={() => {
+              setSelectedAccount(record);
+              setIsDepositModalOpen(true);
+            }}
+          >
+            Deposit
+          </Button>
+          <Button
+            color="red"
+            onClick={() => {
+              setSelectedAccount(record);
+              setIsWithdrawModalOpen(true);
+            }}
+          >
+            Withdraw
+          </Button>
+          <Button
+            color="gold"
+            onClick={() => {
+              setSelectedAccount(record);
+              setIsTransferModalOpen(true);
+            }}
+          >
+            Transfer
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -179,6 +307,135 @@ const AccountComponent = () => {
           onCancel={() => setIsConfirmModalOpen(false)}
         />
       </Layout.Content>
+
+      {/* Deposit Modal */}
+      <Modal
+        title="Depoit Money"
+        open={isDepositModalOpen}
+        onCancel={() => setIsDepositModalOpen(false)}
+        onOk={() => depositForm.submit()}
+      >
+        <Form
+          form={depositForm}
+          layout="vertical"
+          onFinish={(value) => {
+            handleDepositMoney(value);
+          }}
+        >
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[
+              { required: true, type: "number" },
+              {
+                validator: (_, value) =>
+                  value >= 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Balance must be ≥ 0")),
+              },
+            ]}
+          >
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Withdraw Modal */}
+      <Modal
+        title="Withdraw Money"
+        open={isWithdrawModalOpen}
+        onCancel={() => setIsWithdrawModalOpen(false)}
+        onOk={() => withdrawForm.submit()}
+      >
+        <Form
+          form={withdrawForm}
+          layout="vertical"
+          onFinish={(value) => {
+            handleWithdrawMoney(value);
+          }}
+        >
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[
+              { required: true, type: "number" },
+              {
+                validator: (_, value) =>
+                  value >= 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Balance must be ≥ 0")),
+              },
+            ]}
+          >
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Transfer Modal */}
+      <Modal
+        title="Transfer Money"
+        open={isTransferModalOpen}
+        onCancel={() => setIsTransferModalOpen(false)}
+        onOk={() => withdrawForm.submit()}
+      >
+        <Form
+          form={withdrawForm}
+          layout="vertical"
+          onFinish={(value) => {
+            handleTransferMoney(value);
+          }}
+        >
+          <Form.Item
+            name="toAccountNumber"
+            label="To Account Number"
+            rules={[{ required: true, message: "Please enter account number" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[
+              { required: true, type: "number" },
+              {
+                validator: (_, value) =>
+                  value >= 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Balance must be ≥ 0")),
+              },
+            ]}
+          >
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
+          </Form.Item>
+          <Form.Item name="description" label="Description (Optional)">
+            <Input.TextArea
+              name="description"
+              placeholder="Description (optional)"
+              rows={4}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Layout>
   );
 };

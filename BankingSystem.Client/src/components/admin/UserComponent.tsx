@@ -130,6 +130,28 @@ const UserComponent = () => {
 
   /** ---------- Table columns ---------- **/
   const userColumns = [
+    {
+      title: "",
+      dataIndex: "actions",
+      key: "actions",
+      render: (_: any, record: any) => (
+        <div className="flex gap-2">
+          <EditOutlined
+            onClick={() => {
+              setSelectedUser(record);
+              updateUserForm.setFieldsValue({
+                name: record.name,
+                phoneNumber: record.phoneNumber,
+                status: record.isActive ? "Active" : "Inactive",
+              });
+              setIsUpdateUserModalOpen(true);
+            }}
+          />
+
+          <DeleteOutlined onClick={() => openDeleteConfirm(record.id)} />
+        </div>
+      ),
+    },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Phone", dataIndex: "phoneNumber", key: "phoneNumber" },
     {
@@ -147,39 +169,25 @@ const UserComponent = () => {
       ),
     },
     {
-      title: "Actions",
+      title: "",
+      dataIndex: "AddAccount",
+      key: "AddAccount",
       render: (_: any, record: any) => (
-        <div className="flex gap-2">
-          <Button
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setSelectedUser(record);
-              setIsCreateAccountModalOpen(true);
-            }}
-          >
-            Add Account
-          </Button>
-
-          <EditOutlined
-            onClick={() => {
-              setSelectedUser(record);
-              updateUserForm.setFieldsValue({
-                name: record.name,
-                phoneNumber: record.phoneNumber,
-                status: record.isActive ? "Active" : "Inactive",
-              });
-              setIsUpdateUserModalOpen(true);
-            }}
-          />
-
-          <DeleteOutlined onClick={() => openDeleteConfirm(record.id)} />
-        </div>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setSelectedUser(record);
+            setIsCreateAccountModalOpen(true);
+          }}
+        >
+          Add Account
+        </Button>
       ),
     },
   ];
 
   return (
-    <Layout className="min-h-screen">
+    <Layout className="min-h-screen bg-transparent">
       <Layout.Content className="p-8">
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-8">

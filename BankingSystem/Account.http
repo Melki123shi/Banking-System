@@ -43,3 +43,9 @@ Authorization: Bearer {{Admin_AccessToken}}
 {
     "amount": 50
 }
+
+###
+GET {{BankingSystem_HostAddress}}/api/transactions
+Content-Type: application/json
+
+

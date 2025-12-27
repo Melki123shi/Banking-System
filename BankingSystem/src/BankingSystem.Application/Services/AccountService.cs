@@ -154,7 +154,6 @@ public class AccountService : IAccountService
     //     );
     // }
 
-    //! NOT WORKING
     public async Task DeleteAccountAsync(Guid accountId)
     {
         Account? account = await _accountRepository.GetByIdAsync(accountId);
@@ -196,6 +195,7 @@ public class AccountService : IAccountService
 
         Account? toAccount = await _accountRepository.GetByAccountNumberAsync(receiverAccountNumber);
         Account? fromAccount = await _accountRepository.GetByIdAsync(senderAccountId);
+        
         if (fromAccount == null)
             throw new InvalidOperationException("Sender account not found");
 

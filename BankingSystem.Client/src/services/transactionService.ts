@@ -6,10 +6,12 @@ export const transactionService = {
         const response = await api.get<Transaction[]>("/admin/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize);
     return response.data;
   },
-  getTransactionsByUserId: async (userId: string): Promise<Transaction[]> => {
+  getPaginatedTransactionsByUserId: async (userId: string, pageNumber: number, pageSize: number): Promise<Transaction[]> => {
+    console.log("tranaction .... ", userId, pageNumber, pageSize);
     const response = await api.get<Transaction[]>(
-      `/transactions/user/${userId}`
+      `/transactions/${userId}?pageNumber=` + pageNumber + "&pageSize=" + pageSize
     );
+    console.log("response data ", response, response.data);
     return response.data;
   },
 };

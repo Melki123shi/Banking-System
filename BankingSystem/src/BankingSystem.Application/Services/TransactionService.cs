@@ -109,4 +109,10 @@ public class TransactionService : ITransactionService
 
         return transaction.ToDto();
     }
+
+    public async Task<IEnumerable<TransactionDetailDto>> GetPaginatedCustomerTransactionsAsync(Guid customerId, int pageNumber, int pageSize)
+    {
+        var transactions = await _transactionRepository.GetPaginatedTransactionsByUserIdAsync(customerId, pageNumber, pageSize);
+        return transactions.Select(transaction => transaction.ToDto());
+    }
 }

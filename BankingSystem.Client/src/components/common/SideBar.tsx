@@ -7,7 +7,7 @@ import {
   TransactionOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router";
-import { useThemeStore } from "../stores/themeStore";
+import { useThemeStore } from "../../stores/themeStore";
 import logo from "@/assets/logo.png";
 
 const { Sider } = Layout;

@@ -1,12 +1,12 @@
 import { Tag, Spin } from "antd";
-import { useGetAccountsByUserId } from "@/hooks/useAccount";
+import { useUserAccounts } from "@/hooks/useAccount";
 
 interface Props {
   userId: string;
 }
 
 const UserAccounts = ({ userId }: Props) => {
-  const { data, isLoading } = useGetAccountsByUserId(userId);
+  const { data, isLoading } = useUserAccounts(userId);
   // console.log("-------------------->>>>>>>>>>");
   // console.log(data, data?.length);
 

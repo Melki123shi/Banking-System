@@ -10,7 +10,7 @@ Authorization: Bearer {{Admin_AccessToken}}
 ###
 POST {{BankingSystem_HostAddress}}/api/admin/accounts
 Accept: application/json
-Authorization: Bearer {{Admin_AccessToken}}
+# Authorization: Bearer {{Admin_AccessToken}}
 Content-Type: application/json
 
 {
@@ -20,6 +20,22 @@ Content-Type: application/json
     "AccountType": "Savings",
     "Status": "active"
 }
+
+accountNumber
+: 
+"Awaed1234d2"
+accountType
+: 
+"Checking"
+balance
+: 
+12344
+status
+: 
+"Active"
+userId
+: 
+"4422dab6-d56f-4b70-8cde-2cab8283742b"
 
 ###! To be implemented later
 # PUT {{BankingSystem_HostAddress}}/api/admin/accounts/f2caebf6-cd7d-4159-af16-37fe965e2089

@@ -37,13 +37,11 @@ export const accountService = {
     return response.data;
   },
 
-  getPaginatedAccountsByUserId: async (
-    userId: string,
-    pageNumber: number,
-    pageSize: number
+  getAccountsByUserId: async (
+    userId: string
   ): Promise<Account[]> => {
     const response = await api.get<Account[]>(
-      `${basePath}/user/${userId}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+      `accounts/${userId}`
     );
     return response.data;
   },
@@ -55,12 +53,14 @@ export const accountService = {
     await api.delete(`${basePath}/${accountId}`);
   },
   withdraw: async (accountId: string, amount: number): Promise<Account> => {
+    console.log("called ....")
     const response = await api.post<Account>(
       `${basePath}/${accountId}/withdraw`,
       {
         amount,
       }
     );
+    console.log("re", response)
     return response.data;
   },
   deposit: async (accountId: string, amount: number): Promise<Account> => {
@@ -78,7 +78,6 @@ export const accountService = {
     amount: number,
     description: string
   ): Promise<void> => {
-    console.log(accountId, receiverAccountNumber, amount, description)
     try {
       const res = await api.post(`${basePath}/${accountId}/transfer`, {
         accountId,
@@ -86,7 +85,7 @@ export const accountService = {
         amount,
         description,
       });
-      console.log("res", res)
+      return res.data;
     } catch (error) {
       throw error;
     }

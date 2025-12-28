@@ -31,12 +31,12 @@ export const userService = {
   // Matches [HttpPut("{id}")]
   updateUser: async (id: string, data: any) => {
     // console.log("called ....")
-    const res = await api.put(`/admin/users/${id}`, data);
+    const res = await api.put(`${basePath}/${id}`, data);
     // console.log(res);
 
   },
   // Matches [HttpDelete("{id}")]
   RemoveUser: async (id: string) => {
-    await api.delete(`/admin/users/${id}`);
+    await api.delete(`${basePath}/${id}`);
   },
 };

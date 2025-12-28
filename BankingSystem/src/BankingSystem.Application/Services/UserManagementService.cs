@@ -60,7 +60,6 @@ public class UserManagementService : IUserManagementService
         };
     }
 
-
     public async Task<UserDetailsResponse> GetUserDetailsAsync(Guid userId)
     {
         User? user = await _userRepository.GetUserByIdAsync(userId);

@@ -44,6 +44,13 @@ public class AccountRepository : IAccountRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
+    {
+        return await _dbContext.Accounts
+            .Where(a => a.UserId == userId)
+            .ToListAsync();
+    }
+
     public async Task<Account?> GetByAccountNumberAsync(string accountNumber)
     {
         return await _dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);

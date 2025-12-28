@@ -7,12 +7,12 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: authService.login,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setAuth({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
+        user: data.user,
       });
-
     },
   });
 };

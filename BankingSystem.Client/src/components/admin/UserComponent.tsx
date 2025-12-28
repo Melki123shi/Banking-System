@@ -7,7 +7,7 @@ import {
 } from "@/hooks/useUser";
 import { useUserStore } from "@/stores/userStore";
 import { useCreateAccount } from "@/hooks/useAccount";
-import { DataTable } from "@/components/DataTable";
+import { DataTable } from "@/components/common/DataTable";
 import {
   Layout,
   Card,
@@ -30,7 +30,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import UserAccounts from "./UserAccounts";
-import ConfirmationModal from "../ConfirmationModal";
+import ConfirmationModal from "../common/ConfirmationModal";
 
 const { Option } = Select;
 

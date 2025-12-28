@@ -1,8 +1,8 @@
 import type React from "react";
 import { Layout as AntLayout } from "antd";
-import { Sidebar } from "@/components/SideBar";
+import { Sidebar } from "@/components/common/SideBar";
 import { AppHeader } from "./Header";
-import { useThemeStore } from "../stores/themeStore";
+import { useThemeStore } from "../../stores/themeStore";
 
 interface LayoutProps {
   children: React.ReactNode;

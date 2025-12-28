@@ -12,11 +12,11 @@ export const useGetPaginatedTransactions = (pageNumber: number, pageSize: number
  
 };
 
-// export const useGetUserTransactions = (userId: string) => {
-//   return useQuery({
-//     queryKey: ["userTransactions", userId],
-//     queryFn: async () => transactionService.getTransactionsByUserId(userId),
-//     enabled: !!userId,
-//     staleTime: 1000 * 60 * 5,
-//   });
-// };
+export const useGetUserTransactions = (userId: string, pageNumber: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ["userTransactions", userId, pageNumber, pageSize],
+    queryFn: async () => transactionService.getPaginatedTransactionsByUserId(userId, pageNumber, pageSize),
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
+  });
+};

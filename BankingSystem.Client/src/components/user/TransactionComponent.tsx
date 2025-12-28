@@ -1,23 +1,26 @@
-import { useEffect, useState } from "react";
-import { useGetPaginatedTransactions } from "@/hooks/useTransaction";
-import { DataTable } from "@/components/DataTable";
-import { Layout, Card, Statistic, Tag, Row, Col, message } from "antd";
+import { useState } from "react";
+import { useGetUserTransactions } from "@/hooks/useTransaction";
+import { useAuthStore } from "@/stores/authStore";
+import { DataTable } from "@/components/common/DataTable";
+import { Layout, Card, Statistic, Tag, Row, Col } from "antd";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
 
 export const TransactionComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const {data: transactions, isLoading, refetch} = useGetPaginatedTransactions(pageNumber, pageSize);
+  const user = useAuthStore((state : any) => state.user);
+  if (!user) {
+    return <div>Please log in to view your transactions.</div>;
+  }
+  const {data: transactions, isLoading, refetch} = useGetUserTransactions(user.id, pageNumber, pageSize);
 
   const transactionColumns = [
     {
-      title: "Transaction ID",
-      dataIndex: "transactionId",
-      key: "transactionId",
+      title: "Recipent Name",
+      dataIndex: "recipentName",
+      key: "recipentName",
     },
     {
       title: "Description",
@@ -60,32 +63,18 @@ export const TransactionComponent = () => {
       },
     },
     {
-      title: "Sender Account",
-      dataIndex: "senderAccountId",
-      key: "senderAccountId",
+      title: "From Account Number",
+      dataIndex: "accountNumber",
+      key: "accountNumber",
       render: (id?: string) => id ?? "—",
     },
     {
-      title: "Receiver Account",
-      dataIndex: "receiverAccountId",
-      key: "receiverAccountId",
-      render: (id?: string) => id ?? "—",
-    },
-    {
-      title: "Created At",
+      title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (date: string) => new Date(date).toLocaleString(),
     },
   ];
-
-  // const totalCredits = transactions
-  //   ?.filter((t) => t.type === "Withdrawal")
-  //   .reduce((sum, t) => sum + t.amount, 0);
-
-  // const totalDebits = transactions
-  //   ?.filter((t) => t.type === "Deposit")
-  //   .reduce((sum, t) => sum + t.amount, 0);
 
   return (
     <Layout className="min-h-screen">
@@ -95,30 +84,13 @@ export const TransactionComponent = () => {
           <Col span={8}>
             <Card>
               <Statistic
-                title="Total Transactions"
+                title="Recent Transactions"
                 value={transactions?.length || 0}
                 prefix={<DollarOutlined />}
               />
+              {/* <Tag> */}
             </Card>
           </Col>
-          {/* <Col span={8}>
-            <Card>
-              <Statistic
-                title="Total Credits"
-                value={totalCredits || 0}
-                prefix={<ArrowDownOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card>
-              <Statistic
-                title="Total Debits"
-                value={totalDebits || 0}
-                prefix={<ArrowUpOutlined />}
-              />
-            </Card>
-          </Col> */}
         </Row>
 
         {/* Table */}

@@ -1,33 +1,43 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Layout, Input, Button, Dropdown, Space, Avatar, Tabs, Badge } from "antd"
-import { SearchOutlined, BgColorsOutlined, EllipsisOutlined, BellOutlined, MailOutlined } from "@ant-design/icons"
-import { useThemeStore } from "../stores/themeStore";
+import type React from "react";
+import {
+  Layout,
+  Input,
+  Button,
+  Dropdown,
+  Space,
+  Avatar,
+  Badge,
+} from "antd";
+import {
+  SearchOutlined,
+  BgColorsOutlined,
+  EllipsisOutlined,
+  BellOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
+import { useThemeStore } from "@/stores/themeStore";
+import { useLogout } from "@/hooks/useAuth";
 
-const { Header } = Layout
+const { Header } = Layout;
 
 interface HeaderProps {
-  onSearch?: (value: string) => void
+  onSearch?: (value: string) => void;
 }
 
 export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
-  const { isDarkMode, toggleDarkMode } = useThemeStore()
+  const { isDarkMode, toggleDarkMode } = useThemeStore();
+  const { mutate: logout, isPending } = useLogout();
 
   const profileMenu = [
     {
-      key: "profile",
-      label: "Profile",
-    },
-    {
-      key: "settings",
-      label: "Settings",
-    },
-    {
       key: "logout",
       label: "Logout",
+      onClick: () => logout(),
+      disabled: isPending,
     },
-  ]
+  ];
 
   return (
     <Header
@@ -50,22 +60,25 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
         <div className="header-right">
           <Space size="large">
             <Badge count={3} offset={[-5, 5]}>
-              <Button type="text" icon={<BellOutlined style={{ fontSize: "16px" }} />} />
+              <Button type="text" icon={<BellOutlined />} />
             </Badge>
 
-            <Button type="text" icon={<MailOutlined style={{ fontSize: "16px" }} />} />
+            <Button type="text" icon={<MailOutlined />} />
 
             <Button
               type="text"
-              icon={<BgColorsOutlined style={{ fontSize: "16px" }} />}
+              icon={<BgColorsOutlined />}
               onClick={toggleDarkMode}
               title="Toggle Dark Mode"
             />
 
-            <Button type="text" icon={<EllipsisOutlined style={{ fontSize: "16px" }} />} />
+            <Button type="text" icon={<EllipsisOutlined />} />
 
             <Dropdown menu={{ items: profileMenu }} placement="bottomRight">
-              <Avatar style={{ cursor: "pointer", background: "#1890ff" }} size="large">
+              <Avatar
+                style={{ cursor: "pointer", background: "#1890ff" }}
+                size="large"
+              >
                 TP
               </Avatar>
             </Dropdown>
@@ -75,5 +88,5 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
         </div>
       </div>
     </Header>
-  )
-}
+  );
+};

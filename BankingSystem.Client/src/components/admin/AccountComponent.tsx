@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccountStore } from "@/stores/accountStore";
 import { useDeleteAccount, useGetAccounts } from "@/hooks/useAccount";
-import { DataTable } from "@/components/DataTable";
+import { DataTable } from "@/components/common/DataTable";
 import {
   Layout,
   Card,
@@ -22,7 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import ConfirmationModal from "../ConfirmationModal";
+import ConfirmationModal from "../common/ConfirmationModal";
 import { useDepositMoney } from "@/hooks/useAccount";
 import { useWithdrawMoney } from "@/hooks/useAccount";
 import { useTransferMoney } from "@/hooks/useAccount";

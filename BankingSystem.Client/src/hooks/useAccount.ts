@@ -19,31 +19,6 @@ export const useGetAccounts = (pageNumber: number, pageSize: number) => {
 };
 
 /* ----------------------------------------
-   Get Accounts By User ID
------------------------------------------ */
-export const useGetAccountsByUserId = (
-  userId?: string,
-  pageNumber?: number,
-  pageSize?: number
-) => {
-  // console.log("debuggin>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");  console.log(userId, pageNumber, pageSize)
-;  return useQuery<Account[]>({
-    queryKey: ["accounts", userId, pageNumber, pageSize],
-    queryFn: () => {
-      // console.log("called")
-      if (!userId) return Promise.resolve([]);
-      // console.log("Fetching accounts for user:", userId, "with pageNumber:", pageNumber, "and pageSize:", pageSize);
-      return accountService.getPaginatedAccountsByUserId(
-        userId,
-        pageNumber!,
-        pageSize!
-      );
-    },
-    enabled: !!userId && pageNumber !== undefined && pageSize !== undefined,
-  });
-};
-
-/* ----------------------------------------
    Get Account By ID
 ----------------------------------------- */
 export const useGetAccountById = (accountId?: string) => {
@@ -169,5 +144,13 @@ export const useDeleteAccount = () => {
     onError: () => {
       message.error("Failed to delete account");
     },
+  });
+};
+
+export const useUserAccounts = (userId: string) => {
+  return useQuery<Account[]>({
+    queryKey: ["accounts", userId],
+    queryFn: () => accountService.getAccountsByUserId(userId),
+    enabled: !!userId,
   });
 };

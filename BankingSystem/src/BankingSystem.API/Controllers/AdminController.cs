@@ -52,12 +52,12 @@ public class AdminController : ControllerBase
     }
 
 
-    [HttpGet("accounts/user/{userId}")]
-    public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetPaginatedAccountsByUserId(Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
-    {
-        var accounts = await _accountService.GetPaginatedAccountsByUserIdAsync(userId, pageNumber, pageSize);
-        return Ok(accounts);
-    }
+    // [HttpGet("accounts/user/{userId}")]
+    // public async Task<ActionResult<IEnumerable<AccountResponseDto>>> GetPaginatedAccountsByUserId(Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+    // {
+    //     var accounts = await _accountService.GetPaginatedAccountsByUserIdAsync(userId, pageNumber, pageSize);
+    //     return Ok(accounts);
+    // }
 
     [HttpGet("accounts/{accountId}")]
     public async Task<ActionResult<AccountResponseDto>> GetAccountById(Guid accountId)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetPaginatedTransactions } from "@/hooks/useTransaction";
-import { DataTable } from "@/components/DataTable";
+import { DataTable } from "@/components/common/DataTable";
 import { Layout, Card, Statistic, Tag, Row, Col, message } from "antd";
 import {
   ArrowUpOutlined,

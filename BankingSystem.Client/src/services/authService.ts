@@ -9,16 +9,31 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+  user: User;
 }
 
 export const authService = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await api.post<LoginResponse>("/auth/login", data);
+    const payload = {
+      phoneNumber: data.phoneNumber.trim(),
+      password: data.password,
+    };
+
+    const response = await api.post<LoginResponse>("/auth/login", payload);
     return response.data;
   },
 
   logout: async (refreshToken: string): Promise<void> => {
     await api.post("/auth/logout", { refreshToken });
+  },
+
+  me: async (token: string): Promise<User> => {
+    const response = await api.get<User>("/user/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
   },
 
   refresh: async (refreshToken: string): Promise<LoginResponse> => {

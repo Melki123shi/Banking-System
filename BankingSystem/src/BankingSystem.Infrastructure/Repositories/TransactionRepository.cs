@@ -57,4 +57,14 @@ public class TransactionRepository : ITransactionRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task<IEnumerable<Transaction>> GetPaginatedTransactionsByUserIdAsync(Guid userId, int pageNumber, int pageSize)
+    {
+        return await _dbContext.Transactions
+                    .Where(t => t.SenderAccountId == userId || t.ReceiverAccountId == userId)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .AsNoTracking()
+                    .ToListAsync();
+    }
+
 }

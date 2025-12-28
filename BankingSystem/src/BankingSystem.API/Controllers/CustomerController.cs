@@ -14,14 +14,20 @@ public class CustomerController : ControllerBase
     private readonly WithdrawUseCase _withdrawUseCase;
     private readonly TransferUseCase _transferUseCase;
     private readonly IUserManagementService _userService;
+    private readonly IAccountService _accountService;
+    private readonly ITransactionService _transactionService;
     public CustomerController(
         WithdrawUseCase withdrawUseCase,
         TransferUseCase transferUseCase,
-        IUserManagementService userService)
+        IUserManagementService userService,
+        IAccountService accountService,
+        ITransactionService transactionService)
     {
         _withdrawUseCase = withdrawUseCase;
         _transferUseCase = transferUseCase;
         _userService = userService;
+        _accountService = accountService;
+        _transactionService = transactionService;
     }
 
     [HttpPost("accounts/{accountId}/withdraw")]
@@ -47,5 +53,17 @@ public class CustomerController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("transactions/{customerId}")]
+    public async Task<IActionResult> GetAccountTransactions(Guid customerId, int pageNumber = 1, int pageSize = 10)
+    {
+        var response = await _transactionService.GetPaginatedCustomerTransactionsAsync(customerId, pageNumber, pageSize);
+        return Ok(response);
+    }
 
+    [HttpGet("accounts/{customerId}")]
+    public async Task<IActionResult> GetCustomerAccounts(Guid customerId)
+    {
+        var response = await _accountService.GetAccountsByUserIdAsync(customerId);
+        return Ok(response);
+    }
 }

@@ -60,7 +60,8 @@ public class AuthService : IAuthService
         return new LoginResponse(
             accessToken,
             accessTokenExpiresAt,
-            refreshTokenValue
+            refreshTokenValue,
+            user
         );
     }
 

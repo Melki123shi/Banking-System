@@ -15,6 +15,7 @@ export const TransactionComponent = () => {
     return <div>Please log in to view your transactions.</div>;
   }
   const {data: transactions, isLoading, refetch} = useGetUserTransactions(user.id, pageNumber, pageSize);
+  console.log(transactions, "dataaaaaaaaaaaaaaa")
 
   const transactionColumns = [
     {

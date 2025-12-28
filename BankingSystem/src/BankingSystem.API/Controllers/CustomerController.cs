@@ -8,7 +8,6 @@ namespace BankingSystem.src.BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/")]
-[Authorize(Roles = "Customer, Admin")]
 public class CustomerController : ControllerBase
 {
     private readonly WithdrawUseCase _withdrawUseCase;

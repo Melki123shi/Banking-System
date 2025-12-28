@@ -15,7 +15,7 @@ public class TransactionService : ITransactionService
 
     public TransactionService(
         ITransactionRepository transactionRepository,
-         ITransactionNumberGenerator transactionNumberGenerator, 
+         ITransactionNumberGenerator transactionNumberGenerator,
          IAccountService accountService)
     {
         _transactionRepository = transactionRepository;
@@ -59,7 +59,7 @@ public class TransactionService : ITransactionService
             withdrawRequestDto.Description,
             DateTime.UtcNow
         );
-        
+
         transaction.Complete();
         await _transactionRepository.AddAsync(transaction);
 
@@ -74,7 +74,7 @@ public class TransactionService : ITransactionService
             transactionId,
             depositRequestDto.Amount,
             TransactionType.Deposit,
-            accountId, 
+            accountId,
             null,
             depositRequestDto.Description,
             DateTime.UtcNow
@@ -88,11 +88,11 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDetailDto> RecordTransferAsync(Guid senderAccountId, TransferRequestDto transferRequestDto)
     {
-       string transactionId = _transactionNumberGenerator.Generate("M");
-       var receiverAccountId = await _accountService.GetAccountByAccountNumberAsync(transferRequestDto.ReceiverAccountNumber);
+        string transactionId = _transactionNumberGenerator.Generate("M");
+        var receiverAccountId = await _accountService.GetAccountByAccountNumberAsync(transferRequestDto.ReceiverAccountNumber);
 
-       if (receiverAccountId == null)
-        throw new InvalidOperationException("Receiver account not found");
+        if (receiverAccountId == null)
+            throw new InvalidOperationException("Receiver account not found");
 
         Transaction transaction = new Transaction(
             transactionId,
@@ -103,7 +103,7 @@ public class TransactionService : ITransactionService
             transferRequestDto.Description,
             DateTime.UtcNow
         );
-        
+
         transaction.Complete();
         await _transactionRepository.AddAsync(transaction);
 
@@ -112,7 +112,21 @@ public class TransactionService : ITransactionService
 
     public async Task<IEnumerable<TransactionDetailDto>> GetPaginatedCustomerTransactionsAsync(Guid customerId, int pageNumber, int pageSize)
     {
-        var transactions = await _transactionRepository.GetPaginatedTransactionsByUserIdAsync(customerId, pageNumber, pageSize);
-        return transactions.Select(transaction => transaction.ToDto());
+        var accounts = await _accountService.GetAccountsByUserIdAsync(customerId);
+        if (accounts == null || !accounts.Any())
+            throw new InvalidOperationException("No accounts found for the customer");
+
+        var aggregated = new List<Transaction>();
+
+        foreach (var account in accounts)
+        {
+            var page = await _transactionRepository.GetPaginatedTransactionsByAccountIdAsync(
+                account.Id, pageNumber, pageSize);
+
+            if (page != null)
+                aggregated.AddRange(page);
+        }
+
+        return aggregated.Select(t => t.ToDto());
     }
 }

@@ -65,3 +65,7 @@ GET {{BankingSystem_HostAddress}}/api/admin/accounts/7a6ab6d0-2997-41aa-8eef-177
 GET {{BankingSystem_HostAddress}}/api/user/me
 Authorization: Bearer {{Customer_AccessToken}}
 
+###
+GET {{BankingSystem_HostAddress}}/api/transactions/4422dab6-d56f-4b70-8cde-2cab8283742b?pageNumber=1&pageSize=10
+# Authorization: Bearer {{Customer_AccessToken}}
+

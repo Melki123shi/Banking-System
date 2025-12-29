@@ -37,7 +37,6 @@ userId
 : 
 "4422dab6-d56f-4b70-8cde-2cab8283742b"
 
-###! To be implemented later
 # PUT {{BankingSystem_HostAddress}}/api/admin/accounts/f2caebf6-cd7d-4159-af16-37fe965e2089
 # Authorization: Bearer {{Admin_AccessToken}}
 # Accept: application/json
@@ -61,7 +60,7 @@ Authorization: Bearer {{Admin_AccessToken}}
 }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/transactions
+GET {{BankingSystem_HostAddress}}/api/transactions/3e2cff10-b424-4fba-9d38-b03b1f7222c8?pageNumber=1&pageSize=5
 Content-Type: application/json
 
 ###

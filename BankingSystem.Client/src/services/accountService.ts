@@ -57,7 +57,6 @@ export const accountService = {
     await api.delete(`${basePath}/${accountId}`);
   },
   withdraw: async (accountId: string, amount: number, description: string): Promise<Account> => {
-    console.log("withdrawal called ....")
     const response = await api.post<Account>(
       `${basePath}/${accountId}/withdraw`,
       {
@@ -65,7 +64,6 @@ export const accountService = {
         description
       }
     );
-    console.log("re", response)
     return response.data;
   },
   deposit: async (accountId: string, amount: number): Promise<Account> => {

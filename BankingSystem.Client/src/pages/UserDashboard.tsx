@@ -19,14 +19,14 @@ export const UserDashboard = () => {
   return (
     <AppLayout isAdmin={false}>
       <Col span={24} style={{ display: "flex", flexDirection: "column", gap: "24px", margin: "auto" , maxWidth: "80%" }}>
-        <Typography.Title level={2} style={{ margin: 0, color: isDarkMode ? "#444" : "#000"} }>
+        <Typography.Title level={2} style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444"} }>
           Hello, {user.name} 👋
         </Typography.Title>
 
         <Col>
           <Typography.Title
             level={3}
-            style={{ margin: 0, color: isDarkMode ? "#444" : "#000" }}
+            style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444" }}
           >
             Your Accounts
           </Typography.Title>
@@ -39,7 +39,7 @@ export const UserDashboard = () => {
           ))}
         </Row>
 
-        <Typography.Title level={3} style={{ margin: 0, color: isDarkMode ? "#444" : "#000" }}>
+        <Typography.Title level={3} style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444" }}>
           Recent Transactions
         </Typography.Title>
 

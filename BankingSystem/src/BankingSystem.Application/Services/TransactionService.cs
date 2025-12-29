@@ -163,23 +163,25 @@ public class TransactionService : ITransactionService
         return transaction.ToDto();
     }
 
-    public async Task<IEnumerable<TransactionDetailDto>> GetPaginatedCustomerTransactionsAsync(Guid customerId, int pageNumber, int pageSize)
+    public async Task<PaginatedResponseDto<UserTransactionReponse>> GetPaginatedCustomerTransactionsAsync(
+        Guid customerId,
+        int pageNumber,
+        int pageSize)
     {
-        var accounts = await _accountService.GetAccountsByUserIdAsync(customerId);
-        if (accounts == null || !accounts.Any())
-            throw new InvalidOperationException("No accounts found for the customer");
+        var (transactions, totalCount) =
+            await _transactionRepository
+                .GetPaginatedTransactionsForCustomerAsync(
+                    customerId, pageNumber, pageSize);
 
-        var aggregated = new List<Transaction>();
-
-        foreach (var account in accounts)
+        return new PaginatedResponseDto<UserTransactionReponse>
         {
-            var page = await _transactionRepository.GetPaginatedTransactionsByAccountIdAsync(
-                account.Id, pageNumber, pageSize);
-
-            if (page != null)
-                aggregated.AddRange(page);
-        }
-
-        return aggregated.Select(t => t.ToDto());
+            Items = transactions
+                .Select(t => t.ToDto(customerId))
+                .ToList(),
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
+
 }

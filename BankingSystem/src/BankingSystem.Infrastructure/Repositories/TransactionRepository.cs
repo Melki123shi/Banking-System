@@ -20,6 +20,35 @@ public class TransactionRepository : ITransactionRepository
         return await _dbContext.Transactions.FindAsync(transactionId);
     }
 
+    public async Task<(IEnumerable<Transaction> Items, int TotalCount)>
+    GetPaginatedTransactionsForCustomerAsync(
+        Guid customerId,
+        int pageNumber,
+        int pageSize)
+{
+    var query = _dbContext.Transactions
+        .Include(t => t.SenderAccount)
+            .ThenInclude(a => a.User)
+        .Include(t => t.ReceiverAccount)
+            .ThenInclude(a => a.User)
+        .Where(t =>
+            t.SenderAccount!.UserId == customerId ||
+            t.ReceiverAccount!.UserId == customerId
+        );
+
+    var totalCount = await query.CountAsync();
+
+    var items = await query
+        .OrderByDescending(t => t.CreatedAt)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .AsNoTracking()
+        .ToListAsync();
+
+    return (items, totalCount);
+}
+
+
     public async Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId)
     {
         return await _dbContext.Transactions

@@ -1,16 +1,6 @@
 import { apiClient as api } from "@/lib/axios";
 import type { User } from "@/entities/user";
-
-export interface LoginRequest {
-  phoneNumber: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
+import type { LoginRequest, LoginResponse } from "@/lib/types";
 
 export const authService = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {

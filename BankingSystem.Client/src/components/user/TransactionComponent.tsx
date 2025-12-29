@@ -2,38 +2,52 @@ import { useState } from "react";
 import { useGetUserTransactions } from "@/hooks/useTransaction";
 import { useAuthStore } from "@/stores/authStore";
 import { DataTable } from "@/components/common/DataTable";
-import { Layout, Card, Statistic, Tag, Row, Col } from "antd";
-import {
-  DollarOutlined,
-} from "@ant-design/icons";
+import { Layout, Card, Tag} from "antd";
 
 export const TransactionComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const user = useAuthStore((state : any) => state.user);
+  const user = useAuthStore((state: any) => state.user);
   if (!user) {
     return <div>Please log in to view your transactions.</div>;
   }
-  const {data: transactions, isLoading, refetch} = useGetUserTransactions(user.id, pageNumber, pageSize);
-  console.log(transactions)
+  const { data, isLoading } = useGetUserTransactions(
+    user.id,
+    pageNumber,
+    pageSize
+  );
+  const transactions = data?.items;
+
   const transactionColumns = [
     {
-      title: "Recipent Name",
-      dataIndex: "recipentName",
-      key: "recipentName",
+      title: "Name",
+      dataIndex: "counterpartyName",
+      key: "counterpartyName",
+    },
+    {
+      title: "Account",
+      dataIndex: "counterpartyAccountNumber",
+      key: "counterpartyAccountNumber",
+      render: (v?: string) => v ?? "—",
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (id?: string) => id ?? "—",
+      render: (v?: string) => v ?? "—",
     },
     {
       title: "Type",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "transactionType",
+      key: "transactionType",
       render: (type: string) => (
-        <Tag color={type === "Deposit" ? "green" : type === "Transfer" ? "gold" : "red"}>{type}</Tag>
+        <Tag
+          color={
+            type === "Deposit" ? "green" : type === "Transfer" ? "gold" : "red"
+          }
+        >
+          {type}
+        </Tag>
       ),
     },
     {
@@ -41,37 +55,27 @@ export const TransactionComponent = () => {
       dataIndex: "amount",
       key: "amount",
       render: (amount: number, record: any) => (
-        <span>
-          {record.type === "Deposit" ? "+" : "-"} ${amount.toLocaleString()}
+        <span
+          className={
+            record.direction === "IN" ? "text-green-600" : "text-red-600"
+          }
+        >
+          {record.direction === "IN" ? "+" : "-"} ${amount.toLocaleString()}
         </span>
       ),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => {
-        const color =
-          status === "Completed"
-            ? "green"
-            : status === "Pending"
-            ? "orange"
-            : status === "Failed"
-            ? "red"
-            : "default";
-        return <Tag color={color}>{status}</Tag>;
-      },
-    },
-    {
-      title: "From Account Number",
-      dataIndex: "accountNumber",
-      key: "item.accountNumber",
-      render: (id?: string) => id ?? "—",
+      title: "Direction",
+      dataIndex: "direction",
+      key: "direction",
+      render: (d: string) => (
+        <Tag color={d === "IN" ? "green" : "red"}>{d}</Tag>
+      ),
     },
     {
       title: "Date",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "date",
+      key: "date",
       render: (date: string) => new Date(date).toLocaleString(),
     },
   ];
@@ -84,17 +88,17 @@ export const TransactionComponent = () => {
           <DataTable
             title="Recent Transactions"
             loading={isLoading}
-            dataSource={transactions || []}
+            dataSource={data?.items || []}
             columns={transactionColumns}
-            rowKey="id"
+            rowKey="transactionId"
             pagination={{
               current: pageNumber,
               pageSize,
+              total: data?.totalCount || 0,
               onChange: (page, size) => {
                 setPageNumber(page);
-                setPageSize(size);
+                setPageSize(size ?? pageSize);
               },
-              total: transactions?.length || 0,
             }}
           />
         </Card>

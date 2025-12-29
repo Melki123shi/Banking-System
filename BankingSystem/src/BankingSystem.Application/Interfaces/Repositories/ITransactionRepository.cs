@@ -8,6 +8,11 @@ public interface ITransactionRepository
     Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId);
     Task<IEnumerable<Transaction>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize);
     Task<IEnumerable<Transaction>> GetPaginatedTransactionsByAccountIdAsync(Guid accountId, int pageNumber, int pageSize);
+    Task<(IEnumerable<Transaction> Items, int TotalCount)> GetPaginatedTransactionsForCustomerAsync(
+        Guid customerId,
+        int pageNumber,
+        int pageSize);
+
     Task<int> GetTotalCountAsync();
     Task AddAsync(Transaction transaction);
     Task UpdateAsync(Transaction transaction);

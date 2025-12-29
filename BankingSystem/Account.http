@@ -3,7 +3,7 @@
 
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/accounts
+GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10
 Accept: application/json
 Authorization: Bearer {{Admin_AccessToken}}
 
@@ -52,7 +52,7 @@ GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=1&pageSize=4
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###
-POST {{BankingSystem_HostAddress}}/api/accounts/7a6ab6d0-2997-41aa-8eef-177e957c9cd5/withdraw
+POST {{BankingSystem_HostAddress}}/api/accounts/7b7003e7-50ea-4c9b-a982-7f15656a4faf/withdraw
 Content-Type: application/json
 Authorization: Bearer {{Admin_AccessToken}}
 
@@ -63,5 +63,15 @@ Authorization: Bearer {{Admin_AccessToken}}
 ###
 GET {{BankingSystem_HostAddress}}/api/transactions
 Content-Type: application/json
+
+###
+PUT {{BankingSystem_HostAddress}}/api/admin/accounts/4d9ecaff-4b72-4001-a5df-8205fc8b5b03
+Content-Type: application/json
+
+{
+    "accountNumber": "AC13536789",
+    "balance": 100,
+    "status": "active"
+}
 
 

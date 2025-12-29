@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import { useThemeStore } from "@/stores/themeStore";
 import { useLogout } from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/authStore";
 
 const { Header } = Layout;
 
@@ -29,6 +30,7 @@ interface HeaderProps {
 export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
   const { isDarkMode, toggleDarkMode } = useThemeStore();
   const { mutate: logout, isPending } = useLogout();
+ const user = useAuthStore((state) => state.user);
 
   const profileMenu = [
     {
@@ -79,11 +81,11 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
                 style={{ cursor: "pointer", background: "#1890ff" }}
                 size="large"
               >
-                TP
+                {user?.name[0].toUpperCase()}
               </Avatar>
             </Dropdown>
 
-            <span className="user-name">Timothy Pena</span>
+            <span className="user-name">{user?.name}</span>
           </Space>
         </div>
       </div>

@@ -9,6 +9,7 @@ public interface IAccountRepository {
     Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId);
     Task<User?> GetUserByAccountIdAsync(Guid accountId);
     Task<IEnumerable<Account>> GetPaginatedAsync(int pageNumber, int pageSize);
+    Task<List<Account>> GetByIdsAsync(IEnumerable<Guid> accountIds);
     Task AddAsync(Account account);
     Task UpdateAsync( Account account);
     Task DeleteAsync(Account account);

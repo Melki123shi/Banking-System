@@ -71,9 +71,17 @@ public class UserManagementService : IUserManagementService
     {
         User? user = await _userRepository.GetUserByIdAsync(id)
                         ?? throw new KeyNotFoundException("User not found");
+
+        var hashedPassword = user.HashedPassword;
+        if (!string.IsNullOrEmpty(updateUserRequest.Password))
+        {
+            hashedPassword = _passwordHasher.Hash(updateUserRequest.Password);
+        }
         user.UpdateDetails(
             updateUserRequest.Name ?? user.Name,
-            updateUserRequest.PhoneNumber ?? user.PhoneNumber
+            updateUserRequest.PhoneNumber ?? user.PhoneNumber,
+            updateUserRequest.IsActive ?? user.IsActive,
+            hashedPassword
         );
 
         await _userRepository.UpdateAsync(user);

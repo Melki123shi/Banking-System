@@ -45,6 +45,26 @@ export const useCreateAccount = () => {
   });
 };
 
+export const useUpdateAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      accountId,
+      accountData,
+    }: {
+      accountId: string;
+      accountData: Partial<Account>;
+    }) => accountService.updateAccount(accountId, accountData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      message.success("Account updated successfully");
+    },
+    onError: () => {
+      message.error("Failed to update account");
+    },
+  });
+}
+
 /* ----------------------------------------
    Deposit Money
 ----------------------------------------- */
@@ -77,13 +97,16 @@ export const useWithdrawMoney = () => {
     mutationFn: ({
       accountId,
       amount,
+      description
     }: {
       accountId: string;
       amount: number;
-    }) => accountService.withdraw(accountId, amount),
+      description: string;
+    }) => accountService.withdraw(accountId, amount, description),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["userTransactions"] });
       message.success("Withdrawal successful");
     },
     onError: () => {
@@ -115,6 +138,7 @@ export const useTransferMoney = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["userTransactions"] });
     },
     //! Error handling for validation errors
 

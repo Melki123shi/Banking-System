@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   useGetUsers,
   useCreateUser,
@@ -34,7 +34,7 @@ import ConfirmationModal from "../common/ConfirmationModal";
 
 const { Option } = Select;
 
-const UserComponent = () => {
+export const UserComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const setSelectedUser = useUserStore((s) => s.setSelectedUser);

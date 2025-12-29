@@ -67,4 +67,9 @@ public class TransactionRepository : ITransactionRepository
                     .ToListAsync();
     }
 
+    public async Task<int> GetTotalCountAsync()
+    {
+        return await _dbContext.Transactions.CountAsync();
+    }
+
 }

@@ -92,12 +92,12 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
-    // [HttpPut("accounts/{accountId}")]
-    // public async Task<IActionResult> UpdateAccount(Guid accountId, [FromBody] UpdateAccountRequestDto updateAccountRequestDto)
-    // {
-    //     await _accountService.UpdateAccountAsync(accountId, updateAccountRequestDto);
-    //     return NoContent();
-    // }
+    [HttpPut("accounts/{accountId}")]
+    public async Task<IActionResult> UpdateAccount(Guid accountId, [FromBody] UpdateAccountRequestDto updateAccountRequestDto)
+    {
+        var response = await _accountService.UpdateAccountAsync(accountId, updateAccountRequestDto);
+        return Ok(response);
+    }
 
     [HttpPost("accounts/{accountId}/deposit")]
     public async Task<IActionResult> Deposit(Guid accountId, [FromBody] DepositRequestDto depositRequestDto)

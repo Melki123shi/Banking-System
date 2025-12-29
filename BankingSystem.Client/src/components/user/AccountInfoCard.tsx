@@ -49,6 +49,7 @@ export const AccountInfoCard = ({ account }: Props) => {
       await withdrawMoneyMutation.mutateAsync({
         accountId: account.id,
         amount: values.amount,
+        description: values.description,
       });
       message.success("Money withdrawn successfully");
       setIsWithdrawModalOpen(false);
@@ -132,16 +133,24 @@ export const AccountInfoCard = ({ account }: Props) => {
 
         {/* Actions */}
         <Space size="middle">
-          <Tag color="red" icon={<MinusOutlined />} onClick={() => {
-             setSelectedAccount(account)
-             setIsWithdrawModalOpen(true)
-          }}>
+          <Tag
+            color="red"
+            icon={<MinusOutlined />}
+            onClick={() => {
+              setSelectedAccount(account);
+              setIsWithdrawModalOpen(true);
+            }}
+          >
             Withdraw
           </Tag>
-          <Tag color="gold" icon={<SwapOutlined />} onClick={() => {
-             setSelectedAccount(account)
-             setIsTransferModalOpen(true)
-          }}>
+          <Tag
+            color="gold"
+            icon={<SwapOutlined />}
+            onClick={() => {
+              setSelectedAccount(account);
+              setIsTransferModalOpen(true);
+            }}
+          >
             Transfer
           </Tag>
         </Space>
@@ -153,7 +162,8 @@ export const AccountInfoCard = ({ account }: Props) => {
         open={isWithdrawModalOpen}
         onCancel={() => setIsWithdrawModalOpen(false)}
         onOk={() => {
-          withdrawForm.submit()}}
+          withdrawForm.submit();
+        }}
       >
         <Form
           form={withdrawForm}
@@ -181,6 +191,13 @@ export const AccountInfoCard = ({ account }: Props) => {
               formatter={(value) =>
                 `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
+            />
+          </Form.Item>
+          <Form.Item name="description" label="Description (Optional)">
+            <Input.TextArea
+              name="description"
+              placeholder="Description (optional)"
+              rows={4}
             />
           </Form.Item>
         </Form>

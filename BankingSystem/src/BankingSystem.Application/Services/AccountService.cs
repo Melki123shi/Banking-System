@@ -45,6 +45,12 @@ public class AccountService : IAccountService
         return account.ToDto();
     }
 
+    public async Task<List<AccountResponseDto>> GetAccountsByIdsAsync(IEnumerable<Guid> accountIds)
+    {
+        var accounts = await _accountRepository.GetByIdsAsync(accountIds);
+        return accounts.Select(account => account.ToDto()).ToList();
+    }
+
     public async Task<UserDetailsResponse> GetUserByAccountIdAsync(Guid accountId)
     {
         User? user = await _accountRepository.GetUserByAccountIdAsync(accountId);
@@ -108,51 +114,40 @@ public class AccountService : IAccountService
         return accounts.Select(account => account.ToDto());
     }
 
-    // !to be fixed
-    // public async Task<AccountResponseDto> UpdateAccountAsync(Guid accountId, UpdateAccountRequestDto UpdateAccountRequestDto)
-    // {
-    //     Account? account = await _accountRepository.GetByIdAsync(accountId);
-    //     if (account == null)
-    //     {
-    //         throw new InvalidOperationException("Account not found");
-    //     }
+    public async Task<AccountResponseDto> UpdateAccountAsync(
+    Guid accountId,
+    UpdateAccountRequestDto request)
+    {
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account is null)
+            throw new InvalidOperationException("Account not found");
 
-    //     Account updatedAccount = new Account(
-    //         account.UserId,
-    //         account.AccountNumber,
-    //         UpdateAccountRequestDto.Balance ?? account.Balance,
-    //         UpdateAccountRequestDto.AccountType ?? account.Type,
-    //         UpdateAccountRequestDto.AccountStatus ?? account.Status,
-    //         DateTime.UtcNow
-    //     );
-    //     if (updatedAccount == account)
-    //     {
-    //         return new AccountResponseDto(
-    //             account.Id,
-    //             account.UserId,
-    //             account.AccountNumber,
-    //             account.Type.ToString(),
-    //             account.Balance,
-    //             account.Status.ToString(),
-    //             account.CreatedAt,
-    //             account.UpdatedAt
+        var user = await _userRepository.GetUserByIdAsync(account.UserId);
+        if (user is null)
+            throw new InvalidOperationException("User does not exist");
 
-    //         );
-    //     }
+        account.Update(
+            request.AccountNumber,
+            request.Balance,
+            request.Type,
+            request.Status
+        );
 
-    //     await _accountRepository.UpdateAsync(updatedAccount);
+        await _accountRepository.UpdateAsync(account);
 
-    //     return new AccountResponseDto(
-    //         updatedAccount.Id,
-    //         updatedAccount.UserId,
-    //         updatedAccount.AccountNumber,
-    //         updatedAccount.Type.ToString(),
-    //         updatedAccount.Balance,
-    //         updatedAccount.Status.ToString(),
-    //         updatedAccount.CreatedAt,
-    //         updatedAccount.UpdatedAt
-    //     );
-    // }
+        return new AccountResponseDto(
+            account.Id,
+            account.UserId,
+            user.Name,
+            account.AccountNumber,
+            account.Type.ToString(),
+            account.Balance,
+            account.Status.ToString(),
+            account.CreatedAt,
+            account.UpdatedAt
+        );
+    }
+
 
     public async Task DeleteAccountAsync(Guid accountId)
     {
@@ -195,7 +190,7 @@ public class AccountService : IAccountService
 
         Account? toAccount = await _accountRepository.GetByAccountNumberAsync(receiverAccountNumber);
         Account? fromAccount = await _accountRepository.GetByIdAsync(senderAccountId);
-        
+
         if (fromAccount == null)
             throw new InvalidOperationException("Sender account not found");
 

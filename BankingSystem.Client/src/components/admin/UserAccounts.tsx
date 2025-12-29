@@ -5,10 +5,8 @@ interface Props {
   userId: string;
 }
 
-const UserAccounts = ({ userId }: Props) => {
+export const UserAccounts = ({ userId }: Props) => {
   const { data, isLoading } = useUserAccounts(userId);
-  // console.log("-------------------->>>>>>>>>>");
-  // console.log(data, data?.length);
 
   if (isLoading) {
     return <Spin size="small" />;

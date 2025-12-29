@@ -78,4 +78,25 @@ public class Account
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void Update(
+        string? accountNumber,
+        decimal? balance,
+        AccountType? type,
+        AccountStatus? status)
+    {
+        if (accountNumber is not null)
+            AccountNumber = accountNumber;
+
+        if (balance.HasValue)
+            Balance = balance.Value;
+
+        if (type.HasValue)
+            Type = type.Value;
+
+        if (status.HasValue)
+            Status = status.Value;
+
+        UpdatedAt = DateTime.UtcNow;
+    }
+
 }

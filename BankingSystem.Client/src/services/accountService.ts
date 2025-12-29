@@ -49,15 +49,20 @@ export const accountService = {
     const response = await api.get<Account>(`${basePath}/${accountId}`);
     return response.data;
   },
+  updateAccount: async (accountId: string, accountData: Partial<Account>): Promise<Account> => {
+    const response = await api.put<Account>(`${basePath}/${accountId}`, accountData);
+    return response.data;
+  },
   deleteAccount: async (accountId: string): Promise<void> => {
     await api.delete(`${basePath}/${accountId}`);
   },
-  withdraw: async (accountId: string, amount: number): Promise<Account> => {
-    console.log("called ....")
+  withdraw: async (accountId: string, amount: number, description: string): Promise<Account> => {
+    console.log("withdrawal called ....")
     const response = await api.post<Account>(
       `${basePath}/${accountId}/withdraw`,
       {
         amount,
+        description
       }
     );
     console.log("re", response)

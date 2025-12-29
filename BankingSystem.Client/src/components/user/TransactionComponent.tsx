@@ -15,8 +15,7 @@ export const TransactionComponent = () => {
     return <div>Please log in to view your transactions.</div>;
   }
   const {data: transactions, isLoading, refetch} = useGetUserTransactions(user.id, pageNumber, pageSize);
-  console.log(transactions, "dataaaaaaaaaaaaaaa")
-
+  console.log(transactions)
   const transactionColumns = [
     {
       title: "Recipent Name",
@@ -66,7 +65,7 @@ export const TransactionComponent = () => {
     {
       title: "From Account Number",
       dataIndex: "accountNumber",
-      key: "accountNumber",
+      key: "item.accountNumber",
       render: (id?: string) => id ?? "—",
     },
     {
@@ -79,7 +78,7 @@ export const TransactionComponent = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Layout.Content className="p-8">
+      <Layout.Content>
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-8">
           <Col span={8}>

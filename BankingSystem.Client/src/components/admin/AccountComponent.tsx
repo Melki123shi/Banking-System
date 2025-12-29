@@ -15,6 +15,7 @@ import {
   Modal,
   Input,
   InputNumber,
+  Select,
 } from "antd";
 import {
   DollarOutlined,
@@ -23,11 +24,16 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import ConfirmationModal from "../common/ConfirmationModal";
-import { useDepositMoney } from "@/hooks/useAccount";
-import { useWithdrawMoney } from "@/hooks/useAccount";
-import { useTransferMoney } from "@/hooks/useAccount";
+import {
+  useDepositMoney,
+  useUpdateAccount,
+  useWithdrawMoney,
+  useTransferMoney,
+} from "@/hooks/useAccount";
 
-const AccountComponent = () => {
+const { Option } = Select;
+
+export const AccountComponent = () => {
   const pageNumber = 1;
   const pageSize = 10;
   const {
@@ -40,7 +46,8 @@ const AccountComponent = () => {
     (state) => state.setSelectedAccount
   );
 
-  const deleteUserMutation = useDeleteAccount();
+  const deleteAccountMutation = useDeleteAccount();
+  const updateAccountMutation = useUpdateAccount();
   const withdrawMoneyMutation = useWithdrawMoney();
   const depositMoneyMutation = useDepositMoney();
   const transferMoneyMutation = useTransferMoney();
@@ -70,7 +77,7 @@ const AccountComponent = () => {
   const handleDeleteAccount = async () => {
     if (!pendingDeleteAccountId) return;
     try {
-      await deleteUserMutation.mutateAsync(pendingDeleteAccountId);
+      await deleteAccountMutation.mutateAsync(pendingDeleteAccountId);
       message.success("User deleted successfully");
       refetch();
     } catch {
@@ -78,6 +85,25 @@ const AccountComponent = () => {
     } finally {
       setIsConfirmModalOpen(false);
       setPendingDeleteAccountId(null);
+    }
+  };
+
+  const handleUpdateAccount = async (values: any) => {
+    const selectedAccount = useAccountStore.getState().selectedAccount;
+    if (!selectedAccount) {
+      message.error("No account selected");
+      return;
+    }
+    try {
+      await updateAccountMutation.mutateAsync({
+        accountId: selectedAccount.id,
+        accountData: values,
+      });
+      message.success("Account updated successfully");
+      setIsUpdateAccountModalOpen(false);
+      updateAccountForm.resetFields();
+    } catch {
+      message.error("Failed to update account");
     }
   };
 
@@ -110,6 +136,7 @@ const AccountComponent = () => {
       await withdrawMoneyMutation.mutateAsync({
         accountId: selectedAccount.id,
         amount: values.amount,
+        description: values.description,
       });
       message.success("Money withdrawn successfully");
       setIsWithdrawModalOpen(false);
@@ -130,7 +157,7 @@ const AccountComponent = () => {
         fromAccountId: selectedAccount.id,
         toAccountNumber: values.toAccountNumber,
         amount: values.amount,
-        description: values.description
+        description: values.description,
       });
       message.success("Money transferred successfully");
       setIsTransferModalOpen(false);
@@ -148,10 +175,8 @@ const AccountComponent = () => {
           <EditOutlined
             onClick={() => {
               setSelectedAccount(record);
-              // console.log("clicked")
               updateAccountForm.setFieldsValue({
                 accountNumber: record.accountNumber,
-                userName: record.userName,
                 accountType: record.accountType,
                 balance: record.balance,
                 status: record.status,
@@ -381,6 +406,13 @@ const AccountComponent = () => {
               }
             />
           </Form.Item>
+          <Form.Item name="description" label="Description (Optional)">
+            <Input.TextArea
+              name="description"
+              placeholder="Description (optional)"
+              rows={4}
+            />
+          </Form.Item>
         </Form>
       </Modal>
 
@@ -435,6 +467,72 @@ const AccountComponent = () => {
             />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Update Account Modal */}
+      <Modal
+        title="Update Account"
+        open={isUpdateAccountModalOpen}
+        onCancel={() => setIsUpdateAccountModalOpen(false)}
+        onOk={() => updateAccountForm.submit()}
+      >
+        <Form
+            form={updateAccountForm}
+            layout="vertical"
+            onFinish={handleUpdateAccount}
+          >
+            <Form.Item
+              name="accountNumber"
+              label="Account Number"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="accountType"
+              label="Account Type"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select type">
+                <Option value="Checking">Checking</Option>
+                <Option value="Savings">Savings</Option>
+                <Option value="Credit">Credit</Option>
+                <Option value="Business">Business</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="balance"
+              label="Initial Balance"
+              rules={[
+                { required: true, type: "number" },
+                {
+                  validator: (_, value) =>
+                    value >= 0
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("Balance must be ≥ 0")),
+                },
+              ]}
+            >
+              <InputNumber
+                style={{ width: "100%" }}
+                min={0}
+                formatter={(value) =>
+                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+              />
+            </Form.Item>
+
+            <Form.Item name="status" label="Status" initialValue="Active">
+              <Select>
+                <Option value="Active">Active</Option>
+                <Option value="Inactive">Inactive</Option>
+                <Option value="Frozen">Frozen</Option>
+                <Option value="Closed">Closed</Option>
+              </Select>
+            </Form.Item>
+          </Form>
       </Modal>
     </Layout>
   );

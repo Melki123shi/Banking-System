@@ -44,6 +44,14 @@ public class AccountRepository : IAccountRepository
             .ToListAsync();
     }
 
+    public async Task<List<Account>> GetByIdsAsync(IEnumerable<Guid> accountIds)
+{
+    return await _dbContext.Accounts
+        .Where(a => accountIds.Contains(a.Id))
+        .ToListAsync();
+}
+
+
     public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
     {
         return await _dbContext.Accounts

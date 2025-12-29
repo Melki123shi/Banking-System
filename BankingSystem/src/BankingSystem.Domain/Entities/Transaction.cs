@@ -57,4 +57,10 @@ public class Transaction
         Status = TransactionStatus.Failed;
     }
 
+    public void SetAccounts(Account? senderAccount, Account? receiverAccount)
+    {
+        SenderAccount = senderAccount;
+        ReceiverAccount = receiverAccount;
+    }   
+
 }

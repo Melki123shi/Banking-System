@@ -10,12 +10,12 @@ public interface IAccountService
     Task<AccountResponseDto> GetAccountByAccountNumberAsync(string accountNumber);
 
     Task<UserDetailsResponse> GetUserByAccountIdAsync(Guid accountId);
+    Task<List<AccountResponseDto>> GetAccountsByIdsAsync(IEnumerable<Guid> accountIds);
 
-    //! Paginated implementation to be added in the future
+
     Task<IEnumerable<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize);
-    //! Get accounts by UserId pagination to be added in the future
     Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId);
-    // Task<AccountResponseDto>  UpdateAccountAsync(Guid accountId, UpdateAccountRequestDto UpdateAccountRequestDto);
+    Task<AccountResponseDto>  UpdateAccountAsync(Guid accountId, UpdateAccountRequestDto UpdateAccountRequestDto);
     Task DeleteAccountAsync(Guid accountId);
 
     // Account Transaction related methods 

@@ -5,11 +5,13 @@ import { useNavigate } from "react-router";
 import { useLogin } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/authStore";
 import LogoImage from "@/assets/logo.png";
+import { useThemeStore } from "@/stores/themeStore";
 
 const { Title, Text } = Typography;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const loginMutation = useLogin();
   const user = useAuthStore((state) => state.user);
 
@@ -43,7 +45,7 @@ const LoginPage: React.FC = () => {
             {" "}
             Welcome Back <br />{" "}
           </Title>{" "}
-          <Text style={{ color: "#333" }}>
+          <Text style={{ color: isDarkMode ? "#999" : "#333" }}>
             {" "}
             we are happy to see you again! 😊{" "}
           </Text>{" "}

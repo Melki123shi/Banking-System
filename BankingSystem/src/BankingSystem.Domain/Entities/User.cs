@@ -23,10 +23,12 @@ public class User
         HashedPassword = hashedPassword;
     }
 
-    public void UpdateDetails(string name, string phoneNumber)
+    public void UpdateDetails(string name, string phoneNumber, bool isActive, string? hashedPassword = null)
     {
         Name = name;
+        IsActive = isActive;
         PhoneNumber = phoneNumber;
+        HashedPassword = hashedPassword ?? HashedPassword;
         UpdatedAt = DateTime.UtcNow;
     }
 

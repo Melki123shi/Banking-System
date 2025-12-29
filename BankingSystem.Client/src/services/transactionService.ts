@@ -1,9 +1,16 @@
 import { apiClient as api } from "@/lib/axios";
 import type { Transaction } from "@/entities/transaction";
 
+interface PaginatedTransactions {
+  items: Transaction[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+}
+
 export const transactionService = {
-  getPaginatedTransactions: async (pageNumber: number, pageSize: number ): Promise<Transaction[]> => {
-        const response = await api.get<Transaction[]>("/admin/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize);
+  getPaginatedTransactions: async (pageNumber: number, pageSize: number ): Promise<PaginatedTransactions> => {
+        const response = await api.get<PaginatedTransactions>("/admin/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize);
     return response.data;
   },
   getPaginatedTransactionsByUserId: async (userId: string, pageNumber: number, pageSize: number): Promise<Transaction[]> => {

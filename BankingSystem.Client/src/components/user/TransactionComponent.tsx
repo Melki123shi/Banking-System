@@ -79,24 +79,10 @@ export const TransactionComponent = () => {
   return (
     <Layout className="min-h-screen">
       <Layout.Content>
-        {/* Stats */}
-        <Row gutter={[16, 16]} className="mb-8">
-          <Col span={8}>
-            <Card>
-              <Statistic
-                title="Recent Transactions"
-                value={transactions?.length || 0}
-                prefix={<DollarOutlined />}
-              />
-              {/* <Tag> */}
-            </Card>
-          </Col>
-        </Row>
-
         {/* Table */}
         <Card>
           <DataTable
-            title="Transactions"
+            title="Recent Transactions"
             loading={isLoading}
             dataSource={transactions || []}
             columns={transactionColumns}

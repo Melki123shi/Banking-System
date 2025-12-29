@@ -16,8 +16,7 @@ export const TransactionComponent = () => {
     pageNumber,
     pageSize
   );
-  const transactions = data?.items;
-
+  
   const transactionColumns = [
     {
       title: "Name",
@@ -73,11 +72,18 @@ export const TransactionComponent = () => {
       ),
     },
     {
+      title: "Your Account",
+      dataIndex: "customerAccountNumber",
+      key: "customerAccountNumber",
+      render: (v?: string) => v ?? "—",
+    },
+    {
       title: "Date",
       dataIndex: "date",
       key: "date",
       render: (date: string) => new Date(date).toLocaleString(),
     },
+
   ];
 
   return (

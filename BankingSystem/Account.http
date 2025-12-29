@@ -47,7 +47,7 @@ userId
 # }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=1&pageSize=4
+GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=2&pageSize=4
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###

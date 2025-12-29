@@ -9,7 +9,12 @@ public static class UserTransactionMapping
         this Transaction transaction,
         Guid customerId)
     {
-        var isOutgoing = transaction.SenderAccount?.UserId == customerId;
+        bool isDeposit = transaction.Type == TransactionType.Deposit;
+        bool isOutgoing = !isDeposit && transaction.SenderAccount?.UserId == customerId;
+
+        var customerAccount = isOutgoing
+            ? transaction.SenderAccount
+            : transaction.ReceiverAccount;
 
         var counterpartyAccount = isOutgoing
             ? transaction.ReceiverAccount
@@ -20,6 +25,7 @@ public static class UserTransactionMapping
             transaction.Amount,
             transaction.CreatedAt,
             isOutgoing ? "OUT" : "IN",
+            customerAccount?.AccountNumber ?? "-",
             counterpartyAccount?.User?.Name ?? "System",
             counterpartyAccount?.AccountNumber ?? "-",
             transaction.Type.ToString(),

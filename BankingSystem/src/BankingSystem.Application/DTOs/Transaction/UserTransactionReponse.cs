@@ -5,6 +5,7 @@ public record class UserTransactionReponse(
     decimal Amount,
     DateTime Date,
     string Direction,
+    string CustomerAccountNumber,
     string CounterpartyName,
     string CounterpartyAccountNumber,
     string TransactionType,

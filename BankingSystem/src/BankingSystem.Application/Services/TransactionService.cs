@@ -40,11 +40,7 @@ public class TransactionService : ITransactionService
         return transactions.Select(transaction => transaction.ToDto());
     }
 
-
-
-    public async Task<PaginatedResponseDto<TransactionDetailDto>> GetPaginatedTransactionsAsync(
-    int pageNumber,
-    int pageSize)
+    public async Task<PaginatedResponseDto<TransactionDetailDto>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize)
     {
         var transactions = await _transactionRepository
             .GetPaginatedTransactionsAsync(pageNumber, pageSize);
@@ -93,10 +89,6 @@ public class TransactionService : ITransactionService
             TotalCount = totalCount
         };
     }
-
-
-
-
 
     public async Task<TransactionDetailDto> RecordWithdrawAsync(Guid accountId, WithdrawRequestDto withdrawRequestDto)
     {

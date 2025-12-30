@@ -6,10 +6,9 @@ import { useThemeStore } from "../../stores/themeStore";
 
 interface LayoutProps {
   children: React.ReactNode;
-  isAdmin : boolean;
 }
 
-export const AppLayout: React.FC<LayoutProps> = ({ children,  isAdmin}) => {
+export const AppLayout: React.FC<LayoutProps> = ({ children}) => {
   const { isDarkMode } = useThemeStore()
 
   return (
@@ -21,7 +20,6 @@ export const AppLayout: React.FC<LayoutProps> = ({ children,  isAdmin}) => {
         background: isDarkMode ? "#000000" : "#f5f5f5",
       }}
     >
-      {isAdmin && <Sidebar />}
 
       <AntLayout style={{ height: "100%" }}>
         <AppHeader />

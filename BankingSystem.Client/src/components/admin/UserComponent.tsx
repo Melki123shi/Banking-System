@@ -188,7 +188,7 @@ export const UserComponent = () => {
 
   return (
     <Layout className="min-h-screen bg-transparent">
-      <Layout.Content className="p-8">
+      <Layout.Content className="py-6 mb-9">
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-8">
           <Col span={8}>

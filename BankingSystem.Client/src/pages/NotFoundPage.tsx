@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouteError, isRouteErrorResponse } from 'react-router';
 
-const NotFoundPage: React.FC = () => {
+export const NotFoundPage: React.FC = () => {
   const error = useRouteError();
   
   // Logic to safely extract a message from the 'unknown' error type
@@ -35,24 +35,13 @@ const NotFoundPage: React.FC = () => {
       <p style={{ color: "#666", marginBottom: "2rem" }}>
         The page you are looking for doesn't exist or has been moved.
       </p>
-      
-      <div style={{ 
-        padding: "1rem", 
-        background: "#f5f5f5", 
-        borderRadius: "8px", 
-        border: "1px solid #ddd",
-        maxWidth: "100%",
-        overflowX: "auto"
-      }}>
-        <code style={{ color: "#e01e5a" }}>{errorMessage}</code>
-      </div>
-
+    
       <button 
         onClick={() => window.location.href = '/'}
         style={{
           marginTop: "2rem",
           padding: "0.5rem 1.5rem",
-          background: "#1890ff",
+          background: "#0f3d68ff",
           color: "white",
           border: "none",
           borderRadius: "4px",

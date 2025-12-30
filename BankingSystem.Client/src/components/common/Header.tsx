@@ -78,7 +78,7 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
 
             <Dropdown menu={{ items: profileMenu }} placement="bottomRight">
               <Avatar
-                style={{ cursor: "pointer", background: "#1890ff" }}
+                style={{ cursor: "pointer", background: "#073c6dff" }}
                 size="large"
               >
                 {user?.name[0].toUpperCase()}

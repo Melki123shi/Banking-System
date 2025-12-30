@@ -285,8 +285,8 @@ export const AccountComponent = () => {
   ];
 
   return (
-    <Layout className="min-h-screen">
-      <Layout.Content className="p-8">
+    <Layout className="min-h-screen ">
+      <Layout.Content className="mb-9">
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-8">
           <Col span={8}>

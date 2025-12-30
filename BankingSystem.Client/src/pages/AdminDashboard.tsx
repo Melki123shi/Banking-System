@@ -1,21 +1,15 @@
-import {UserComponent} from "@/components/admin/UserComponent";
-import {AccountComponent} from "@/components/admin/AccountComponent";
-import {TransactionComponent} from "@/components/admin/TransactionComponent";
-import { AppLayout } from "@/components/common/Layout";
+import { UserComponent } from "@/components/admin/UserComponent";
+import { AccountComponent } from "@/components/admin/AccountComponent";
+import { TransactionComponent } from "@/components/admin/TransactionComponent";
 import { Space } from "antd";
 
 export function AdminDashboard() {
   return (
-    <AppLayout isAdmin={true}>
-      <div
-        className="
-      "
-      >
-        <UserComponent />
-        <AccountComponent />
-        <TransactionComponent />
-        <Space style={{ height: "40px" }} />
-      </div>
-    </AppLayout>
+    <div className="min-h-screen p-8">
+      <UserComponent />
+      <AccountComponent />
+      <TransactionComponent />
+      <Space style={{ height: "40px" }} />
+    </div>
   );
 }

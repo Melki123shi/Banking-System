@@ -95,7 +95,6 @@ export const AccountInfoCard = ({ account }: Props) => {
           <Title level={5} style={{ marginBottom: 0 }}>
             {account.type}
           </Title>
-          <Text type="secondary">{account.userName}</Text>
         </div>
 
         <Tag

@@ -3,7 +3,7 @@ import { Table } from "antd";
 import type { TableProps } from "antd/es/table";
 
 type DataTableProps<T> = Omit<TableProps<T>, "title"> & {
-  title?: React.ReactNode; // your header text/node
+  title?: React.ReactNode; 
   extra?: React.ReactNode;
 };
 

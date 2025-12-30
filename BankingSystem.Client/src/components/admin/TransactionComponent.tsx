@@ -91,7 +91,7 @@ export const TransactionComponent = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Layout.Content>
+      <Layout.Content  className="py-6">
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-8">
           <Col span={8}>

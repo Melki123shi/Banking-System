@@ -1,4 +1,4 @@
-import { Row, Col, Statistic, Select, Typography } from "antd";
+import { Row, Col, Typography } from "antd";
 import { TransactionComponent } from "@/components/user/TransactionComponent";
 import { AccountInfoCard } from "@/components/user/AccountInfoCard";
 import { useAuthStore } from "@/stores/authStore";
@@ -13,11 +13,11 @@ export const UserDashboard = () => {
     return <div>Loading...</div>;
   }
   const accounts = useUserAccounts(user.id);
+
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  console.log("account", accounts);
 
   return (
-    <AppLayout isAdmin={false}>
+    <AppLayout>
       <Col span={24} style={{ display: "flex", flexDirection: "column", gap: "24px", margin: "auto" , maxWidth: "80%" }}>
         <Typography.Title level={2} style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444"} }>
           Hello, {user.name} 👋
@@ -32,7 +32,7 @@ export const UserDashboard = () => {
           </Typography.Title>
         </Col>
         <Row gutter={[24, 24]}>
-          {accounts.data?.map((account) => (
+          {(accounts?.data || []).map((account) => (
             <Col xs={24} md={12} lg={8} key={account.id}>
               <AccountInfoCard account={account} />
             </Col>

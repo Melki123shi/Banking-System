@@ -13,52 +13,52 @@ import logo from "@/assets/logo.png";
 const { Sider } = Layout;
 
 const routeToKey: Record<string, string> = {
-  "/": "dashboard",
-  "/payments": "payments",
-  "/invoices": "invoices",
-  "/cards": "cards",
-  "/insight": "insight",
-  "/rewards": "rewards",
-  "/help": "help",
-  "/feedback": "feedback",
+  "/admin": "overview",
+  "/admin/customers": "customers",
+  "/admin/accounts": "accounts",
+  "/admin/transactions": "transactions",
 };
 
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedKey = routeToKey[location.pathname];
+
+  const selectedKey =
+    routeToKey[location.pathname] ??
+    Object.keys(routeToKey).find((path) =>
+      location.pathname.startsWith(path)
+    );
 
   const { sidebarCollapsed, toggleSidebar, isDarkMode } = useThemeStore();
 
   const menuItems = [
     {
-      key: "",
-      label: "",
+      key: "admin",
       type: "group" as const,
       children: [
         {
           key: "overview",
           icon: <DashboardOutlined />,
           label: "Overview",
-          onClick: () => navigate("/"),
+          onClick: () => navigate("/admin"),
         },
         {
-          key: "users",
+          key: "customers",
           icon: <UserOutlined />,
-          label: "Users",
-          onClick: () => navigate("/users"),
+          label: "Customers",
+          onClick: () => navigate("/admin/customers"),
         },
         {
           key: "accounts",
           icon: <AccountBookOutlined />,
           label: "Accounts",
-          onClick: () => navigate("/accounts"),
+          onClick: () => navigate("/admin/accounts"),
         },
         {
           key: "transactions",
           icon: <TransactionOutlined />,
           label: "Transactions",
-          onClick: () => navigate("/transactions"),
+          onClick: () => navigate("/admin/transactions"),
         },
       ],
     },
@@ -69,20 +69,28 @@ export const Sidebar: React.FC = () => {
       collapsed={sidebarCollapsed}
       onCollapse={toggleSidebar}
       width={250}
-      className={`sidebar ${isDarkMode ? "dark-mode" : ""} h-full`}
+      className={`sidebar ${isDarkMode ? "dark-mode" : ""}`}
       style={{
         background: isDarkMode ? "#141414" : "#ffffff",
       }}
     >
-      <div className="sidebar-logo">
+      {/* Logo */}
+      <div className="sidebar-logo flex items-center gap-2 px-4 py-4">
         <Image
           src={logo}
           alt="logo"
-          width={64}
+          width={48}
+          preview={false}
           className="border border-[#077dcb] rounded-full shadow-md"
-        ></Image>
-        {!sidebarCollapsed && <span className="text-[#077dcb]">BankSy</span>}
+        />
+        {!sidebarCollapsed && (
+          <span className="text-[#077dcb] font-semibold text-lg">
+            BankSy
+          </span>
+        )}
       </div>
+
+      {/* Menu */}
       <Menu
         mode="inline"
         items={menuItems}

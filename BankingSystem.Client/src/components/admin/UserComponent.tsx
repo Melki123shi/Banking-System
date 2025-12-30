@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import UserDetailModal from "./UserDetailModal";
 import {
   useGetUsers,
   useCreateUser,
@@ -25,6 +26,7 @@ import {
   Space,
   Tooltip,
   Typography,
+  Descriptions,
 } from "antd";
 import {
   DeleteOutlined,
@@ -34,10 +36,12 @@ import {
   PhoneOutlined,
   UserOutlined,
   LockOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import UserAccounts from "./UserAccounts";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { validateEthioPhone } from "@/lib/validation";
+import type { Account } from "@/entities/account";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -46,6 +50,7 @@ export const UserComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const setSelectedUser = useUserStore((s) => s.setSelectedUser);
+  const selectedUser = useUserStore((state) => state.selectedUser);
 
   // User list
   const { data, isLoading, refetch } = useGetUsers(pageNumber, pageSize);
@@ -58,14 +63,18 @@ export const UserComponent = () => {
 
   // Forms & modal states
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
-  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
+  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] =
+    useState(false);
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isUserDetailModalOpen, setIsUserDetailModalOpen] = useState(false);
 
   const [createUserForm] = Form.useForm();
   const [updateUserForm] = Form.useForm();
   const [createAccountForm] = Form.useForm();
-  const [pendingDeleteUserId, setPendingDeleteUserId] = useState<string | null>(null);
+  const [pendingDeleteUserId, setPendingDeleteUserId] = useState<string | null>(
+    null
+  );
 
   /** ---------- Handlers ---------- **/
 
@@ -136,6 +145,51 @@ export const UserComponent = () => {
   /** ---------- Table columns ---------- **/
   const userColumns = [
     {
+      width: 1,
+      title: "",
+      key: "actions",
+      render: (_: any, record: any) => {
+        return (
+          <div className="flex gap-2">
+            <Tooltip title="View Details">
+              <Button
+                type="text"
+                icon={<EyeOutlined />}
+                onClick={() => {
+                  setSelectedUser(record);
+                  setIsUserDetailModalOpen(true);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip title="Edit">
+              <Button
+                type="text"
+                icon={<EditOutlined className="text-blue-500" />}
+                onClick={() => {
+                  setSelectedUser(record);
+                  updateUserForm.setFieldsValue({
+                    name: record.name,
+                    phoneNumber: record.phoneNumber,
+                    status: record.isActive ? "Active" : "Inactive",
+                  });
+                  setIsUpdateUserModalOpen(true);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => openDeleteConfirm(record.id)}
+              />
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+    {
       title: "Customer Name",
       dataIndex: "name",
       key: "name",
@@ -150,11 +204,6 @@ export const UserComponent = () => {
       title: "Phone Number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      render: (phone: string) => (
-        <Tag color="blue" bordered={false} icon={<PhoneOutlined />}>
-          {phone}
-        </Tag>
-      ),
     },
     {
       title: "Accounts",
@@ -164,7 +213,6 @@ export const UserComponent = () => {
     {
       title: "Status",
       dataIndex: "isActive",
-      align: 'center' as const,
       render: (active: boolean) => (
         <Tag color={active ? "success" : "error"} className="rounded-full px-3">
           {active ? "Active" : "Inactive"}
@@ -172,59 +220,36 @@ export const UserComponent = () => {
       ),
     },
     {
-      title: "Actions",
-      key: "actions",
-      align: 'right' as const,
+      title: "Add Account",
+      key: "addAccount",
       render: (_: any, record: any) => (
-        <Space size="middle">
-          <Button
-            type="primary"
-            ghost
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setSelectedUser(record);
-              setIsCreateAccountModalOpen(true);
-            }}
-          >
-            Account
-          </Button>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              icon={<EditOutlined className="text-blue-500" />}
-              onClick={() => {
-                setSelectedUser(record);
-                updateUserForm.setFieldsValue({
-                  name: record.name,
-                  phoneNumber: record.phoneNumber,
-                  status: record.isActive ? "Active" : "Inactive",
-                });
-                setIsUpdateUserModalOpen(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Delete">
-            <Button
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => openDeleteConfirm(record.id)}
-            />
-          </Tooltip>
-        </Space>
+        <Button
+          className="p-4"
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setSelectedUser(record);
+            setIsCreateAccountModalOpen(true);
+          }}
+        >
+          Account
+        </Button>
       ),
     },
   ];
 
   return (
-    <Layout className="min-h-screen bg-slate-50 p-6">
+    <Layout className="min-h-screen">
       <Layout.Content>
         {/* Header Section */}
         <div className="flex justify-between items-end mb-8">
           <div>
-            <Title level={2} style={{ margin: 0 }}>Customer Directory</Title>
-            <Text type="secondary">Monitor user status and manage linked financial accounts</Text>
+            <Title level={2} style={{ margin: 0 }}>
+              Customer Directory
+            </Title>
+            <Text type="secondary">
+              Monitor user status and manage linked financial accounts
+            </Text>
           </div>
           <Button
             type="primary"
@@ -240,7 +265,7 @@ export const UserComponent = () => {
         {/* Stats Section */}
         <Row gutter={[24, 24]} className="mb-8">
           <Col xs={24} sm={12} md={6}>
-            <Card className="shadow-sm border-none">
+            <Card className="shadow-sm border-none bg-red">
               <Statistic
                 title="Active Users"
                 value={data?.totalCount ?? 0}
@@ -251,25 +276,31 @@ export const UserComponent = () => {
         </Row>
 
         {/* User Table Card */}
-        <Card className="shadow-sm rounded-lg border-none overflow-hidden">
-          <DataTable
-            loading={isLoading}
-            dataSource={data?.items ?? []}
-            columns={userColumns}
-            rowKey="id"
-            pagination={{
-              current: pageNumber,
-              pageSize,
-              total: data?.totalCount,
-              showSizeChanger: true,
-              onChange: (page, size) => {
-                setPageNumber(page);
-                setPageSize(size);
-              },
-            }}
-          />
-        </Card>
+        <DataTable
+          loading={isLoading}
+          dataSource={data?.items ?? []}
+          columns={userColumns}
+          rowKey="id"
+          pagination={{
+            current: pageNumber,
+            pageSize,
+            total: data?.totalCount,
+            showSizeChanger: true,
+            onChange: (page, size) => {
+              setPageNumber(page);
+              setPageSize(size);
+            },
+          }}
+        />
 
+        {/* user detail modal */}
+        {selectedUser && (
+        <UserDetailModal
+          open={isUserDetailModalOpen}
+          onClose={() => setIsUserDetailModalOpen(false)}
+          selectedUser={selectedUser}
+        />
+      )}
         {/* Create User Modal */}
         <Modal
           title="Register New Customer"
@@ -290,21 +321,30 @@ export const UserComponent = () => {
               label="Full Name"
               rules={[{ required: true, message: "Please enter full name" }]}
             >
-              <Input prefix={<UserOutlined className="text-slate-400" />} placeholder="John Doe" />
+              <Input
+                prefix={<UserOutlined className="text-slate-400" />}
+                placeholder="John Doe"
+              />
             </Form.Item>
             <Form.Item
               name="phoneNumber"
               label="Phone Number"
               rules={[{ required: true, validator: validateEthioPhone }]}
             >
-              <Input prefix={<PhoneOutlined className="text-slate-400" />} placeholder="09 / 07..." />
+              <Input
+                prefix={<PhoneOutlined className="text-slate-400" />}
+                placeholder="09 / 07..."
+              />
             </Form.Item>
             <Form.Item
               name="password"
               label="Secure Password"
               rules={[{ required: true, min: 6 }]}
             >
-              <Input.Password prefix={<LockOutlined className="text-slate-400" />} placeholder="Minimum 6 characters" />
+              <Input.Password
+                prefix={<LockOutlined className="text-slate-400" />}
+                placeholder="Minimum 6 characters"
+              />
             </Form.Item>
           </Form>
         </Modal>
@@ -324,7 +364,11 @@ export const UserComponent = () => {
             onFinish={handleUpdateUser}
             className="mt-4"
           >
-            <Form.Item name="name" label="Full Name" rules={[{ required: true }]}>
+            <Form.Item
+              name="name"
+              label="Full Name"
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
             <Form.Item
@@ -334,7 +378,11 @@ export const UserComponent = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="status" label="Account Status" rules={[{ required: true }]}>
+            <Form.Item
+              name="status"
+              label="Account Status"
+              rules={[{ required: true }]}
+            >
               <Select>
                 <Option value="Active">Active</Option>
                 <Option value="Inactive">Inactive</Option>
@@ -357,10 +405,18 @@ export const UserComponent = () => {
             onFinish={handleCreateAccount}
             className="mt-4"
           >
-            <Form.Item name="accountNumber" label="Account Number" rules={[{ required: true }]}>
+            <Form.Item
+              name="accountNumber"
+              label="Account Number"
+              rules={[{ required: true }]}
+            >
               <Input placeholder="Enter unique account number" />
             </Form.Item>
-            <Form.Item name="accountType" label="Account Type" rules={[{ required: true }]}>
+            <Form.Item
+              name="accountType"
+              label="Account Type"
+              rules={[{ required: true }]}
+            >
               <Select placeholder="Select type">
                 <Option value="Checking">Checking</Option>
                 <Option value="Savings">Savings</Option>
@@ -376,10 +432,16 @@ export const UserComponent = () => {
               <InputNumber
                 style={{ width: "100%" }}
                 prefix="ETB"
-                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
               />
             </Form.Item>
-            <Form.Item name="status" label="Initial Status" initialValue="Active">
+            <Form.Item
+              name="status"
+              label="Initial Status"
+              initialValue="Active"
+            >
               <Select>
                 <Option value="Active">Active</Option>
                 <Option value="Inactive">Inactive</Option>

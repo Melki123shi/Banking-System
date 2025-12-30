@@ -29,6 +29,14 @@ export const useGetUserByAccountId = (accountId?: string) => {
   });
 };
 
+export const useGetUserDetails = (id: string) => {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: () => userService.getDetails(id),
+    enabled: !!id,
+  });
+};
+
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({

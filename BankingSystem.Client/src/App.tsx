@@ -13,6 +13,14 @@ function App() {
         algorithm: isDarkMode
           ? antdTheme.darkAlgorithm
           : antdTheme.defaultAlgorithm,
+         components: {
+        Card: {
+          colorBgContainer: isDarkMode ? "#000" : "#fff",   // Card background
+        },
+        Table: {
+          colorBgContainer: isDarkMode ? "#000" : "fff",   // Card background
+        },
+      },
       }}
     >
       <Outlet />

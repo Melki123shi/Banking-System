@@ -15,7 +15,6 @@ const AdminLayout = () => {
           style={{
             padding: 24,
             overflowY: "auto",
-            background: "transparent",
           }}
         >
           <Outlet />

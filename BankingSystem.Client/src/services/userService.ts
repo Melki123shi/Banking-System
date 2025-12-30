@@ -14,6 +14,10 @@ export const userService = {
     );
     return response.data;
   },
+  getDetails: async (id: string): Promise<User> => {
+    const response = await api.get<User>(`${basePath}/${id}`);
+    return response.data;
+  },
 
   createUser: async (userData: any): Promise<User> => {
     const response = await api.post<User>(`${basePath}/register`, userData);

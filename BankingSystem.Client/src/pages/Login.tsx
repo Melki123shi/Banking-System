@@ -9,6 +9,7 @@ import { useThemeStore } from "@/stores/themeStore";
 import { Layout as AntLayout } from "antd";
 import { validateEthioPhone } from "@/lib/validation";
 import bg from "../assets/bg.jpg";
+import bgDark from "../assets/bg-dark.jpg";
 
 const { Title, Text } = Typography;
 
@@ -38,7 +39,7 @@ const LoginPage: React.FC = () => {
     <AntLayout 
       style={{ 
         minHeight: '100vh', 
-        backgroundImage: `url(${bg})`,
+        backgroundImage: `${isDarkMode ? "url(" + bgDark + ")" :"url(" + bg + ")"}`,
         backgroundSize: 'cover',
         display: 'flex',
         alignItems: 'center',

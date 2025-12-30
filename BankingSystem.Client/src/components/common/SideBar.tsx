@@ -71,7 +71,8 @@ export const Sidebar: React.FC = () => {
       width={250}
       className={`sidebar ${isDarkMode ? "dark-mode" : ""}`}
       style={{
-        background: isDarkMode ? "#141414" : "#ffffff",
+        background: isDarkMode ? "#000" : "#ffffff",
+        borderRight: `1px solid ${isDarkMode ? "#434343" : "#f0f0f0"}`,
       }}
     >
       {/* Logo */}
@@ -85,8 +86,11 @@ export const Sidebar: React.FC = () => {
         />
         {!sidebarCollapsed && (
           <span className="text-[#077dcb] font-semibold text-lg">
+            @Admin
+            <br />
             BankSy
           </span>
+          
         )}
       </div>
 

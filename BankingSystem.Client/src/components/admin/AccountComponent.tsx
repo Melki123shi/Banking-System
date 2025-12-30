@@ -16,6 +16,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Tooltip,
 } from "antd";
 import {
   DollarOutlined,
@@ -185,7 +186,14 @@ export const AccountComponent = () => {
             }}
           />
 
-          <DeleteOutlined onClick={() => openDeleteConfirm(record.id)} />
+          <Tooltip title="Delete">
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => openDeleteConfirm(record.id)}
+            />
+          </Tooltip>
         </div>
       ),
     },
@@ -255,6 +263,9 @@ export const AccountComponent = () => {
           <Button
             color="green"
             onClick={() => {
+              if (record.status.toString().toLowerCase() !== "active") {
+                return message.error("Cannot deposit to an inactive account");
+              }
               setSelectedAccount(record);
               setIsDepositModalOpen(true);
             }}
@@ -264,6 +275,9 @@ export const AccountComponent = () => {
           <Button
             color="red"
             onClick={() => {
+              if (record.status.toString().toLowerCase() !== "active") {
+                return message.error("Cannot deposit to an inactive account");
+              }
               setSelectedAccount(record);
               setIsWithdrawModalOpen(true);
             }}
@@ -273,6 +287,9 @@ export const AccountComponent = () => {
           <Button
             color="gold"
             onClick={() => {
+              if (record.status.toString().toLowerCase() !== "active") {
+                return message.error("Cannot deposit to an inactive account");
+              }
               setSelectedAccount(record);
               setIsTransferModalOpen(true);
             }}
@@ -285,13 +302,22 @@ export const AccountComponent = () => {
   ];
 
   return (
-    <Layout className="min-h-screen ">
-      <Layout.Content className="mb-9">
+    <Layout className="min-h-screen">
+      <Layout.Content className="p-6 bg-gray-50">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Accounts Overview
+          </h1>
+          <p className="text-gray-500">
+            Manage customer accounts and view balance summaries
+          </p>
+        </div>
 
-        <Card>
-           <Row gutter={[16, 16]} className="mb-8">
-          <Col span={8}>
-            <Card>
+        {/* Summary Cards */}
+        <Row gutter={[16, 16]} className="mb-10">
+          <Col xs={24} sm={12} md={6}>
+            <Card className="shadow-sm">
               <Statistic
                 title="Total Accounts"
                 value={Array.isArray(accounts) ? accounts.length : 0}
@@ -299,8 +325,9 @@ export const AccountComponent = () => {
               />
             </Card>
           </Col>
-          <Col span={8}>
-            <Card>
+
+          <Col xs={24} sm={12} md={6}>
+            <Card className="shadow-sm">
               <Statistic
                 title="Total Balance"
                 value={
@@ -313,8 +340,53 @@ export const AccountComponent = () => {
             </Card>
           </Col>
         </Row>
+
+        <Col>
+          <Col xs={24} sm={12} md={6}>
+            <h1 className="text-lg mb-2">Active Accounts</h1>
+          </Col>
+          <Row>
+            <Card className="shadow-sm" style={
+              {
+                backgroundColor: "#b1f4cbff"
+              }
+            }>
+              <Statistic
+                title="Counts"
+                value={
+                  Array.isArray(accounts)
+                    ? accounts.filter((account) => account.status === "active")
+                        .length
+                    : 0
+                }
+                prefix={<CreditCardOutlined />}
+              />
+            </Card>
+             <Card className="shadow-sm" style={
+              {
+                backgroundColor: "#b1f4cbff"
+              }
+            }>
+              <Statistic
+                title="Counts"
+                value={
+                  Array.isArray(accounts)
+                    ? accounts.filter((account) => account.status === "active")
+                        .length
+                    : 0
+                }
+                prefix={<CreditCardOutlined />}
+              />
+            </Card>
+          </Row>
+        </Col>
+        {/* Accounts Table */}
+        <Card
+          title="Account List"
+          className="shadow-sm"
+          bodyStyle={{ padding: 0 }}
+        >
           <DataTable
-            title="Accounts"
             loading={isLoading}
             dataSource={Array.isArray(accounts) ? accounts : []}
             columns={accountColumns}
@@ -325,7 +397,7 @@ export const AccountComponent = () => {
         {/* Confirmation Modal */}
         <ConfirmationModal
           open={isConfirmModalOpen}
-          text="Are you sure you want to delete this user?"
+          text="Are you sure you want to delete this account?"
           onSucess={handleDeleteAccount}
           onCancel={() => setIsConfirmModalOpen(false)}
         />
@@ -475,62 +547,62 @@ export const AccountComponent = () => {
         onOk={() => updateAccountForm.submit()}
       >
         <Form
-            form={updateAccountForm}
-            layout="vertical"
-            onFinish={handleUpdateAccount}
+          form={updateAccountForm}
+          layout="vertical"
+          onFinish={handleUpdateAccount}
+        >
+          <Form.Item
+            name="accountNumber"
+            label="Account Number"
+            rules={[{ required: true }]}
           >
-            <Form.Item
-              name="accountNumber"
-              label="Account Number"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
+            <Input />
+          </Form.Item>
 
-            <Form.Item
-              name="accountType"
-              label="Account Type"
-              rules={[{ required: true }]}
-            >
-              <Select placeholder="Select type">
-                <Option value="Checking">Checking</Option>
-                <Option value="Savings">Savings</Option>
-                <Option value="Credit">Credit</Option>
-                <Option value="Business">Business</Option>
-              </Select>
-            </Form.Item>
+          <Form.Item
+            name="accountType"
+            label="Account Type"
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Select type">
+              <Option value="Checking">Checking</Option>
+              <Option value="Savings">Savings</Option>
+              <Option value="Credit">Credit</Option>
+              <Option value="Business">Business</Option>
+            </Select>
+          </Form.Item>
 
-            <Form.Item
-              name="balance"
-              label="Initial Balance"
-              rules={[
-                { required: true, type: "number" },
-                {
-                  validator: (_, value) =>
-                    value >= 0
-                      ? Promise.resolve()
-                      : Promise.reject(new Error("Balance must be ≥ 0")),
-                },
-              ]}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                formatter={(value) =>
-                  `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-              />
-            </Form.Item>
+          <Form.Item
+            name="balance"
+            label="Initial Balance"
+            rules={[
+              { required: true, type: "number" },
+              {
+                validator: (_, value) =>
+                  value >= 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Balance must be ≥ 0")),
+              },
+            ]}
+          >
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
+          </Form.Item>
 
-            <Form.Item name="status" label="Status" initialValue="Active">
-              <Select>
-                <Option value="Active">Active</Option>
-                <Option value="Inactive">Inactive</Option>
-                <Option value="Frozen">Frozen</Option>
-                <Option value="Closed">Closed</Option>
-              </Select>
-            </Form.Item>
-          </Form>
+          <Form.Item name="status" label="Status" initialValue="Active">
+            <Select>
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
+              <Option value="Frozen">Frozen</Option>
+              <Option value="Closed">Closed</Option>
+            </Select>
+          </Form.Item>
+        </Form>
       </Modal>
     </Layout>
   );

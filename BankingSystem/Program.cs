@@ -81,7 +81,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<ITransactionNumberGenerator, TransactionNumberGenerator>();
+builder.Services.AddScoped<INumberGenerator, NumberGenerator>();
 builder.Services.AddScoped<DepositUseCase>();
 builder.Services.AddScoped<WithdrawUseCase>();
 builder.Services.AddScoped<TransferUseCase>();

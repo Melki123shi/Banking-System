@@ -12,11 +12,11 @@ public class TransactionService : ITransactionService
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IAccountService _accountService;
-    public ITransactionNumberGenerator _transactionNumberGenerator;
+    public INumberGenerator _transactionNumberGenerator;
 
     public TransactionService(
         ITransactionRepository transactionRepository,
-         ITransactionNumberGenerator transactionNumberGenerator,
+         INumberGenerator transactionNumberGenerator,
          IAccountService accountService)
     {
         _transactionRepository = transactionRepository;
@@ -93,7 +93,7 @@ public class TransactionService : ITransactionService
     public async Task<TransactionDetailDto> RecordWithdrawAsync(Guid accountId, WithdrawRequestDto withdrawRequestDto)
     {
 
-        string transactionId = _transactionNumberGenerator.Generate("M");
+        string transactionId = _transactionNumberGenerator.GenerateTransactionNumber("M");
 
         Transaction transaction = new Transaction(
             transactionId,
@@ -113,7 +113,7 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDetailDto> RecordDepositAsync(Guid accountId, DepositRequestDto depositRequestDto)
     {
-        string transactionId = _transactionNumberGenerator.Generate("M");
+        string transactionId = _transactionNumberGenerator.GenerateTransactionNumber("M");
 
         Transaction transaction = new Transaction(
             transactionId,
@@ -133,7 +133,7 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDetailDto> RecordTransferAsync(Guid senderAccountId, TransferRequestDto transferRequestDto)
     {
-        string transactionId = _transactionNumberGenerator.Generate("M");
+        string transactionId = _transactionNumberGenerator.GenerateTransactionNumber("M");
         var receiverAccountId = await _accountService.GetAccountByAccountNumberAsync(transferRequestDto.ReceiverAccountNumber);
 
         if (receiverAccountId == null)

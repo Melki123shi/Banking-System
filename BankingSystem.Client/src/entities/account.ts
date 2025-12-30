@@ -6,9 +6,9 @@ export interface Account {
     user?: User;
     userName: string;
     accountNumber: string;
-    type: 'Checking' | 'Savings' | 'Credit' | 'Business';
+    type: 'checking' | 'savings' | 'credit' | 'business';
     balance: number;
-    status: 'Active'| 'Inactive' | 'Closed' | 'Frozen';
+    status: 'active'| 'inactive' | 'closed' | 'frozen';
     createdAt: string;
     updatedAt?: string;
 }

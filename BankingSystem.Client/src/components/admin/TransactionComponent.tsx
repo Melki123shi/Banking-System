@@ -91,40 +91,82 @@ export const TransactionComponent = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Layout.Content  className="py-6">
-        {/* Stats */}
-        <Row gutter={[16, 16]} className="mb-8">
-          <Col span={8}>
-            <Card>
-              <Statistic
-                title="Total Transactions"
-                value={total}
-                prefix={<DollarOutlined />}
-              />
-            </Card>
-          </Col>
-        </Row>
+      <Layout.Content  className="">
+        <div className="mb-8">
+      <h1 className="text-2xl font-semibold text-gray-800">
+        Transactions Overview
+      </h1>
+      <p className="text-gray-500">
+        Review and monitor all financial transactions in the system
+      </p>
+    </div>
 
-        {/* Table */}
+         <Row gutter={[16, 16]} className="mb-10">
+      <Col xs={24} sm={12} md={6}>
         <Card>
-          <DataTable
-            title="Transactions"
-            loading={isLoading}
-            dataSource={transactions}
-            columns={transactionColumns}
-            rowKey="id"
-            pagination={{
-              current: pageNumber,
-              pageSize,
-              total,
-              showSizeChanger: true,
-              onChange: (page, size) => {
-                setPageNumber(page);
-                setPageSize(size ?? 10);
-              },
-            }}
+          <Statistic
+            title="Total Transactions"
+            value={total}
+            prefix={<DollarOutlined />}
           />
         </Card>
+      </Col>
+
+      <Col xs={24} sm={12} md={6}>
+        <Card>
+          <Statistic
+            title="Completed"
+            value={transactions.filter(t => t.status === "Completed").length}
+            valueStyle={{ color: "#16a34a" }}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12} md={6}>
+        <Card>
+          <Statistic
+            title="Pending"
+            value={transactions.filter(t => t.status === "Pending").length}
+            valueStyle={{ color: "#f59e0b" }}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12} md={6}>
+        <Card>
+          <Statistic
+            title="Failed"
+            value={transactions.filter(t => t.status === "Failed").length}
+            valueStyle={{ color: "#dc2626" }}
+          />
+        </Card>
+      </Col>
+    </Row>
+
+        {/* Table */}
+         <Card
+      title="Transaction Records"
+      className="shadow-sm"
+      bodyStyle={{ padding: 0 }}
+    >
+      <DataTable
+        loading={isLoading}
+        dataSource={transactions}
+        columns={transactionColumns}
+        rowKey="id"
+        pagination={{
+          current: pageNumber,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          onChange: (page, size) => {
+            setPageNumber(page);
+            setPageSize(size ?? 10);
+          },
+        }}
+      />
+    </Card>
+        {/* Stats */}
       </Layout.Content>
     </Layout>
   );

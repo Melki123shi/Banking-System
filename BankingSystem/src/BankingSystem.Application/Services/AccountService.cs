@@ -5,17 +5,20 @@ using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.Mappings;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
+using BankingSystem.Migrations;
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
 public class AccountService : IAccountService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly IUserRepository _userRepository;
+    private readonly INumberGenerator _numberGenerator;
 
-    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository)
+    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, INumberGenerator numberGenerator)
     {
         _accountRepository = accountRepository;
         _userRepository = userRepository;
+        _numberGenerator = numberGenerator;
     }
 
     public async Task<AccountResponseDto> CreateAccountAsync(CreateAccountRequestDto CreateAccountRequestDto)
@@ -25,7 +28,8 @@ public class AccountService : IAccountService
         {
             throw new InvalidOperationException("User does not exist");
         }
-        Account? existingAccountNumber = await _accountRepository.GetByAccountNumberAsync(CreateAccountRequestDto.AccountNumber);
+        string accountNumber = _numberGenerator.GenerateAccountNumber("MB");
+        Account? existingAccountNumber = await _accountRepository.GetByAccountNumberAsync(accountNumber);
 
         if (existingAccountNumber is not null)
         {
@@ -34,7 +38,7 @@ public class AccountService : IAccountService
 
         Account account = new Account(
             CreateAccountRequestDto.UserId,
-            CreateAccountRequestDto.AccountNumber,
+            accountNumber,
             CreateAccountRequestDto.Balance,
             CreateAccountRequestDto.AccountType,
             CreateAccountRequestDto.Status

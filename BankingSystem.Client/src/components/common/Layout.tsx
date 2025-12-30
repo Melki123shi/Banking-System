@@ -1,23 +1,17 @@
 import type React from "react";
 import { Layout as AntLayout } from "antd";
-import { Sidebar } from "@/components/common/SideBar";
 import { AppHeader } from "./Header";
-import { useThemeStore } from "../../stores/themeStore";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const AppLayout: React.FC<LayoutProps> = ({ children}) => {
-  const { isDarkMode } = useThemeStore()
 
   return (
     <AntLayout
-      className={`app-layout ${isDarkMode ? "dark-mode" : ""}`}
       style={{
         height: "100vh",          
-        // overflow: "hidden",  
-        background: isDarkMode ? "#000000" : "#f5f5f5",
       }}
     >
 

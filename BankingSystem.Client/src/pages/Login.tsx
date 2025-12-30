@@ -6,6 +6,9 @@ import { useLogin } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/authStore";
 import LogoImage from "@/assets/logo.png";
 import { useThemeStore } from "@/stores/themeStore";
+import { Layout as AntLayout } from "antd";
+import { validateEthioPhone } from "@/lib/validation";
+import bg from "../assets/bg.jpg";
 
 const { Title, Text } = Typography;
 
@@ -32,14 +35,23 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <AntLayout 
+      style={{ 
+        minHeight: '100vh', 
+        backgroundImage: `url(${bg})`,
+        backgroundSize: 'cover',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
       <Card className="w-full max-w-md p-8 shadow-lg">
         <div className="text-center mb-8">
           {" "}
           <Image src={LogoImage} preview={false} />{" "}
           <Title
-            level={2}
-            style={{ margin: 0, marginBottom: 8, color: "#41e1fb" }}
+            level={3}
+            style={{ margin: 0, marginBottom: 8, color: isDarkMode ? "#41e1fb" : "#143d64" }}
             className="text-xl font-medium text-[#143d64] px-7"
           >
             {" "}
@@ -51,10 +63,12 @@ const LoginPage: React.FC = () => {
           </Text>{" "}
         </div>
 
-        <Form layout="vertical" size="large" onFinish={onFinish}>
+        <Form layout="vertical" size="large" onFinish={onFinish} className="px-3">
           <Form.Item
             name="phoneNumber"
-            rules={[{ required: true, message: "Phone number required" }]}
+            rules={[{ required: true,
+               validator: validateEthioPhone
+               }]}
           >
             <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
           </Form.Item>
@@ -80,13 +94,13 @@ const LoginPage: React.FC = () => {
             {" "}
             <p>
               {" "}
-              Demo: Customer (+25992996677 / 1234), <br /> Admin (+25991996677
-              / admin@1234){" "}
+              Demo: Customer (+251996670943 / 1234), <br /> Admin (+251998878956
+              / 1234){" "}
             </p>{" "}
           </div>
         </Form>
       </Card>
-    </div>
+    </AntLayout>
   );
 };
 

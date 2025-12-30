@@ -18,18 +18,13 @@ export const UserDashboard = () => {
 
   return (
     <AppLayout>
-      <Col span={24} style={{ display: "flex", flexDirection: "column", gap: "24px", margin: "auto" , maxWidth: "80%" }}>
-        <Typography.Title level={2} style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444"} }>
+      <Col span={24} style={{ display: "flex", flexDirection: "column", gap: "24px", margin: "auto" , maxWidth: "80%"}}>
+        <Typography.Title level={2} style={{ margin: 0, color: isDarkMode ? "#ffffffff" : "#111"} }>
           Hello, {user.name} 👋
         </Typography.Title>
 
         <Col>
-          <Typography.Title
-            level={3}
-            style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444" }}
-          >
-            Your Accounts
-          </Typography.Title>
+         <h3 className="text-lg font-semibold">Your Accounts  </h3>
         </Col>
         <Row gutter={[24, 24]}>
           {(accounts?.data || []).map((account) => (
@@ -38,10 +33,6 @@ export const UserDashboard = () => {
             </Col>
           ))}
         </Row>
-
-        <Typography.Title level={3} style={{ margin: 0, color: isDarkMode ? "#ccc" : "#444" }}>
-          Recent Transactions
-        </Typography.Title>
 
         <Col xs={24} md={24} lg={24}>
           <TransactionComponent />

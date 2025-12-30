@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj": {}
+    "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj": {}
   },
   "projects": {
-    "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj": {
+    "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj",
+        "projectUniqueName": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj",
         "projectName": "BankingSystem",
-        "projectPath": "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj",
-        "packagesPath": "/home/melki/.nuget/packages/",
-        "outputPath": "/home/melki/Desktop/Banking-System/BankingSystem/obj/",
+        "projectPath": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj",
+        "packagesPath": "C:\\Users\\tMelkishi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/melki/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\tMelkishi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -116,7 +116,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.308/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

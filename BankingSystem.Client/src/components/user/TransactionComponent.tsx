@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useGetUserTransactions } from "@/hooks/useTransaction";
 import { useAuthStore } from "@/stores/authStore";
 import { DataTable } from "@/components/common/DataTable";
-import { Layout, Card, Tag} from "antd";
+import { Avatar, Space } from "antd";
+import { Layout, Card, Tag } from "antd";
+import type { ColumnType } from "antd/es/table/interface";
+import type { UserTransactionDetail } from "@/lib/types";
+import { useUserAccounts } from "@/hooks/useAccount";
 
 export const TransactionComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -16,15 +20,36 @@ export const TransactionComponent = () => {
     pageNumber,
     pageSize
   );
-  
-  const transactionColumns = [
+
+  const accounts = useUserAccounts(user.id);
+
+  const transactionColumns: ColumnType<UserTransactionDetail>[] = [
     {
       title: "Name",
       dataIndex: "counterpartyName",
       key: "counterpartyName",
+      sorter: {
+        compare: (a: any, b: any) =>
+          (a.counterpartyName ?? "").localeCompare(b.counterpartyName ?? ""),
+        multiple: 3,
+      },
+      render: (_: any, record: any) => {
+        const name = record.counterpartyName ?? "Unknown";
+        return (
+          <Space>
+            <Avatar
+              size="large"
+              style={{ backgroundColor: "#6581e6ff", verticalAlign: "middle" }}
+            >
+              {name[0].toUpperCase()}
+            </Avatar>
+            <span>{name}</span>
+          </Space>
+        );
+      },
     },
     {
-      title: "Account",
+      title: "To Account",
       dataIndex: "counterpartyAccountNumber",
       key: "counterpartyAccountNumber",
       render: (v?: string) => v ?? "—",
@@ -48,6 +73,22 @@ export const TransactionComponent = () => {
           {type}
         </Tag>
       ),
+      filters: [
+        {
+          text: "Deposit",
+          value: "Deposit",
+        },
+        {
+          text: "Transfer",
+          value: "Transfer",
+        },
+        {
+          text: "Withdrawal",
+          value: "Withdrawal",
+        },
+      ],
+      filterMode: "menu",
+      onFilter: (value: any, record: any) => record.transactionType === value,
     },
     {
       title: "Amount",
@@ -64,26 +105,29 @@ export const TransactionComponent = () => {
       ),
     },
     {
-      title: "Direction",
-      dataIndex: "direction",
-      key: "direction",
-      render: (d: string) => (
-        <Tag color={d === "IN" ? "green" : "red"}>{d}</Tag>
-      ),
-    },
-    {
-      title: "Your Account",
+      title: "From Account",
       dataIndex: "customerAccountNumber",
       key: "customerAccountNumber",
       render: (v?: string) => v ?? "—",
+      filters: (accounts?.data ?? []).map((account) => ({
+        text:account.accountNumber,
+        value:account.accountNumber,
+      })) ,
+      filterMode: "menu",
+      onFilter: (value: any, record: any) => record.customerAccountNumber === value,
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
       render: (date: string) => new Date(date).toLocaleString(),
+      defaultSortOrder: "descend",
+      sorter: {
+        compare: (a: any, b: any) =>
+          new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime(),
+        multiple: 3,
+      },
     },
-
   ];
 
   return (

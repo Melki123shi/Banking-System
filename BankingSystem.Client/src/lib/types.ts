@@ -7,6 +7,7 @@ export interface UserTransactionDetail {
   direction: "IN" | "OUT";
   counterpartyName: string;
   counterpartyAccountNumber: string;
+  customerAccountNumber: string;
   transactionType: string;
   description?: string | null;
 }

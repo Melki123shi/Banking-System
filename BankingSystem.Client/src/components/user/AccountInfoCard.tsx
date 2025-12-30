@@ -79,6 +79,8 @@ export const AccountInfoCard = ({ account }: Props) => {
     }
   };
 
+  // const handleAccountDetails = () 
+
   return (
     <Card
       hoverable
@@ -112,7 +114,7 @@ export const AccountInfoCard = ({ account }: Props) => {
       <div style={{ marginTop: 20 }}>
         <Text type="secondary">Account Balance</Text>
         <Title level={2} style={{ margin: "4px 0" }}>
-          ${account.balance.toLocaleString()}
+          {account.balance.toLocaleString()} ETB
         </Title>
       </div>
 
@@ -124,7 +126,7 @@ export const AccountInfoCard = ({ account }: Props) => {
             size="small"
             icon={<CopyOutlined />}
             onClick={(e) => {
-              e.stopPropagation(); // prevent card selection
+              e.stopPropagation();
               navigator.clipboard.writeText(account.accountNumber);
             }}
           />
@@ -136,6 +138,9 @@ export const AccountInfoCard = ({ account }: Props) => {
             color="red"
             icon={<MinusOutlined />}
             onClick={() => {
+              if (account.status.toString().toLowerCase() !== "active") {
+                return message.error("Cannot withdraw from an inactive account");
+              }
               setSelectedAccount(account);
               setIsWithdrawModalOpen(true);
             }}
@@ -146,6 +151,9 @@ export const AccountInfoCard = ({ account }: Props) => {
             color="gold"
             icon={<SwapOutlined />}
             onClick={() => {
+              if (account.status.toString().toLowerCase() !== "active") {
+                return message.error("Cannot transfer from an inactive account");
+              }
               setSelectedAccount(account);
               setIsTransferModalOpen(true);
             }}
@@ -187,9 +195,11 @@ export const AccountInfoCard = ({ account }: Props) => {
             <InputNumber
               style={{ width: "100%" }}
               min={0}
-              formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
+              controls={false}
+              formatter={(value) => {
+                if (value === undefined || value === null) return "ETB 0";
+                return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              }}
             />
           </Form.Item>
           <Form.Item name="description" label="Description (Optional)">
@@ -241,7 +251,7 @@ export const AccountInfoCard = ({ account }: Props) => {
               style={{ width: "100%" }}
               min={0}
               formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
             />
           </Form.Item>

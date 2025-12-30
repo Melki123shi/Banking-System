@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   useGetUsers,
   useCreateUser,
@@ -22,17 +22,25 @@ import {
   Form,
   Input,
   message,
+  Space,
+  Tooltip,
+  Typography,
 } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
   TeamOutlined,
+  PhoneOutlined,
+  UserOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
 import UserAccounts from "./UserAccounts";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { validateEthioPhone } from "@/lib/validation";
 
 const { Option } = Select;
+const { Title, Text } = Typography;
 
 export const UserComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -50,17 +58,14 @@ export const UserComponent = () => {
 
   // Forms & modal states
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
-  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] =
-    useState(false);
+  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const [createUserForm] = Form.useForm();
   const [updateUserForm] = Form.useForm();
   const [createAccountForm] = Form.useForm();
-  const [pendingDeleteUserId, setPendingDeleteUserId] = useState<string | null>(
-    null
-  );
+  const [pendingDeleteUserId, setPendingDeleteUserId] = useState<string | null>(null);
 
   /** ---------- Handlers ---------- **/
 
@@ -131,29 +136,26 @@ export const UserComponent = () => {
   /** ---------- Table columns ---------- **/
   const userColumns = [
     {
-      title: "",
-      dataIndex: "actions",
-      key: "actions",
-      render: (_: any, record: any) => (
-        <div className="flex gap-2">
-          <EditOutlined
-            onClick={() => {
-              setSelectedUser(record);
-              updateUserForm.setFieldsValue({
-                name: record.name,
-                phoneNumber: record.phoneNumber,
-                status: record.isActive ? "Active" : "Inactive",
-              });
-              setIsUpdateUserModalOpen(true);
-            }}
-          />
-
-          <DeleteOutlined onClick={() => openDeleteConfirm(record.id)} />
-        </div>
+      title: "Customer Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text: string) => (
+        <Space>
+          <UserOutlined className="text-slate-400" />
+          <Text strong>{text}</Text>
+        </Space>
       ),
     },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Phone", dataIndex: "phoneNumber", key: "phoneNumber" },
+    {
+      title: "Phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      render: (phone: string) => (
+        <Tag color="blue" bordered={false} icon={<PhoneOutlined />}>
+          {phone}
+        </Tag>
+      ),
+    },
     {
       title: "Accounts",
       key: "accounts",
@@ -162,50 +164,95 @@ export const UserComponent = () => {
     {
       title: "Status",
       dataIndex: "isActive",
+      align: 'center' as const,
       render: (active: boolean) => (
-        <Tag color={active ? "green" : "red"}>
-          {active ? "ACTIVE" : "INACTIVE"}
+        <Tag color={active ? "success" : "error"} className="rounded-full px-3">
+          {active ? "Active" : "Inactive"}
         </Tag>
       ),
     },
     {
-      title: "",
-      dataIndex: "AddAccount",
-      key: "AddAccount",
+      title: "Actions",
+      key: "actions",
+      align: 'right' as const,
       render: (_: any, record: any) => (
-        <Button
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setSelectedUser(record);
-            setIsCreateAccountModalOpen(true);
-          }}
-        >
-          Add Account
-        </Button>
+        <Space size="middle">
+          <Button
+            type="primary"
+            ghost
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setSelectedUser(record);
+              setIsCreateAccountModalOpen(true);
+            }}
+          >
+            Account
+          </Button>
+          <Tooltip title="Edit">
+            <Button
+              type="text"
+              icon={<EditOutlined className="text-blue-500" />}
+              onClick={() => {
+                setSelectedUser(record);
+                updateUserForm.setFieldsValue({
+                  name: record.name,
+                  phoneNumber: record.phoneNumber,
+                  status: record.isActive ? "Active" : "Inactive",
+                });
+                setIsUpdateUserModalOpen(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => openDeleteConfirm(record.id)}
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
 
   return (
-    <Layout className="min-h-screen bg-transparent">
-      <Layout.Content className="py-6 mb-9">
-        {/* Stats */}
-        <Row gutter={[16, 16]} className="mb-8">
-          <Col span={8}>
-            <Card>
+    <Layout className="min-h-screen bg-slate-50 p-6">
+      <Layout.Content>
+        {/* Header Section */}
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <Title level={2} style={{ margin: 0 }}>Customer Directory</Title>
+            <Text type="secondary">Monitor user status and manage linked financial accounts</Text>
+          </div>
+          <Button
+            type="primary"
+            size="large"
+            icon={<PlusOutlined />}
+            onClick={() => setIsCreateUserModalOpen(true)}
+            className="shadow-md"
+          >
+            Add New Customer
+          </Button>
+        </div>
+
+        {/* Stats Section */}
+        <Row gutter={[24, 24]} className="mb-8">
+          <Col xs={24} sm={12} md={6}>
+            <Card className="shadow-sm border-none">
               <Statistic
-                title="Total Users"
+                title="Active Users"
                 value={data?.totalCount ?? 0}
-                prefix={<TeamOutlined />}
+                prefix={<TeamOutlined className="mr-2 text-blue-500" />}
               />
             </Card>
           </Col>
         </Row>
 
-        {/* User Table */}
-        <Card>
+        {/* User Table Card */}
+        <Card className="shadow-sm rounded-lg border-none overflow-hidden">
           <DataTable
-            title="Customers"
             loading={isLoading}
             dataSource={data?.items ?? []}
             columns={userColumns}
@@ -214,90 +261,80 @@ export const UserComponent = () => {
               current: pageNumber,
               pageSize,
               total: data?.totalCount,
+              showSizeChanger: true,
               onChange: (page, size) => {
                 setPageNumber(page);
                 setPageSize(size);
               },
             }}
-            extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => setIsCreateUserModalOpen(true)}
-              >
-                Add User
-              </Button>
-            }
           />
         </Card>
 
         {/* Create User Modal */}
         <Modal
-          title="Add Customer"
+          title="Register New Customer"
           open={isCreateUserModalOpen}
           onCancel={() => setIsCreateUserModalOpen(false)}
           onOk={() => createUserForm.submit()}
+          okText="Create User"
+          confirmLoading={createUserMutation.isPending}
         >
           <Form
             form={createUserForm}
             layout="vertical"
             onFinish={handleCreateUser}
+            className="mt-4"
           >
             <Form.Item
               name="name"
               label="Full Name"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "Please enter full name" }]}
             >
-              <Input />
+              <Input prefix={<UserOutlined className="text-slate-400" />} placeholder="John Doe" />
             </Form.Item>
             <Form.Item
               name="phoneNumber"
-              label="Phone"
-              rules={[{ required: true }]}
+              label="Phone Number"
+              rules={[{ required: true, validator: validateEthioPhone }]}
             >
-              <Input />
+              <Input prefix={<PhoneOutlined className="text-slate-400" />} placeholder="09 / 07..." />
             </Form.Item>
             <Form.Item
               name="password"
-              label="Password"
-              rules={[{ required: true }]}
+              label="Secure Password"
+              rules={[{ required: true, min: 6 }]}
             >
-              <Input.Password />
+              <Input.Password prefix={<LockOutlined className="text-slate-400" />} placeholder="Minimum 6 characters" />
             </Form.Item>
           </Form>
         </Modal>
 
         {/* Update User Modal */}
         <Modal
-          title="Update Customer"
+          title="Edit Customer Details"
           open={isUpdateUserModalOpen}
           onCancel={() => setIsUpdateUserModalOpen(false)}
           onOk={() => updateUserForm.submit()}
+          okText="Update Details"
+          confirmLoading={updateUserMutation.isPending}
         >
           <Form
             form={updateUserForm}
             layout="vertical"
             onFinish={handleUpdateUser}
+            className="mt-4"
           >
-            <Form.Item
-              name="name"
-              label="Full Name"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="name" label="Full Name" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
             <Form.Item
               name="phoneNumber"
               label="Phone"
-              rules={[{ required: true }]}
+              rules={[{ required: true, validator: validateEthioPhone }]}
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="status"
-              label="Status"
-              rules={[{ required: true, message: "Please select status" }]}
-            >
+            <Form.Item name="status" label="Account Status" rules={[{ required: true }]}>
               <Select>
                 <Option value="Active">Active</Option>
                 <Option value="Inactive">Inactive</Option>
@@ -308,29 +345,22 @@ export const UserComponent = () => {
 
         {/* Create Account Modal */}
         <Modal
-          title="Create Account"
+          title="Open New Account"
           open={isCreateAccountModalOpen}
           onCancel={() => setIsCreateAccountModalOpen(false)}
           onOk={() => createAccountForm.submit()}
+          confirmLoading={createAccountMutation.isPending}
         >
           <Form
             form={createAccountForm}
             layout="vertical"
             onFinish={handleCreateAccount}
+            className="mt-4"
           >
-            <Form.Item
-              name="accountNumber"
-              label="Account Number"
-              rules={[{ required: true }]}
-            >
-              <Input />
+            <Form.Item name="accountNumber" label="Account Number" rules={[{ required: true }]}>
+              <Input placeholder="Enter unique account number" />
             </Form.Item>
-
-            <Form.Item
-              name="accountType"
-              label="Account Type"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="accountType" label="Account Type" rules={[{ required: true }]}>
               <Select placeholder="Select type">
                 <Option value="Checking">Checking</Option>
                 <Option value="Savings">Savings</Option>
@@ -338,44 +368,30 @@ export const UserComponent = () => {
                 <Option value="Business">Business</Option>
               </Select>
             </Form.Item>
-
             <Form.Item
               name="balance"
-              label="Initial Balance"
-              rules={[
-                { required: true, type: "number" },
-                {
-                  validator: (_, value) =>
-                    value >= 0
-                      ? Promise.resolve()
-                      : Promise.reject(new Error("Balance must be ≥ 0")),
-                },
-              ]}
+              label="Initial Deposit"
+              rules={[{ required: true, type: "number", min: 0 }]}
             >
               <InputNumber
                 style={{ width: "100%" }}
-                min={0}
-                formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
+                prefix="ETB"
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               />
             </Form.Item>
-
-            <Form.Item name="status" label="Status" initialValue="Active">
+            <Form.Item name="status" label="Initial Status" initialValue="Active">
               <Select>
                 <Option value="Active">Active</Option>
                 <Option value="Inactive">Inactive</Option>
                 <Option value="Frozen">Frozen</Option>
-                <Option value="Closed">Closed</Option>
               </Select>
             </Form.Item>
           </Form>
         </Modal>
 
-        {/* Confirmation Modal */}
         <ConfirmationModal
           open={isConfirmModalOpen}
-          text="Are you sure you want to delete this user?"
+          text="This action cannot be undone. Are you sure you want to delete this user?"
           onSucess={handleDeleteUser}
           onCancel={() => setIsConfirmModalOpen(false)}
         />

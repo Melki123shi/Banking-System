@@ -8,18 +8,16 @@ import {
   Dropdown,
   Space,
   Avatar,
-  Badge,
+  Image
 } from "antd";
 import {
   SearchOutlined,
   BgColorsOutlined,
-  EllipsisOutlined,
-  BellOutlined,
-  MailOutlined,
 } from "@ant-design/icons";
 import { useThemeStore } from "@/stores/themeStore";
 import { useLogout } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/authStore";
+import LogoImage  from "@/assets/logo.png";
 
 const { Header } = Layout;
 
@@ -43,13 +41,16 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
 
   return (
     <Header
-      className={`app-header ${isDarkMode ? "dark-mode" : ""}`}
       style={{
         background: isDarkMode ? "#141414" : "#ffffff",
         borderBottom: `1px solid ${isDarkMode ? "#434343" : "#f0f0f0"}`,
       }}
     >
       <div className="header-content">
+        <div className="flex gap-5 items-center">
+          <Image src={LogoImage} alt="Logo" width={55} />
+          <p className={`font-bold text-lg text-[#135187ff]`}>Banking System</p>
+        </div>
         <div className="header-left">
           <Input
             placeholder="Search..."
@@ -61,21 +62,12 @@ export const AppHeader: React.FC<HeaderProps> = ({ onSearch }) => {
 
         <div className="header-right">
           <Space size="large">
-            <Badge count={3} offset={[-5, 5]}>
-              <Button type="text" icon={<BellOutlined />} />
-            </Badge>
-
-            <Button type="text" icon={<MailOutlined />} />
-
             <Button
               type="text"
               icon={<BgColorsOutlined />}
               onClick={toggleDarkMode}
               title="Toggle Dark Mode"
             />
-
-            <Button type="text" icon={<EllipsisOutlined />} />
-
             <Dropdown menu={{ items: profileMenu }} placement="bottomRight">
               <Avatar
                 style={{ cursor: "pointer", background: "#073c6dff" }}

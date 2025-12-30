@@ -287,8 +287,9 @@ export const AccountComponent = () => {
   return (
     <Layout className="min-h-screen ">
       <Layout.Content className="mb-9">
-        {/* Stats */}
-        <Row gutter={[16, 16]} className="mb-8">
+
+        <Card>
+           <Row gutter={[16, 16]} className="mb-8">
           <Col span={8}>
             <Card>
               <Statistic
@@ -312,9 +313,6 @@ export const AccountComponent = () => {
             </Card>
           </Col>
         </Row>
-
-        {/* Table */}
-        <Card>
           <DataTable
             title="Accounts"
             loading={isLoading}
@@ -364,7 +362,7 @@ export const AccountComponent = () => {
               style={{ width: "100%" }}
               min={0}
               formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
             />
           </Form.Item>
@@ -402,7 +400,7 @@ export const AccountComponent = () => {
               style={{ width: "100%" }}
               min={0}
               formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
             />
           </Form.Item>
@@ -455,7 +453,7 @@ export const AccountComponent = () => {
               style={{ width: "100%" }}
               min={0}
               formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
             />
           </Form.Item>
@@ -519,7 +517,7 @@ export const AccountComponent = () => {
                 style={{ width: "100%" }}
                 min={0}
                 formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
               />
             </Form.Item>

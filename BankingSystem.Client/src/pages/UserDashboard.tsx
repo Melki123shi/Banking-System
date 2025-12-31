@@ -1,4 +1,4 @@
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography} from "antd";
 import { TransactionComponent } from "@/components/user/TransactionComponent";
 import { AccountInfoCard } from "@/components/user/AccountInfoCard";
 import { useAuthStore } from "@/stores/authStore";
@@ -34,9 +34,7 @@ export const UserDashboard = () => {
           ))}
         </Row>
 
-        <Col xs={24} md={24} lg={24}>
           <TransactionComponent />
-        </Col>
       </Col>
     </AppLayout>
   );

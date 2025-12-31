@@ -6,6 +6,7 @@ using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.Interfaces;
 using BankingSystem.src.BankingSystem.Application.Mappings;
 using BankingSystem.src.BankingSystem.Application.DTOs;
+using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 
 
 namespace BankingSystem.src.BankingSystem.Infrastructure.Services;
@@ -85,6 +86,19 @@ public class UserManagementService : IUserManagementService
         );
 
         await _userRepository.UpdateAsync(user);
+    }
+
+    public async Task<CustomerSummeryDto> GetCustomerSummeryAsync()
+    {
+        var activeUsersCount = await _userRepository.GetActiveUserCountAsync();
+        var (users, totalCount) = await _userRepository.GetPaginatedCustomersAsync(1, int.MaxValue);
+        var inactiveUsersCount = totalCount - activeUsersCount;
+
+        return new CustomerSummeryDto(
+            TotalCustomers: totalCount,
+            ActiveCustomers: activeUsersCount,
+            InactiveCustomers: inactiveUsersCount
+        );  
     }
 
     public async Task DeleteUserAsync(Guid userId)

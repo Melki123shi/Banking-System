@@ -12,6 +12,7 @@ public interface IUserRepository
         int pageNumber,
         int pageSize
     );
+    Task<int> GetActiveUserCountAsync();
     Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task UpdateAsync(User user);
     Task DeleteAsync(User user);

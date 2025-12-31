@@ -21,9 +21,9 @@ export const UserAccounts = ({ userId }: Props) => {
   return (
     <div className="flex flex-col gap-2">
       {data.map((account) => (
-        <Tag color="blue" key={account.id}>
+        <p className={`${account.status === 'active' ? 'text-green-600' : 'text-red-600'}`} key={account.id}>
           {account.accountNumber}
-        </Tag>
+        </p>
       ))}
     </div>
   );

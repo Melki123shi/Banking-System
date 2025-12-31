@@ -3,6 +3,7 @@ using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 using BankingSystem.src.BankingSystem.Infrastructure.Persistence;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
 
 namespace BankingSystem.src.BankingSystem.Infrastructure.Repositories;
 
@@ -28,9 +29,9 @@ public class TransactionRepository : ITransactionRepository
     {
         var query = _dbContext.Transactions
             .Include(t => t.SenderAccount)
-                .ThenInclude(a => a.User)
+                .ThenInclude(a => a!.User)
             .Include(t => t.ReceiverAccount)
-                .ThenInclude(a => a.User)
+                .ThenInclude(a => a!.User)
             .Where(t =>
                 t.SenderAccount!.UserId == customerId ||
                 t.ReceiverAccount!.UserId == customerId
@@ -47,7 +48,56 @@ public class TransactionRepository : ITransactionRepository
 
         return (items, totalCount);
     }
+    public async Task<(IEnumerable<Transaction> Items, int TotalCount)> GetTransactionsAsync(
+        TransactionSearchParams searchParams,
+        Guid? userId = null)
+    {
+        var query = _dbContext.Transactions
+            .Include(t => t.SenderAccount)
+                .ThenInclude(a => a!.User)
+            .Include(t => t.ReceiverAccount)
+                .ThenInclude(a => a!.User)
+            .AsQueryable();
 
+        // 1. Filter by UserId (Checks if user is either Sender or Receiver)
+        if (userId.HasValue)
+        {
+            query = query.Where(t =>
+                (t.SenderAccount != null && t.SenderAccount.UserId == userId.Value) ||
+                (t.ReceiverAccount != null && t.ReceiverAccount.UserId == userId.Value)
+            );
+        }
+
+        // 2. Filter by Name (Checks the User linked to either account)
+        if (!string.IsNullOrWhiteSpace(searchParams.Name))
+        {
+            query = query.Where(t =>
+                (t.SenderAccount != null && t.SenderAccount.User.Name.Contains(searchParams.Name)) ||
+                (t.ReceiverAccount != null && t.ReceiverAccount.User.Name.Contains(searchParams.Name))
+            );
+        }
+
+        // 3. Filter by AccountNumber (Checks either Sender or Receiver account number)
+        if (!string.IsNullOrWhiteSpace(searchParams.AccountNumber))
+        {
+            query = query.Where(t =>
+                (t.SenderAccount != null && t.SenderAccount.AccountNumber.Contains(searchParams.AccountNumber)) ||
+                (t.ReceiverAccount != null && t.ReceiverAccount.AccountNumber.Contains(searchParams.AccountNumber))
+            );
+        }
+
+        // 4. Execution
+        int totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(t => t.CreatedAt)
+            .Skip((searchParams.PageNumber - 1) * searchParams.PageSize)
+            .Take(searchParams.PageSize)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return (items, totalCount);
+    }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId)
     {

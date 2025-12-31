@@ -5,6 +5,7 @@ using BankingSystem.src.BankingSystem.Application.Mappings;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
 using BankingSystem.src.BankingSystem.Application.DTOs;
+using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
@@ -40,55 +41,42 @@ public class TransactionService : ITransactionService
         return transactions.Select(transaction => transaction.ToDto());
     }
 
-    public async Task<PaginatedResponseDto<TransactionDetailDto>> GetPaginatedTransactionsAsync(int pageNumber, int pageSize)
+    public async Task<PaginatedResponseDto<TransactionDetailDto>> GetTransactionsAsync(TransactionSearchParams searchParams)
     {
-        var transactions = await _transactionRepository
-            .GetPaginatedTransactionsAsync(pageNumber, pageSize);
-
-        var totalCount = await _transactionRepository.GetTotalCountAsync();
-
-        var accountIds = transactions
-            .SelectMany(t => new[] { t.SenderAccountId, t.ReceiverAccountId })
-            .Where(id => id.HasValue)
-            .Select(id => id!.Value)
-            .Distinct()
-            .ToList();
-
-        var accounts = await _accountService.GetAccountsByIdsAsync(accountIds);
-
-        var accountMap = accounts.ToDictionary(a => a.Id);
-
-        var items = transactions.Select(t =>
-        {
-            accountMap.TryGetValue(t.SenderAccountId ?? Guid.Empty, out var sender);
-            accountMap.TryGetValue(t.ReceiverAccountId ?? Guid.Empty, out var receiver);
-
-            return new TransactionDetailDto
-            {
-                Id = t.Id,
-                TransactionId = t.TransactionId,
-                Amount = t.Amount,
-                TransactionType = t.Type,
-                Status = t.Status,
-                SenderAccountId = t.SenderAccountId,
-                SenderAccountNumber = sender?.AccountNumber ?? "-",
-                ReceiverAccountId = t.ReceiverAccountId,
-                ReceiverAccountNumber = receiver?.AccountNumber ?? "-",
-                SenderAccount = sender,
-                ReceiverAccount = receiver,
-                Description = t.Description ?? string.Empty,
-                CompletedAt = t.CompletedAt
-            };
-        }).ToList();
-
+        var (items, total) = await _transactionRepository.GetTransactionsAsync(searchParams);
         return new PaginatedResponseDto<TransactionDetailDto>
         {
-            Items = items,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalCount = totalCount
+            Items = items.Select(t => t.ToDto()),
+            TotalCount = total
         };
     }
+
+    public async Task<PaginatedResponseDto<UserTransactionReponse>> GetUserTransactionsAsync(Guid userId, TransactionSearchParams searchParams)
+    {
+        var (items, total) = await _transactionRepository.GetTransactionsAsync(searchParams, userId);
+        return new PaginatedResponseDto<UserTransactionReponse>
+        {
+            Items = items.Select(transaction =>
+               new UserTransactionReponse(
+                    transaction.TransactionId,
+                    transaction.Amount,
+                    transaction.CreatedAt,
+                    transaction.Type.ToString() == "Deposit" ? "IN" : "OUT",
+                    transaction.SenderAccount?.AccountNumber ?? string.Empty,
+                    (transaction.SenderAccount?.UserId == userId
+                        ? transaction.ReceiverAccount?.User.Name
+                        : transaction.SenderAccount?.User.Name) ?? string.Empty,
+                    (transaction.SenderAccount?.UserId == userId
+                        ? transaction.ReceiverAccount?.AccountNumber
+                        : transaction.SenderAccount?.AccountNumber) ?? string.Empty,
+                    transaction.Type.ToString(),
+                    transaction.Description ?? string.Empty
+                )
+     ),
+            TotalCount = total
+        };
+    }
+
 
     public async Task<TransactionDetailDto> RecordWithdrawAsync(Guid accountId, WithdrawRequestDto withdrawRequestDto)
     {
@@ -155,25 +143,6 @@ public class TransactionService : ITransactionService
         return transaction.ToDto();
     }
 
-    public async Task<PaginatedResponseDto<UserTransactionReponse>> GetPaginatedCustomerTransactionsAsync(
-        Guid customerId,
-        int pageNumber,
-        int pageSize)
-    {
-        var (transactions, totalCount) =
-            await _transactionRepository
-                .GetPaginatedTransactionsForCustomerAsync(
-                    customerId, pageNumber, pageSize);
 
-        return new PaginatedResponseDto<UserTransactionReponse>
-        {
-            Items = transactions
-                .Select(t => t.ToDto(customerId))
-                .ToList(),
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalCount = totalCount
-        };
-    }
 
 }

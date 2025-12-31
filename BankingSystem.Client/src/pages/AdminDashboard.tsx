@@ -14,8 +14,8 @@ export function AdminDashboard() {
      const isDarkMode = useThemeStore((state) => state.isDarkMode);
   return (
     <div className="min-h-screen p-8">
-      <Typography.Title level={2} style={{ margin: 0, marginBottom: 23, color: isDarkMode ? "#dddbdbff" : "#141414"} }>
-                Hello, {user.name} 👋
+      <Typography.Title level={2} style={{ margin: 0, marginBottom: 43, color: isDarkMode ? "#dddbdbff" : "#141414"} }>
+                👋 Hello, {user.name}
               </Typography.Title>
       <Space direction="vertical" size="large" style={{ display: 'flex' }}>
         <UserComponent />

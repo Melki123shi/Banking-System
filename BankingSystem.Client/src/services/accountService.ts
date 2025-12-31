@@ -3,12 +3,12 @@ import type { Account } from "@/entities/account";
 import type { User } from "@/entities/user";
 import { AxiosError } from "axios";
 
-const basePath = "/admin/accounts";
+const basePath = "admin/accounts";
 
 export const accountService = {
   createAccount: async (accountData: Partial<Account>): Promise<Account> => {
     try {
-      const response = await api.post<Account>("/admin/accounts", accountData);
+      const response = await api.post<Account>(`${basePath}`, accountData);
       return response.data;
     } catch (error) {
       const err = error as AxiosError<any>;

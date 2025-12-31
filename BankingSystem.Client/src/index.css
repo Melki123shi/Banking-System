@@ -25,47 +25,12 @@
   }
 }
 
-.app-header {
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  height: 64px;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 24px;
-}
-
-.header-left {
-  flex: 0 0 200px;
-}
-
 .search-input {
   width: 100%;
   border-radius: 6px;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 500;
-  min-width: 120px;
-}
-
 @media (max-width: 1200px) {
-  .header-content {
-    flex-wrap: wrap;
-  }
-
   .user-name {
     display: none;
   }
@@ -119,19 +84,4 @@
 
 .sidebar::-webkit-scrollbar-thumb {
   border-radius: 3px;
-}
-
-.app-layout {
-  display: flex;
-}
-
-.layout-content {
-  padding: 24px;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.app-layout,
-.ant-layout {
-  height: 100%;
 }

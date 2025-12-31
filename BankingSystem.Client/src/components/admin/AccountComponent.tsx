@@ -303,7 +303,7 @@ export const AccountComponent = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Layout.Content className="p-6 bg-gray-50">
+      <Layout.Content>
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-gray-800">

@@ -3,7 +3,7 @@
 
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10
+GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10&name=Meseret
 Accept: application/json
 Authorization: Bearer {{Admin_AccessToken}}
 
@@ -47,7 +47,7 @@ userId
 # }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=2&pageSize=4
+GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=2&pageSize=5&accountNumber=Aed1234d23w
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###
@@ -60,7 +60,7 @@ Authorization: Bearer {{Admin_AccessToken}}
 }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/transactions/3e2cff10-b424-4fba-9d38-b03b1f7222c8?pageNumber=1&pageSize=5
+GET {{BankingSystem_HostAddress}}/api/transactions/3e2cff10-b424-4fba-9d38-b03b1f7222c8?name= 
 Content-Type: application/json
 
 ###

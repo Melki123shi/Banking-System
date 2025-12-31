@@ -24,7 +24,7 @@ export const AppLayout: React.FC<LayoutProps> = ({ children }) => {
           style={{
             overflowY: "auto",
             padding: 24,
-            backgroundColor: isDarkMode ? "#000" : "#ffffff",
+            backgroundColor: isDarkMode ? "#141414" : "#ffffff",
           }}
         >
           {children}

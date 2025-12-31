@@ -99,10 +99,10 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("transactions")]
-    public async Task<ActionResult<IEnumerable<TransactionDetailDto>>> GetPaginatedTransactionsAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
+    public async Task<ActionResult<IEnumerable<TransactionDetailDto>>> GetPaginatedTransactionsAsync([FromQuery] TransactionSearchParams searchParams)
     {
-        var transactions = await _transactionService.GetPaginatedTransactionsAsync(pageNumber, pageSize);
-        return Ok(transactions);
+        var response = await _transactionService.GetTransactionsAsync(searchParams);
+        return Ok(response);
     } 
 
     [HttpPost("accounts/{accountId}/withdraw")]

@@ -1,9 +1,10 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using BankingSystem.src.BankingSystem.Application.UseCases;
 using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
+using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 namespace BankingSystem.src.BankingSystem.API.Controllers;
 
 [ApiController]
@@ -38,6 +39,13 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("accounts/summery")]
+    public async Task<ActionResult<CustomerSummeryDto>> GetCustomerSummery()
+    {
+        var summery = await _userService.GetCustomerSummeryAsync();
+        return Ok(summery);
+    }
+
     [HttpPost("accounts/{senderAccountId}/transfer")]
     public async Task<IActionResult> Transfer(Guid senderAccountId, [FromBody] TransferRequestDto transferRequestDto)
     {
@@ -53,9 +61,22 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("transactions/{customerId}")]
-    public async Task<IActionResult> GetAccountTransactions(Guid customerId, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> GetAccountTransactions(Guid customerId, [FromQuery] TransactionSearchParams searchParams)
     {
-        var response = await _transactionService.GetPaginatedCustomerTransactionsAsync(customerId, pageNumber, pageSize);
+        //! To be implemented using the logged in user's ID
+        // var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // if (claim is null || !Guid.TryParse(claim, out var userId))
+        // {
+        //     return Unauthorized();
+        // }
+
+        // We pass the userId to restrict the search to ONLY this customer
+        var user = await _userService.GetUserDetailsAsync(customerId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+        var response = await _transactionService.GetUserTransactionsAsync(customerId, searchParams);
         return Ok(response);
     }
 

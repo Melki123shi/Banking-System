@@ -9,16 +9,16 @@ export const authService = {
       password: data.password,
     };
 
-    const response = await api.post<LoginResponse>("/auth/login", payload);
+    const response = await api.post<LoginResponse>("auth/login", payload);
     return response.data;
   },
 
   logout: async (refreshToken: string): Promise<void> => {
-    await api.post("/auth/logout", { refreshToken });
+    await api.post("auth/logout", { refreshToken });
   },
 
   me: async (token: string): Promise<User> => {
-    const response = await api.get<User>("/user/me", {
+    const response = await api.get<User>("user/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -27,7 +27,7 @@ export const authService = {
   },
 
   refresh: async (refreshToken: string): Promise<LoginResponse> => {
-    const response = await api.post<LoginResponse>("/auth/refresh", {
+    const response = await api.post<LoginResponse>("auth/refresh", {
       refreshToken,
     });
     return response.data;

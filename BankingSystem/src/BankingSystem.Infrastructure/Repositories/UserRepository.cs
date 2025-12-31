@@ -49,6 +49,11 @@ public class UserRepository : IUserRepository
             .AnyAsync(u => u.PhoneNumber == phoneNumber);
     }
 
+    public async Task<int> GetActiveUserCountAsync()
+    {
+        return await _dbContext.Users.Where(u => u.IsActive).CountAsync();
+    }
+
 
     public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
     {

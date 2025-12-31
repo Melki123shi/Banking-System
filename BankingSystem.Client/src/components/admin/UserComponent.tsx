@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import  { useState } from "react";
+import type { ColumnsType } from "antd/es/table";
+import type { User } from "@/entities/user";
 import UserDetailModal from "./UserDetailModal";
 import {
   useGetUsers,
@@ -26,7 +28,6 @@ import {
   Space,
   Tooltip,
   Typography,
-  Descriptions,
 } from "antd";
 import {
   DeleteOutlined,
@@ -41,16 +42,20 @@ import {
 import UserAccounts from "./UserAccounts";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { validateEthioPhone } from "@/lib/validation";
-import type { Account } from "@/entities/account";
+import { useThemeStore } from "@/stores/themeStore";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 export const UserComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(2);
+
   const setSelectedUser = useUserStore((s) => s.setSelectedUser);
   const selectedUser = useUserStore((state) => state.selectedUser);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+
+;
 
   // User list
   const { data, isLoading, refetch } = useGetUsers(pageNumber, pageSize);
@@ -113,6 +118,9 @@ export const UserComponent = () => {
     const selectedUser = useUserStore.getState().selectedUser;
     if (!selectedUser) return;
 
+    values.isActive = values.status === "Active" ? true : false;
+    delete values.status;
+
     try {
       await updateUserMutation.mutateAsync({
         id: selectedUser.id,
@@ -143,14 +151,14 @@ export const UserComponent = () => {
   };
 
   /** ---------- Table columns ---------- **/
-  const userColumns = [
+  const userColumns: ColumnsType<User> = [
     {
       width: 1,
       title: "",
       key: "actions",
       render: (_: any, record: any) => {
         return (
-          <div className="flex gap-2">
+          <div className="flex">
             <Tooltip title="View Details">
               <Button
                 type="text"
@@ -218,6 +226,22 @@ export const UserComponent = () => {
           {active ? "Active" : "Inactive"}
         </Tag>
       ),
+      filters: [
+        {
+          text: "Active",
+          value: "Active",
+        },
+        {
+          text: "Inactive",
+          value: "Inactive",
+        },
+      ],
+      filterMode: "menu",
+      onFilter: (value, record) => {
+        if (value === "Active") return record.isActive === true;
+        if (value === "Inactive") return record.isActive === false;
+        return false;
+      },
     },
     {
       title: "Add Account",
@@ -265,17 +289,44 @@ export const UserComponent = () => {
         {/* Stats Section */}
         <Row gutter={[24, 24]} className="mb-8">
           <Col xs={24} sm={12} md={6}>
-            <Card className="shadow-sm border-none bg-red">
+            <Card className="shadow-sm border-none">
+              <Statistic
+                title="Total Users"
+                value={data?.totalCount ?? 0}
+                prefix={<TeamOutlined className="mr-2 text-blue-500" />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Card className="shadow-sm border-none"style={
+              {
+                backgroundColor:  isDarkMode ? "#1a3d1aff" : "#b1f4cbff"
+              }}>
               <Statistic
                 title="Active Users"
-                value={data?.totalCount ?? 0}
+                value={data?.items?.filter(user => user.isActive).length ?? 0}
+                prefix={<TeamOutlined className="mr-2 text-blue-500" />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Card className="shadow-sm border-none" style={
+              {
+                backgroundColor: isDarkMode ? "#821111ff" : "#fbb7b7ff",
+              }}>
+              <Statistic
+                title="Inactive Users"
+                value={data?.items?.filter(user => !user.isActive).length ?? 0}
                 prefix={<TeamOutlined className="mr-2 text-blue-500" />}
               />
             </Card>
           </Col>
         </Row>
 
+
+            
         {/* User Table Card */}
+        <Title level={4} className="mb-4">Customers Table</Title>
         <DataTable
           loading={isLoading}
           dataSource={data?.items ?? []}
@@ -377,6 +428,12 @@ export const UserComponent = () => {
               rules={[{ required: true, validator: validateEthioPhone }]}
             >
               <Input />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="New Password"
+            >
+              <Input.Password />
             </Form.Item>
             <Form.Item
               name="status"

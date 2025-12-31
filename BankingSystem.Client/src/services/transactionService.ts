@@ -1,26 +1,23 @@
 import { apiClient as api } from "@/lib/axios";
 import type { Transaction } from "@/entities/transaction";
-import type { PaginatedResponse, UserTransactionDetail } from "@/lib/types";
+import type { PaginatedResponse, TransactionSearchParams, UserTransactionDetail } from "@/lib/types";
+
+const buildParams = (params: TransactionSearchParams) => new URLSearchParams({
+  ...(params.name && { name: params.name }),
+  ...(params.accountNumber && { accountNumber: params.accountNumber }),
+  pageNumber: params.pageNumber.toString(),
+  pageSize: params.pageSize.toString(),
+}).toString();
 
 export const transactionService = {
-  getPaginatedTransactions: async (
-    pageNumber: number,
-    pageSize: number
-  ): Promise<PaginatedResponse<Transaction>> => {
-    const response = await api.get<PaginatedResponse<Transaction>>(
-      "/admin/transactions?pageNumber=" + pageNumber + "&pageSize=" + pageSize
-    );
+  getTransactions: async (params: TransactionSearchParams) => {
+    const response = await api.get<PaginatedResponse<Transaction>>(`admin/transactions?${buildParams(params)}`);
     return response.data;
   },
-  getPaginatedTransactionsByUserId: async (
-    userId: string,
-    pageNumber: number,
-    pageSize: number
-  ): Promise<PaginatedResponse<UserTransactionDetail>> => {
-    const response = await api.get<PaginatedResponse<UserTransactionDetail>>(
-      `/transactions/${userId}?pageNumber=${pageNumber}&pageSize=${pageSize}`
-    );
-
+  getUserTransactions: async (userId : string, params: TransactionSearchParams) => {
+    console.log(`aparam  ${params}`)
+    const response = await api.get<PaginatedResponse<UserTransactionDetail>>(`transactions/${userId}?${buildParams(params)}`);
+    console.log(  response.data, "response data ---> <---")
     return response.data;
-  },
+  }
 };

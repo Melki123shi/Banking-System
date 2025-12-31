@@ -1,8 +1,8 @@
 import { apiClient as api } from "@/lib/axios";
 import type { User } from "@/entities/user";
-import type { PaginatedResponse } from "@/lib/types";
+import type { PaginatedResponse, UpdateUserRequest } from "@/lib/types";
 
-const basePath = "/admin/users";
+const basePath = "admin/users";
 
 export const userService = {
   getPaginatedUsers: async (
@@ -24,7 +24,7 @@ export const userService = {
     return response.data;
   },
 
-  updateUser: async (id: string, data: any) => {
+  updateUser: async (id: string, data: UpdateUserRequest) => {
     await api.put(`${basePath}/${id}`, data);
   },
 

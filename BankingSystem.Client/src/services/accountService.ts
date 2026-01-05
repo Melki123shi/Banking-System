@@ -27,6 +27,7 @@ export const accountService = {
     const response = await api.get<Account[]>(
       `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
+    console.log("Accounts fetch ---", response)
     return response.data;
   },
 

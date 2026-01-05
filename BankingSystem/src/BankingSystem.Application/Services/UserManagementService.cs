@@ -96,17 +96,20 @@ public class UserManagementService : IUserManagementService
         await _userRepository.UpdateAsync(user);
     }
 
-    public async Task<CustomerSummeryDto> GetCustomerSummeryAsync()
-    {
-        var activeUsersCount = await _userRepository.GetActiveUserCountAsync();
-        var (users, totalCount) = await _userRepository.GetPaginatedCustomersAsync(1, int.MaxValue);
-        var inactiveUsersCount = totalCount - activeUsersCount;
 
-        return new CustomerSummeryDto(
-            TotalCustomers: totalCount,
-            ActiveCustomers: activeUsersCount,
-            InactiveCustomers: inactiveUsersCount
-        );  
+    public async Task<CustomerSummaryDto> GetCustomerSummaryAsync()
+    {
+        int activeCustomers = await _userRepository.GetActiveUserCountAsync();
+        int inactiveCustomers = await _userRepository.GetInactiveUserCountAsync();
+        int totalCustomers = activeCustomers + inactiveCustomers;
+        int newUsersThisMonth = await _userRepository.GetNewUsersCountThisMonthAsync();
+
+        return new CustomerSummaryDto(
+            totalCustomers,
+            activeCustomers,
+            inactiveCustomers,
+            newUsersThisMonth
+        );
     }
 
     public async Task DeleteUserAsync(Guid userId)

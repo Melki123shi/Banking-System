@@ -13,7 +13,7 @@ public interface IUserManagementService
         int pageNumber,
         int pageSize
     );
-    Task<CustomerSummeryDto> GetCustomerSummeryAsync();
+    Task<CustomerSummaryDto> GetCustomerSummaryAsync();
 
     Task UpdateUserAsync(Guid id, UpdateUserRequest updateUserRequest);
     Task DeleteUserAsync(Guid userId);

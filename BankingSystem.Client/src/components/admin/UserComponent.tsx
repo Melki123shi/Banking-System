@@ -7,7 +7,6 @@ import {
   useCreateUser,
   useDeleteUser,
   useUpdateUser,
-  useGetUserSummary,
 } from "@/hooks/useUser";
 import { useUserStore } from "@/stores/userStore";
 import { useCreateAccount } from "@/hooks/useAccount";
@@ -66,7 +65,6 @@ export const UserComponent = () => {
   const createAccountMutation = useCreateAccount();
   const deleteUserMutation = useDeleteUser();
   const updateUserMutation = useUpdateUser();
-  const { data: userSummary } = useGetUserSummary();
 
   // Forms & modal states
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
@@ -306,7 +304,7 @@ export const UserComponent = () => {
               }}>
               <Statistic
                 title="Active Users"
-                value={userSummary?.activeCustomers ?? 0}
+                value={data?.items?.filter(user => user.isActive).length ?? 0}
                 prefix={<TeamOutlined className="mr-2 text-blue-500" />}
               />
             </Card>
@@ -318,29 +316,17 @@ export const UserComponent = () => {
               }}>
               <Statistic
                 title="Inactive Users"
-                value={userSummary?.inactiveCustomers ?? 0}
+                value={data?.items?.filter(user => !user.isActive).length ?? 0}
                 prefix={<TeamOutlined className="mr-2 text-blue-500" />}
               />
             </Card>
           </Col>
         </Row>
-        <Col xs={24} sm={12} md={6}>
-           <Card className="shadow-sm border-none" style={
-              {
-                backgroundColor: isDarkMode ? "#16477bff" : "#a3d7fcff",
-              }}>
-              <Statistic
-                title="New Users This Month"
-                value={userSummary?.newUsersThisMonth ?? 0}
-                prefix={<TeamOutlined className="mr-2 text-blue-500" />}
-              />
-            </Card>
-          </Col>
 
 
             
         {/* User Table Card */}
-        <Title level={4} className="mb-4 my-6">Customers Table</Title>
+        <Title level={4} className="mb-4">Customers Table</Title>
         <DataTable
           loading={isLoading}
           dataSource={data?.items ?? []}

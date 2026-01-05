@@ -1,8 +1,7 @@
 namespace BankingSystem.src.BankingSystem.Application.DTOs.Account;
 
-public record class CustomerSummaryDto(
+public record class CustomerSummeryDto(
     int TotalCustomers,
     int ActiveCustomers,
-    int InactiveCustomers,
-    int NewUsersThisMonth
+    int InactiveCustomers
 );

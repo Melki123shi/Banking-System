@@ -17,7 +17,7 @@ export function AdminDashboard() {
       <Typography.Title level={2} style={{ margin: 0, marginBottom: 43, color: isDarkMode ? "#dddbdbff" : "#141414"} }>
                 👋 Hello, {user.name}
               </Typography.Title>
-      <Space orientation="vertical" size="large" style={{ display: 'flex' , gap: '40px' }}>
+      <Space direction="vertical" size="large" style={{ display: 'flex' }}>
         <UserComponent />
         <AccountComponent />
         <TransactionComponent />

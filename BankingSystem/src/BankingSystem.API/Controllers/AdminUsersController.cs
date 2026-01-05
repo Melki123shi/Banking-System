@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 using BankingSystem.src.BankingSystem.Application.DTOs;
-using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 
 namespace BankingSystem.src.BankingSystem.API.Controllers;
 
@@ -32,13 +31,6 @@ public class AdminUsersController : ControllerBase
     {
         var response = await _userService.GetPaginatedCustomersAsync(pageNumber, pageSize);
         return Ok(response);
-    }
-
-    [HttpGet("summary")]
-    public async Task<ActionResult<CustomerSummaryDto>> GetCustomerSummary()
-    {
-        var summary = await _userService.GetCustomerSummaryAsync();
-        return Ok(summary);
     }
 
     [HttpGet("{id}")]

@@ -57,6 +57,4 @@ Content-Type: application/json
     "status": "active"
 }
 
-###
-GET {{BankingSystem_HostAddress}}/api/admin/users/summary
 

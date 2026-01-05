@@ -31,7 +31,6 @@ import {
   useWithdrawMoney,
   useTransferMoney,
 } from "@/hooks/useAccount";
-import { useThemeStore } from "@/stores/themeStore";
 
 const { Option } = Select;
 
@@ -53,7 +52,7 @@ export const AccountComponent = () => {
   const withdrawMoneyMutation = useWithdrawMoney();
   const depositMoneyMutation = useDepositMoney();
   const transferMoneyMutation = useTransferMoney();
-  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+
   const [isUpdateAccountModalOpen, setIsUpdateAccountModalOpen] =
     useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -307,14 +306,10 @@ export const AccountComponent = () => {
       <Layout.Content>
         {/* Page Header */}
         <div className="mb-8">
-          <h1
-            className={`text-2xl font-semibold ${
-              isDarkMode ? "text-gray-200" : "text-gray-800"
-            }`}
-          >
+          <h1 className="text-2xl font-semibold text-gray-800">
             Accounts Overview
           </h1>
-          <p className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
+          <p className="text-gray-500">
             Manage customer accounts and view balance summaries
           </p>
         </div>
@@ -346,91 +341,59 @@ export const AccountComponent = () => {
           </Col>
         </Row>
 
-        <Row className="mb-7" gutter={[16, 16]}>
+        <Col>
           <Col xs={24} sm={12} md={6}>
-            <Card style={{
-                      backgroundColor: isDarkMode ? "#1a3d1aff" : "#b1f4cbff",
-                    }}>
-              <h1 className="text-lg mb-2">Active Accounts</h1>
-              <Row className="justify-between">
-                <Col xl={10} sm={12} md={6}>
-
-                    <Statistic
-                      title={`Counts ${isDarkMode}`} 
-                      value={
-                        Array.isArray(accounts)
-                          ? accounts.filter(
-                              (account) => account.status === "active"
-                            ).length
-                          : 0
-                      }
-                      prefix={<CreditCardOutlined />}
-                    />
-                </Col>
-                <Col xl={10} sm={12} md={6}>
-
-                    <Statistic
-                      title="Balance"
-                      value={
-                        Array.isArray(accounts)
-                          ? accounts.filter(
-                              (account) => account.status === "active"
-                            ).length
-                          : 0
-                      }
-                      prefix={<DollarOutlined />}
-                    />
-                </Col>
-              </Row>
-            </Card>
+            <h1 className="text-lg mb-2">Active Accounts</h1>
           </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card
-              style={{
-                backgroundColor: isDarkMode ? "#821111ff" :  "#fbb7b7ff",
-              }}
-            >
-              <h1 className="text-lg mb-2">Inactive Accounts</h1>
-              <Row className="justify-between">
-                <Col xl={10} sm={12} md={6}>
-                  <Statistic
-                    title="Counts"
-                    value={
-                      Array.isArray(accounts)
-                        ? accounts.filter(
-                            (account) => account.status === "active"
-                          ).length
-                        : 0
-                    }
-                    prefix={<CreditCardOutlined />}
-                  />
-                </Col>
-                <Col xl={10} sm={12} md={6}>
-                  <Statistic
-                    title="Balance"
-                    value={
-                      Array.isArray(accounts)
-                        ? accounts.filter(
-                            (account) => account.status === "active"
-                          ).length
-                        : 0
-                    }
-                    prefix={<DollarOutlined />}
-                  />
-                </Col>
-              </Row>
+          <Row>
+            <Card className="shadow-sm" style={
+              {
+                backgroundColor: "#b1f4cbff"
+              }
+            }>
+              <Statistic
+                title="Counts"
+                value={
+                  Array.isArray(accounts)
+                    ? accounts.filter((account) => account.status === "active")
+                        .length
+                    : 0
+                }
+                prefix={<CreditCardOutlined />}
+              />
             </Card>
-          </Col>
-        </Row>
+             <Card className="shadow-sm" style={
+              {
+                backgroundColor: "#b1f4cbff"
+              }
+            }>
+              <Statistic
+                title="Counts"
+                value={
+                  Array.isArray(accounts)
+                    ? accounts.filter((account) => account.status === "active")
+                        .length
+                    : 0
+                }
+                prefix={<CreditCardOutlined />}
+              />
+            </Card>
+          </Row>
+        </Col>
         {/* Accounts Table */}
+        <Card
+          title="Account List"
+          className="shadow-sm"
+          bodyStyle={{ padding: 0 }}
+        >
           <DataTable
-          title="Accounts Table"
             loading={isLoading}
             dataSource={Array.isArray(accounts) ? accounts : []}
             columns={accountColumns}
             rowKey="id"
           />
-  
+        </Card>
+
         {/* Confirmation Modal */}
         <ConfirmationModal
           open={isConfirmModalOpen}
@@ -467,7 +430,13 @@ export const AccountComponent = () => {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} prefix="ETB" />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>
@@ -499,7 +468,13 @@ export const AccountComponent = () => {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} prefix="ETB" />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label="Description (Optional)">
             <Input.TextArea
@@ -546,7 +521,13 @@ export const AccountComponent = () => {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} prefix="ETB" />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label="Description (Optional)">
             <Input.TextArea
@@ -604,7 +585,13 @@ export const AccountComponent = () => {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} min={0} prefix="ETB" />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+            />
           </Form.Item>
 
           <Form.Item name="status" label="Status" initialValue="Active">

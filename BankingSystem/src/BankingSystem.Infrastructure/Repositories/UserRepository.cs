@@ -49,19 +49,6 @@ public class UserRepository : IUserRepository
             .AnyAsync(u => u.PhoneNumber == phoneNumber);
     }
 
-    public async Task<int> GetInactiveUserCountAsync()
-    {
-        return await _dbContext.Users.Where(u => !u.IsActive).CountAsync();
-    }
-    public async Task<int> GetNewUsersCountThisMonthAsync()
-    {
-        var currentMonth = DateTime.UtcNow.Month;
-        var currentYear = DateTime.UtcNow.Year;
-
-        return await _dbContext.Users
-            .Where(u => u.CreatedAt.Month == currentMonth && u.CreatedAt.Year == currentYear)
-            .CountAsync();
-    }
     public async Task<int> GetActiveUserCountAsync()
     {
         return await _dbContext.Users.Where(u => u.IsActive).CountAsync();

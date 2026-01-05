@@ -39,11 +39,11 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("accounts/summary")]
-    public async Task<ActionResult<CustomerSummaryDto>> GetCustomerSummary()
+    [HttpGet("accounts/summery")]
+    public async Task<ActionResult<CustomerSummeryDto>> GetCustomerSummery()
     {
-        var summary = await _userService.GetCustomerSummaryAsync();
-        return Ok(summary);
+        var summery = await _userService.GetCustomerSummeryAsync();
+        return Ok(summery);
     }
 
     [HttpPost("accounts/{senderAccountId}/transfer")]

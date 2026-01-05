@@ -250,7 +250,9 @@ export const AccountInfoCard = ({ account }: Props) => {
             <InputNumber
               style={{ width: "100%" }}
               min={0}
-              prefix="ETB"
+              formatter={(value) =>
+                `ETB ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
             />
           </Form.Item>
           <Form.Item name="description" label="Description (Optional)">

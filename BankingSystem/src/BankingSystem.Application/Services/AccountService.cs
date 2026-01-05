@@ -6,6 +6,7 @@ using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.Mappings;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 using BankingSystem.Migrations;
+using BankingSystem.src.BankingSystem.Application.DTOs;
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
 public class AccountService : IAccountService
@@ -28,7 +29,8 @@ public class AccountService : IAccountService
         {
             throw new InvalidOperationException("User does not exist");
         }
-        string accountNumber = _numberGenerator.GenerateAccountNumber("MB");
+
+        string accountNumber = _numberGenerator.GenerateAccountNumber("223");
         Account? existingAccountNumber = await _accountRepository.GetByAccountNumberAsync(accountNumber);
 
         if (existingAccountNumber is not null)
@@ -84,9 +86,9 @@ public class AccountService : IAccountService
         }
         return account.ToDto();
     }
-    public async Task<IEnumerable<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize)
+    public async Task<PaginatedResponseDto<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize)
     {
-        var accounts = await _accountRepository.GetPaginatedAsync(pageNumber, pageSize);
+        var (accounts, totalCount) = await _accountRepository.GetPaginatedAsync(pageNumber, pageSize);
 
         var tasks = accounts.Select(async account =>
         {
@@ -99,7 +101,7 @@ public class AccountService : IAccountService
             return new AccountResponseDto(
                 account.Id,
                 account.UserId,
-                user.Name,
+                user.FirstName + " " + user.LastName,
                 account.AccountNumber,
                 account.Type.ToString(),
                 account.Balance,
@@ -109,7 +111,13 @@ public class AccountService : IAccountService
             );
         });
 
-        return await Task.WhenAll(tasks);
+        return new PaginatedResponseDto<AccountResponseDto>
+        {
+            Items = await Task.WhenAll(tasks),
+            PageSize = pageSize,
+            PageNumber = pageNumber,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId)
@@ -142,7 +150,7 @@ public class AccountService : IAccountService
         return new AccountResponseDto(
             account.Id,
             account.UserId,
-            user.Name,
+            user.FirstName + " " + user.LastName,
             account.AccountNumber,
             account.Type.ToString(),
             account.Balance,

@@ -4074,19 +4074,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\tMelkishi\\.nuget\\packages\\": {}
+    "/home/melki/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj",
+      "projectUniqueName": "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj",
       "projectName": "BankingSystem",
-      "projectPath": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\BankingSystem.csproj",
-      "packagesPath": "C:\\Users\\tMelkishi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tMelkishi\\Desktop\\Banking-System\\BankingSystem\\obj\\",
+      "projectPath": "/home/melki/Desktop/Banking-System/BankingSystem/BankingSystem.csproj",
+      "packagesPath": "/home/melki/.nuget/packages/",
+      "outputPath": "/home/melki/Desktop/Banking-System/BankingSystem/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\tMelkishi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/melki/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -4110,7 +4110,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -4188,7 +4188,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.308/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

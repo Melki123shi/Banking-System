@@ -1,4 +1,5 @@
 using System;
+using BankingSystem.src.BankingSystem.Application.DTOs;
 using BankingSystem.src.BankingSystem.Application.DTOs.Account;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 namespace BankingSystem.src.BankingSystem.Application.Interfaces.Services;
@@ -13,7 +14,7 @@ public interface IAccountService
     Task<List<AccountResponseDto>> GetAccountsByIdsAsync(IEnumerable<Guid> accountIds);
 
 
-    Task<IEnumerable<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize);
+    Task<PaginatedResponseDto<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize);
     Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId);
     Task<AccountResponseDto>  UpdateAccountAsync(Guid accountId, UpdateAccountRequestDto UpdateAccountRequestDto);
     Task DeleteAccountAsync(Guid accountId);

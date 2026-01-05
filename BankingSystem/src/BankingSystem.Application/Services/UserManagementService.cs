@@ -27,19 +27,24 @@ public class UserManagementService : IUserManagementService
         if (await _userRepository.PhoneNumberExistsAsync(createUserRequest.PhoneNumber))
             throw new InvalidOperationException("Phone number already exists");
         var user = new User(
-            createUserRequest.Name,
+            createUserRequest.FirstName,
+            createUserRequest.LastName,
+            createUserRequest.Email, 
             createUserRequest.PhoneNumber,
-            _passwordHasher.Hash(createUserRequest.Password)
+            _passwordHasher.Hash(createUserRequest.Password),
+            createUserRequest.DateOfBirth
         );
 
         await _userRepository.AddAsync(user);
 
         return new CreateUserResponse(
             user.Id,
-            user.Name,
+            user.FirstName + " " + user.LastName,
             user.PhoneNumber,
             user.Role,
-            user.CreatedAt
+            user.CreatedAt,
+            user.DateOfBirth,
+            user.Email
         );
     }
 
@@ -79,10 +84,13 @@ public class UserManagementService : IUserManagementService
             hashedPassword = _passwordHasher.Hash(updateUserRequest.Password);
         }
         user.UpdateDetails(
-            updateUserRequest.Name ?? user.Name,
+            updateUserRequest.FirstName ?? user.FirstName,
+            updateUserRequest.LastName ?? user.LastName,
             updateUserRequest.PhoneNumber ?? user.PhoneNumber,
+            updateUserRequest.Email ?? user.Email,
             updateUserRequest.IsActive ?? user.IsActive,
-            hashedPassword
+            hashedPassword,
+            updateUserRequest.DateOfBirth ?? user.DateOfBirth
         );
 
         await _userRepository.UpdateAsync(user);

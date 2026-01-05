@@ -1,6 +1,7 @@
 using System;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Services;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
@@ -29,15 +30,24 @@ public class NumberGenerator : INumberGenerator
         return $"{timestamp}{channelCode}{sequenceStr}";
     }
 
-    public string GenerateAccountNumber(string channelCode)
+    public string GenerateAccountNumber(string branchCode)
     {
-       byte[] bytes = new byte[8];
-    using (var rng = RandomNumberGenerator.Create())
-    {
-        rng.GetBytes(bytes);
+        string bankCode = "1002";
+        string year = DateTime.UtcNow.Year.ToString();
+
+        // Secure random number
+        var random = RandomNumberGenerator.GetInt32(100000, 999999);
+
+        string raw = $"{bankCode}{branchCode}{year}{random}";
+        int checkDigit = CalculateCheckDigit(raw);
+
+        return $"{bankCode}-{branchCode}-{year}-{random}-{checkDigit}";
     }
 
-    return BitConverter.ToUInt64(bytes, 0).ToString();
+    private static int CalculateCheckDigit(string input)
+    {
+        int sum = input.Sum(c => c - '0');
+        return sum % 10;
     }
 
 }

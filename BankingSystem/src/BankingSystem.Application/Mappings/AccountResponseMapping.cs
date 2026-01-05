@@ -9,7 +9,7 @@ public static class AccountResponseMapping
         return new DTOs.Account.AccountResponseDto(
             account.Id,
             account.UserId, 
-            account.User?.Name ?? string.Empty,
+            account.User?.FirstName + " " + account.User?.LastName ?? string.Empty,
             account.AccountNumber,
             account.Type.ToString(),
             account.Balance,

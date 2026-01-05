@@ -8,8 +8,10 @@ public static class UserDetailsResponseMapping
     {
         return new UserDetailsResponse(
              user.Id,
-            user.Name,
+            user.FirstName + " " + user.LastName,
             user.PhoneNumber,
+            user.Email,
+            user.DateOfBirth,
             user.Role,
             user.IsActive,
             user.CreatedAt,

@@ -13,7 +13,8 @@ public class CreateUserValidator : AbstractValidator<CreateUserRequest>
                                 .Matches(@"^\+251[7, 9]?[1-9]\d{1,8}$")
                                 .WithMessage("Invalid phone number");
 
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.FirstName).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.LastName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
     }
 }

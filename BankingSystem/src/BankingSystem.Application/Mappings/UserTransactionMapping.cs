@@ -26,7 +26,7 @@ public static class UserTransactionMapping
             transaction.CreatedAt,
             isOutgoing ? "OUT" : "IN",
             customerAccount?.AccountNumber ?? "-",
-            counterpartyAccount?.User?.Name ?? "System",
+            counterpartyAccount?.User?.FirstName + " " + counterpartyAccount?.User?.LastName ?? "System",
             counterpartyAccount?.AccountNumber ?? "-",
             transaction.Type.ToString(),
             transaction.Description!

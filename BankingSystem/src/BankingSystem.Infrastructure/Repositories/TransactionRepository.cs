@@ -72,8 +72,8 @@ public class TransactionRepository : ITransactionRepository
         if (!string.IsNullOrWhiteSpace(searchParams.Name))
         {
             query = query.Where(t =>
-                (t.SenderAccount != null && t.SenderAccount.User.Name.Contains(searchParams.Name)) ||
-                (t.ReceiverAccount != null && t.ReceiverAccount.User.Name.Contains(searchParams.Name))
+                (t.SenderAccount != null && (t.SenderAccount.User.FirstName.Contains(searchParams.Name) || t.SenderAccount.User.LastName.Contains(searchParams.Name))) ||
+                (t.ReceiverAccount != null && (t.ReceiverAccount.User.FirstName.Contains(searchParams.Name) || t.ReceiverAccount.User.LastName.Contains(searchParams.Name)))
             );
         }
 

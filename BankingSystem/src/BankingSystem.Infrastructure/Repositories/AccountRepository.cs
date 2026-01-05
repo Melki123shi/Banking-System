@@ -64,12 +64,14 @@ public class AccountRepository : IAccountRepository
         return await _dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
     }
 
-    public async Task<IEnumerable<Account>> GetPaginatedAsync(int pageNumber, int pageSize)
+    public async Task<(IEnumerable<Account>, int)> GetPaginatedAsync(int pageNumber, int pageSize)
     {
-        return await _dbContext.Accounts
+        var query = await _dbContext.Accounts
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+        var totalCount = await _dbContext.Accounts.CountAsync();
+        return (query, totalCount);
     }
 
     public async Task UpdateAsync(Account account)

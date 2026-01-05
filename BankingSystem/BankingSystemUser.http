@@ -16,9 +16,12 @@ Authorization: Bearer {{Admin_AccessToken}}
 Content-Type: application/json
 
 {
-    "Name": "Kebron Marken",
-    "phoneNumber": "+25992996677",
-    "password": "1234"
+    "FirstName": "Kebron",
+    "LastName": "Tesfaye",
+    "email": "kebron.tesfaye@gmail.com",
+    "phoneNumber": "+251998996677",
+    "password": "1234",
+    "dateOfBirth": "1995-05-15"
 }
 
 ###

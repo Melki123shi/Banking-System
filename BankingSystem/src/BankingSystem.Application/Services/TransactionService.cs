@@ -64,8 +64,8 @@ public class TransactionService : ITransactionService
                     transaction.Type.ToString() == "Deposit" ? "IN" : "OUT",
                     transaction.SenderAccount?.AccountNumber ?? string.Empty,
                     (transaction.SenderAccount?.UserId == userId
-                        ? transaction.ReceiverAccount?.User.Name
-                        : transaction.SenderAccount?.User.Name) ?? string.Empty,
+                        ? transaction.ReceiverAccount?.User.FirstName + " "  + transaction.ReceiverAccount?.User.LastName
+                        : transaction.SenderAccount?.User.FirstName + " "  + transaction.SenderAccount?.User.LastName) ?? string.Empty,
                     (transaction.SenderAccount?.UserId == userId
                         ? transaction.ReceiverAccount?.AccountNumber
                         : transaction.SenderAccount?.AccountNumber) ?? string.Empty,

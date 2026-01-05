@@ -3,39 +3,23 @@
 
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10&name=Meseret
+GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10
 Accept: application/json
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###
 POST {{BankingSystem_HostAddress}}/api/admin/accounts
 Accept: application/json
-# Authorization: Bearer {{Admin_AccessToken}}
 Content-Type: application/json
 
 {
-    "UserId": "0859d988-4435-4835-b732-e2d2613b8241",
-    "AccountNumber": "AC1t353678h9",
-    "Balance": 5000.00,
-    "AccountType": "Savings",
-    "Status": "active"
+  "userId": "4bbc04a4-41c1-46be-ae62-7e73569a48eb",
+  "balance": 5000,
+  "accountType": "Savings",
+  "status": "Active"
 }
 
-accountNumber
-: 
-"Awaed1234d2"
-accountType
-: 
-"Checking"
-balance
-: 
-12344
-status
-: 
-"Active"
-userId
-: 
-"4422dab6-d56f-4b70-8cde-2cab8283742b"
+
 
 # PUT {{BankingSystem_HostAddress}}/api/admin/accounts/f2caebf6-cd7d-4159-af16-37fe965e2089
 # Authorization: Bearer {{Admin_AccessToken}}

@@ -71,3 +71,11 @@ export const useUpdateUser = () => {
     },
   });
 };
+
+export const useGetUserSummary = () => {
+  return useQuery({
+    queryKey: ["userSummary"],
+    queryFn: () => userService.GetSummary(),
+    retry: false,
+  });
+}

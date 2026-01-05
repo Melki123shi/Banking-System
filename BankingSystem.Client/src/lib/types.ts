@@ -14,6 +14,13 @@ import type { User } from "@/entities/user";
     type: string;
   }
 
+export interface UserSummary {
+  totalCustomers: number;
+  activeCustomers: number;
+  inactiveCustomers: number;
+  newUsersThisMonth: number;
+}
+
 export interface PaginatedResponse<T> {
   items: T[];
   pageNumber: number;

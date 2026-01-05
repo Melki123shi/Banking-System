@@ -1,17 +1,29 @@
 import { apiClient as api } from "@/lib/axios";
 import type { User } from "@/entities/user";
-import type { PaginatedResponse, UpdateUserRequest, UserSummary } from "@/lib/types";
+import type {
+  PaginatedResponse,
+  UpdateUserRequest,
+  UserSearchParams,
+  UserSummary,
+} from "@/lib/types";
 
 const basePath = "admin/users";
 
 export const userService = {
   getPaginatedUsers: async (
+    phoneNumber: string,
     pageNumber: number,
     pageSize: number
   ): Promise<PaginatedResponse<User>> => {
+    console.log(phoneNumber);
     const response = await api.get<PaginatedResponse<User>>(
-      `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+      `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+        phoneNumber
+          ? `&phoneNumber=${encodeURIComponent(phoneNumber)}`
+          : ""
+      }`
     );
+    console.log(response.data, "response data");
     return response.data;
   },
   getDetails: async (id: string): Promise<User> => {
@@ -31,8 +43,8 @@ export const userService = {
   RemoveUser: async (id: string) => {
     await api.delete(`${basePath}/${id}`);
   },
-  GetSummary: async () : Promise<UserSummary> => {
-    const response = await api.get<UserSummary>(`admin/users/summary`);
+  GetSummary: async (): Promise<UserSummary> => {
+    const response = await api.get<UserSummary>(`${basePath}/summary`);
     return response.data;
-  }
+  },
 };

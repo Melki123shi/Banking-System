@@ -19,8 +19,6 @@ const LoginPage: React.FC = () => {
   const loginMutation = useLogin();
   const user = useAuthStore((state) => state.user);
 
-  console.log(user, "-------------------<>")
-
   useEffect(() => {
     if (!user) return;
 
@@ -32,20 +30,23 @@ const LoginPage: React.FC = () => {
   }, [user, navigate]);
 
   const onFinish = (values: { phoneNumber: string; password: string }) => {
+    values.phoneNumber = "+2519" + values.phoneNumber.trim();
     loginMutation.mutate(values, {
       onError: () => message.error("Invalid phone number or password"),
     });
   };
 
   return (
-    <AntLayout 
-      style={{ 
-        minHeight: '100vh', 
-        backgroundImage: `${isDarkMode ? "url(" + bgDark + ")" :"url(" + bg + ")"}`,
-        backgroundSize: 'cover',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+    <AntLayout
+      style={{
+        minHeight: "100vh",
+        backgroundImage: `${
+          isDarkMode ? "url(" + bgDark + ")" : "url(" + bg + ")"
+        }`,
+        backgroundSize: "cover",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Card className="w-full max-w-md p-8 shadow-lg">
@@ -54,7 +55,11 @@ const LoginPage: React.FC = () => {
           <Image src={LogoImage} preview={false} />{" "}
           <Title
             level={3}
-            style={{ margin: 0, marginBottom: 8, color: isDarkMode ? "#41e1fb" : "#143d64" }}
+            style={{
+              margin: 0,
+              marginBottom: 8,
+              color: isDarkMode ? "#46beedff" : "#143d64",
+            }}
             className="text-xl font-medium text-[#143d64] px-7"
           >
             {" "}
@@ -66,14 +71,25 @@ const LoginPage: React.FC = () => {
           </Text>{" "}
         </div>
 
-        <Form layout="vertical" size="large" onFinish={onFinish} className="px-3">
+        <Form
+          layout="vertical"
+          size="large"
+          onFinish={onFinish}
+          className="px-3"
+        >
           <Form.Item
             name="phoneNumber"
-            rules={[{ required: true,
-               validator: validateEthioPhone
-               }]}
+            rules={[{ required: true, validator: validateEthioPhone }]}
           >
-            <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
+            <Input
+              prefix={
+                <div className="flex gap-2">
+                  <PhoneOutlined className="text-slate-400" />
+                  <span className={isDarkMode ? "text-slate-400" : "text-slate-900"}>+2519 |</span>
+                </div>
+              }
+              placeholder="Phone Number"
+            />
           </Form.Item>
 
           <Form.Item

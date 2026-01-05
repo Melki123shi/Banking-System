@@ -35,6 +35,10 @@ export interface TransactionSearchParams {
     pageSize: number;
 }
 
+export interface UserSearchParams {
+    phoneNumber?: string;
+}
+
 
 export interface LoginRequest {
   phoneNumber: string;

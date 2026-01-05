@@ -15,7 +15,10 @@ function App() {
           : antdTheme.defaultAlgorithm,
         components: {
           Card: {
-            colorBgContainer: isDarkMode ? "#141414" : "#fff",
+            colorBgContainer: "transparent",
+          },
+          Input: {
+            colorBgContainer: "transparent",
           },
           Table: {
             colorBgContainer: isDarkMode ? "#141414" : "fff",

@@ -146,10 +146,9 @@ export const useTransferMoney = () => {
       const validationErrors = error.response?.data?.errors;
 
       // Grab the first validation error message
-      const firstErrorMessage = validationErrors
+      validationErrors
         ? Object.values(validationErrors).flat()[0]
         : null;
-      console.log("errroooooooooorrrrooooooo", validationErrors, firstErrorMessage)
     },
   });
 };

@@ -27,8 +27,8 @@ public class UserManagementService : IUserManagementService
         if (await _userRepository.PhoneNumberExistsAsync(createUserRequest.PhoneNumber))
             throw new InvalidOperationException("Phone number already exists");
         var user = new User(
-            createUserRequest.FirstName,
-            createUserRequest.LastName,
+            createUserRequest.FirstName[0].ToString().ToUpper() + createUserRequest.FirstName.Substring(1).ToLower(),
+            createUserRequest.LastName[0].ToString().ToUpper() + createUserRequest.LastName.Substring(1).ToLower(),
             createUserRequest.Email, 
             createUserRequest.PhoneNumber,
             _passwordHasher.Hash(createUserRequest.Password),
@@ -48,11 +48,12 @@ public class UserManagementService : IUserManagementService
         );
     }
 
-    public async Task<PaginatedResponseDto<UserDetailsResponse>> GetPaginatedCustomersAsync(
+    public async Task<PaginatedResponseDto<UserDetailsResponse>> GetPaginatedCustomersAsync( UserSearchParams searchParams,
     int pageNumber,
     int pageSize)
     {
         var pagedUsers = await _userRepository.GetPaginatedCustomersAsync(
+            searchParams,
             pageNumber,
             pageSize
         );

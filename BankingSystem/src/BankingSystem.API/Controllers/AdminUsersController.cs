@@ -28,9 +28,9 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PaginatedResponseDto<UserDetailsResponse>>> GetPaginatedUsers(int pageNumber, int pageSize)
+    public async Task<ActionResult<PaginatedResponseDto<UserDetailsResponse>>> GetPaginatedUsers(int pageNumber, int pageSize, [FromQuery] UserSearchParams searchParams )
     {
-        var response = await _userService.GetPaginatedCustomersAsync(pageNumber, pageSize);
+        var response = await _userService.GetPaginatedCustomersAsync(searchParams, pageNumber, pageSize);
         return Ok(response);
     }
 

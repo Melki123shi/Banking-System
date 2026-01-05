@@ -47,6 +47,8 @@ public class TransactionService : ITransactionService
         return new PaginatedResponseDto<TransactionDetailDto>
         {
             Items = items.Select(t => t.ToDto()),
+            PageNumber = searchParams.PageNumber,
+            PageSize = searchParams.PageSize,
             TotalCount = total
         };
     }
@@ -54,6 +56,7 @@ public class TransactionService : ITransactionService
     public async Task<PaginatedResponseDto<UserTransactionReponse>> GetUserTransactionsAsync(Guid userId, TransactionSearchParams searchParams)
     {
         var (items, total) = await _transactionRepository.GetTransactionsAsync(searchParams, userId);
+
         return new PaginatedResponseDto<UserTransactionReponse>
         {
             Items = items.Select(transaction =>

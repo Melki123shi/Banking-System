@@ -4,7 +4,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODU5ZDk4OC00NDM1LTQ4MzUtYjczMi1
 
 @Customer_AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NDIyZGFiNi1kNTZmLTRiNzAtOGNkZS0yY2FiODI4Mzc0MmIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsInBob25lIjoiKzI1OTkyOTk2Njc3IiwiZXhwIjoxNzY2ODg0ODY3LCJpc3MiOiJCYW5raW5nU3lzdGVtIiwiYXVkIjoiQmFua2luZ1N5c3RlbVVzZXJzIn0.zQu0ZIYyzaCLRHdMsPHI08x0Lt0sCkEuVJtfZ2HKz24
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/users?pageNumber=1&pageSize=10
+GET {{BankingSystem_HostAddress}}/api/admin/users?pageNumber=1&pageSize=10&phoneNumber=%2B251945342313
 Authorization: Bearer {{Admin_AccessToken}}
 Accept: application/json
 
@@ -65,7 +65,7 @@ DELETE {{BankingSystem_HostAddress}}/api/admin/users/0859D988-4435-4835-B732-E2D
 GET {{BankingSystem_HostAddress}}/api/admin/accounts/7a6ab6d0-2997-41aa-8eef-177e957c9cd5/user
 
 ###
-GET {{BankingSystem_HostAddress}}/api/user/me
+GET {{BankingSystem_HostAddress}}/api/admin/users/summary
 Authorization: Bearer {{Customer_AccessToken}}
 
 ###
@@ -73,7 +73,7 @@ GET {{BankingSystem_HostAddress}}/api/transactions?pageNumber=1&pageSize=10
 Authorization: Bearer {{Customer_AccessToken}}
 
 ###
-PUT {{BankingSystem_HostAddress}}/api/admin/users/4422dab6-d56f-4b70-8cde-2cab8283742b
+PUT {{BankingSystem_HostAddress}}/api/admin/users/2b023fa5-d5fc-41c9-b4a0-f73667f66439
 Content-Type: application/json
 
 {

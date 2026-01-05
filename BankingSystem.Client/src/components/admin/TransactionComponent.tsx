@@ -42,14 +42,12 @@ export const TransactionComponent = () => {
     pageNumber,
     pageSize,
   });
-  const { data: userSummary } = useGetUserSummary();
-
-  console.log("ummary", userSummary);
+  // const { data: userSummary } = useGetUserSummary();
 
   const transactions = data?.items ?? [];
   const total = data?.totalCount ?? 0;
-  const totalInactiveUsers = userSummary?.inactiveCustomers;
-  const totalActiveUsers = userSummary?.activeCustomers;
+  // const totalInactiveUsers = userSummary?.inactiveCustomers;
+  // const totalActiveUsers = userSummary?.activeCustomers;
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   const transactionColumns: ColumnsType<Transaction> = [
@@ -128,6 +126,13 @@ export const TransactionComponent = () => {
     },
   ];
 
+  const timeFrames = [
+  { title: "This Week" },
+  { title: "This Month" },
+  { title: "This Year" },
+];
+
+
   return (
     <Layout className="min-h-screen">
       <Layout.Content className="">
@@ -146,187 +151,99 @@ export const TransactionComponent = () => {
 
         {/* Stats */}
         <Row gutter={[16, 16]} className="mb-10">
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <div className="flex gap-6">
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 500,
-                    color: isDarkMode ? "#dddbdbff" : "#141414",
-                    marginBottom: 12,
-                  }}
-                >
-                  Total Transactions
-                </Text>
-              </div>
-              <Statistic value={total} prefix={<DollarOutlined />} />
+      <Col xs={24} sm={12} lg={6}>
+        <Card>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              color: isDarkMode ? "#dddbdbff" : "#141414",
+              marginBottom: 12,
+              display: "block",
+            }}
+          >
+            Total Transactions
+          </Text>
 
-              <Card style={{ marginTop: 16 }}>
+          <Statistic
+            value={total}
+            prefix={<DollarOutlined />}
+            style={{ marginBottom: 16 }}
+          />
 
-              <Row>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Completed"
-                    value={totalActiveUsers}
-                    style={{ color: "#16a34a" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Pending"
-                    value={totalInactiveUsers}
-                    style={{ color: "#f59e0b" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Failed"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-              </Row>
-              </Card>
-            </Card>
-          </Col>
-        </Row>
+          <Card size="small">
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} md={8}>
+                {/* <Statistic
+                  title="Completed"
+                  value={totalActiveUsers}
+                  valueStyle={{ color: "#16a34a" }}
+                /> */}
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                {/* <Statistic
+                  title="Pending"
+                  value={totalInactiveUsers}
+                  valueStyle={{ color: "#f59e0b" }}
+                /> */}
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Statistic
+                  title="Failed"
+                  value={transactions.filter((t) => t.status === "Failed").length}
+                  valueStyle={{ color: "#dc2626" }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Card>
+      </Col>
+    </Row>
 
-        <Row gutter={[16, 16]} className="mb-10">
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <div className="flex gap-6">
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 500,
-                    color: isDarkMode ? "#dddbdbff" : "#141414",
-                    marginBottom: 12,
-                  }}
-                >
-                  This Week
-                </Text>
-              </div>
-              <Row>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Completed"
-                    value={totalInactiveUsers}
-                    style={{ color: "#f59e0b" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Pending"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Failed"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Col>
+    {/* This Week / Month / Year Cards */}
+    <Row gutter={[16, 16]} className="mb-10">
+      {timeFrames.map((frame) => (
+        <Col key={frame.title} xs={24} sm={12} lg={6}>
+          <Card>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 500,
+                color: isDarkMode ? "#dddbdbff" : "#141414",
+                marginBottom: 12,
+                display: "block",
+              }}
+            >
+              {frame.title}
+            </Text>
 
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <div className="flex gap-6">
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 500,
-                    color: isDarkMode ? "#dddbdbff" : "#141414",
-                    marginBottom: 12,
-                  }}
-                >
-                  This Month
-                </Text>
-              </div>
-              <Row>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Completed"
-                    value={totalInactiveUsers}
-                    style={{ color: "#f59e0b" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Pending"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Failed"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <div className="flex gap-6">
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 500,
-                    color: isDarkMode ? "#dddbdbff" : "#141414",
-                    marginBottom: 12,
-                  }}
-                >
-                  This Year
-                </Text>
-              </div>
-              <Row>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Completed"
-                    value={totalInactiveUsers}
-                    style={{ color: "#f59e0b" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Pending"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <Statistic
-                    title="Failed"
-                    value={
-                      transactions.filter((t) => t.status === "Failed").length
-                    }
-                    style={{ color: "#dc2626" }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} md={8}>
+                {/* <Statistic
+                  title="Completed"
+                  value={totalInactiveUsers}
+                  valueStyle={{ color: "#16a34a" }}
+                /> */}
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Statistic
+                  title="Pending"
+                  value={transactions.filter((t) => t.status === "Pending").length}
+                  valueStyle={{ color: "#f59e0b" }}
+                />
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Statistic
+                  title="Failed"
+                  value={transactions.filter((t) => t.status === "Failed").length}
+                  valueStyle={{ color: "#dc2626" }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      ))}
+    </Row>
 
         {/* Table */}
         <div className="flex justify-between">

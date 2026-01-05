@@ -6,7 +6,6 @@ import { useAuthStore } from "@/stores/authStore";
 import { DataTable } from "@/components/common/DataTable";
 import { Layout, Card, Tag, Typography, Avatar, Space, Button } from "antd";
 import type { ColumnType } from "antd/es/table/interface";
-import { useUserAccounts } from "@/hooks/useAccount";
 import SearchBar from "../common/SearchBar";
 import type { UserTransactionDetail } from "@/lib/types";
 import { ReloadOutlined } from "@ant-design/icons";
@@ -38,10 +37,6 @@ export const TransactionComponent = () => {
     pageNumber,
     pageSize,
   });
-
-  console.log("data ---> ", data);
-
-  const accounts = useUserAccounts(user.id);
 
   const transactionColumns: ColumnType<UserTransactionDetail>[] = [
     {

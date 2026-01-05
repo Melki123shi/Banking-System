@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/services/userService";
 import { accountService } from "@/services/accountService";
+import type { User } from "@/entities/user";
 
 export interface PaginatedResponse<T> {
   items: T[];
@@ -9,10 +10,10 @@ export interface PaginatedResponse<T> {
   totalCount: number;
 }
 
-export const useGetUsers = (pageNumber: number, pageSize: number) => {
+export const useGetUsers = ( phoneNumber: string, pageNumber: number, pageSize: number) => {
   return useQuery({
     queryKey: ["users", pageNumber, pageSize],
-    queryFn: () => userService.getPaginatedUsers(pageNumber, pageSize),
+    queryFn: () => userService.getPaginatedUsers(phoneNumber, pageNumber, pageSize),
     retry: false,
     placeholderData: (previousData) => previousData,
   });
@@ -72,9 +73,9 @@ export const useUpdateUser = () => {
   });
 };
 
-export const useGetUserSummary = () => {
+export const useGetUserSummary = (users: User[]) => {
   return useQuery({
-    queryKey: ["userSummary"],
+    queryKey: ["userSummary", users],
     queryFn: () => userService.GetSummary(),
     retry: false,
   });

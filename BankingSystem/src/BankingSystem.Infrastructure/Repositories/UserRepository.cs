@@ -1,4 +1,5 @@
 using System;
+using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 using BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Infrastructure.Persistence;
@@ -26,10 +27,16 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<(IEnumerable<User> Users, int TotalCount)> GetPaginatedCustomersAsync(
-    int pageNumber,
-    int pageSize)
+        UserSearchParams searchParams,
+        int pageNumber,
+        int pageSize)
     {
         var query = _dbContext.Users.AsQueryable().Where(u => u.Role.ToString() == "Customer");
+
+        if (!string.IsNullOrEmpty(searchParams.PhoneNumber))
+        {
+            query = query.Where(u => u.PhoneNumber.Contains(searchParams.PhoneNumber));
+        }
 
         var totalCount = await query.CountAsync();
 
@@ -51,7 +58,7 @@ public class UserRepository : IUserRepository
 
     public async Task<int> GetInactiveUserCountAsync()
     {
-        return await _dbContext.Users.Where(u => !u.IsActive).CountAsync();
+        return await _dbContext.Users.Where(u => !u.IsActive && u.Role == UserRole.Customer).CountAsync();
     }
     public async Task<int> GetNewUsersCountThisMonthAsync()
     {
@@ -59,12 +66,12 @@ public class UserRepository : IUserRepository
         var currentYear = DateTime.UtcNow.Year;
 
         return await _dbContext.Users
-            .Where(u => u.CreatedAt.Month == currentMonth && u.CreatedAt.Year == currentYear)
+            .Where(u => u.CreatedAt.Month == currentMonth && u.CreatedAt.Year == currentYear && u.Role == UserRole.Customer)
             .CountAsync();
     }
     public async Task<int> GetActiveUserCountAsync()
     {
-        return await _dbContext.Users.Where(u => u.IsActive).CountAsync();
+        return await _dbContext.Users.Where(u => u.IsActive && u.Role == UserRole.Customer).CountAsync();
     }
 
 

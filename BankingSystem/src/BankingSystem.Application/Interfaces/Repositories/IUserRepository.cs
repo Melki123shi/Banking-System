@@ -1,4 +1,5 @@
 using System;
+using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 namespace BankingSystem.src.BankingSystem.Application.Interfaces.Repositories;
 
@@ -9,6 +10,7 @@ public interface IUserRepository
     Task AddAsync(User user);
     Task<IEnumerable<User>> GetAllUsersAsync();
     Task<(IEnumerable<User> Users, int TotalCount)> GetPaginatedCustomersAsync(
+        UserSearchParams searchParams,
         int pageNumber,
         int pageSize
     );

@@ -36,10 +36,10 @@ import { useThemeStore } from "@/stores/themeStore";
 const { Option } = Select;
 
 export const AccountComponent = () => {
-  const pageNumber = 1;
-  const pageSize = 10;
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const {
-    data: accounts,
+    data,
     isLoading,
     refetch,
   } = useGetAccounts(pageNumber, pageSize);
@@ -47,6 +47,8 @@ export const AccountComponent = () => {
   const setSelectedAccount = useAccountStore(
     (state) => state.setSelectedAccount
   );
+
+  const accounts = data?.items ?? [];
 
   const deleteAccountMutation = useDeleteAccount();
   const updateAccountMutation = useUpdateAccount();
@@ -427,6 +429,16 @@ export const AccountComponent = () => {
           title="Accounts Table"
             loading={isLoading}
             dataSource={Array.isArray(accounts) ? accounts : []}
+            pagination={{
+              current: pageNumber,
+              pageSize: pageSize,
+              showSizeChanger: true,
+              total: data?.totalCount || 0,
+              onChange: (page, size) => {
+                setPageNumber(page);
+                setPageSize(size || 10);
+              },
+            }}
             columns={accountColumns}
             rowKey="id"
           />
@@ -570,13 +582,6 @@ export const AccountComponent = () => {
           layout="vertical"
           onFinish={handleUpdateAccount}
         >
-          <Form.Item
-            name="accountNumber"
-            label="Account Number"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
 
           <Form.Item
             name="accountType"

@@ -2,6 +2,7 @@ import { apiClient as api } from "@/lib/axios";
 import type { Account } from "@/entities/account";
 import type { User } from "@/entities/user";
 import { AxiosError } from "axios";
+import type { PaginatedResponse } from "@/lib/types";
 
 const basePath = "admin/accounts";
 
@@ -23,11 +24,10 @@ export const accountService = {
   getPaginatedAccounts: async (
     pageNumber: number,
     pageSize: number
-  ): Promise<Account[]> => {
-    const response = await api.get<Account[]>(
+  ): Promise<PaginatedResponse<Account>> => {
+    const response = await api.get<PaginatedResponse<Account>>(
       `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
-    console.log("Accounts fetch ---", response)
     return response.data;
   },
 

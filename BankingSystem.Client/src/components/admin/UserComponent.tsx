@@ -1,6 +1,7 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 import type { User } from "@/entities/user";
+import dayjs from "dayjs";
 import UserDetailModal from "./UserDetailModal";
 import {
   useGetUsers,
@@ -29,6 +30,7 @@ import {
   Space,
   Tooltip,
   Typography,
+  DatePicker,
 } from "antd";
 import {
   DeleteOutlined,
@@ -39,11 +41,13 @@ import {
   UserOutlined,
   LockOutlined,
   EyeOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import UserAccounts from "./UserAccounts";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { validateEthioPhone } from "@/lib/validation";
 import { useThemeStore } from "@/stores/themeStore";
+import SearchBar from "../common/SearchBar";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -51,22 +55,33 @@ const { Title, Text } = Typography;
 export const UserComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(2);
-
+  const [searchByPhoneNumberTerm, setSearchByPhoneNumberTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const setSelectedUser = useUserStore((s) => s.setSelectedUser);
   const selectedUser = useUserStore((state) => state.selectedUser);
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
-;
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchByPhoneNumberTerm);
+      setPageNumber(1); // Reset to page 1 on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchByPhoneNumberTerm]);
 
   // User list
-  const { data, isLoading, refetch } = useGetUsers(pageNumber, pageSize);
+  const { data, isLoading, refetch } = useGetUsers(
+    debouncedSearch,
+    pageNumber,
+      pageSize
+  );
 
   // Mutations
   const createUserMutation = useCreateUser();
   const createAccountMutation = useCreateAccount();
   const deleteUserMutation = useDeleteUser();
   const updateUserMutation = useUpdateUser();
-  const { data: userSummary } = useGetUserSummary();
+  const { data: userSummary } = useGetUserSummary(data?.items || []);
 
   // Forms & modal states
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
@@ -105,6 +120,7 @@ export const UserComponent = () => {
   };
 
   const handleCreateUser = async (values: any) => {
+    values.phoneNumber = "+2519" + values.phoneNumber;
     try {
       await createUserMutation.mutateAsync(values);
       message.success("User created successfully");
@@ -121,7 +137,7 @@ export const UserComponent = () => {
     if (!selectedUser) return;
 
     values.isActive = values.status === "Active" ? true : false;
-    delete values.status;
+    values.phoneNumber = "+2519" + values.phoneNumber;
 
     try {
       await updateUserMutation.mutateAsync({
@@ -179,8 +195,13 @@ export const UserComponent = () => {
                 onClick={() => {
                   setSelectedUser(record);
                   updateUserForm.setFieldsValue({
-                    name: record.name,
-                    phoneNumber: record.phoneNumber,
+                    firstName: record.name.slice(0, record.name.indexOf(" ")),
+                    lastName: record.name.slice(record.name.indexOf(" ") + 1),
+                    phoneNumber: record.phoneNumber.slice(5),
+                    email: record.email,
+                    dateOfBirth: record.dateOfBirth
+                      ? dayjs(record.dateOfBirth)
+                      : null,
                     status: record.isActive ? "Active" : "Inactive",
                   });
                   setIsUpdateUserModalOpen(true);
@@ -300,10 +321,12 @@ export const UserComponent = () => {
             </Card>
           </Col>
           <Col xs={24} sm={12} md={6}>
-            <Card className="shadow-sm border-none"style={
-              {
-                backgroundColor:  isDarkMode ? "#1a3d1aff" : "#b1f4cbff"
-              }}>
+            <Card
+              className="shadow-sm border-none"
+              style={{
+                backgroundColor: isDarkMode ? "#1a3d1aff" : "#b1f4cbff",
+              }}
+            >
               <Statistic
                 title="Active Users"
                 value={userSummary?.activeCustomers ?? 0}
@@ -312,10 +335,12 @@ export const UserComponent = () => {
             </Card>
           </Col>
           <Col xs={24} sm={12} md={6}>
-            <Card className="shadow-sm border-none" style={
-              {
+            <Card
+              className="shadow-sm border-none"
+              style={{
                 backgroundColor: isDarkMode ? "#821111ff" : "#fbb7b7ff",
-              }}>
+              }}
+            >
               <Statistic
                 title="Inactive Users"
                 value={userSummary?.inactiveCustomers ?? 0}
@@ -325,22 +350,29 @@ export const UserComponent = () => {
           </Col>
         </Row>
         <Col xs={24} sm={12} md={6}>
-           <Card className="shadow-sm border-none" style={
-              {
-                backgroundColor: isDarkMode ? "#16477bff" : "#a3d7fcff",
-              }}>
-              <Statistic
-                title="New Users This Month"
-                value={userSummary?.newUsersThisMonth ?? 0}
-                prefix={<TeamOutlined className="mr-2 text-blue-500" />}
-              />
-            </Card>
-          </Col>
+          <Card
+            className="shadow-sm border-none"
+            style={{
+              backgroundColor: isDarkMode ? "#16477bff" : "#a3d7fcff",
+            }}
+          >
+            <Statistic
+              title="New Users This Month"
+              value={userSummary?.newUsersThisMonth ?? 0}
+              prefix={<TeamOutlined className="mr-2 text-blue-500" />}
+            />
+          </Card>
+        </Col>
 
-
-            
         {/* User Table Card */}
-        <Title level={4} className="mb-4 my-6">Customers Table</Title>
+        <Title level={4} className="mb-4 my-6">
+          Customers Table
+        </Title>
+        <SearchBar
+          value={searchByPhoneNumberTerm}
+          placeholder="Search by Phone Number..."
+          onChange={(value) => setSearchByPhoneNumberTerm(value)}
+        />
         <DataTable
           loading={isLoading}
           dataSource={data?.items ?? []}
@@ -360,12 +392,12 @@ export const UserComponent = () => {
 
         {/* user detail modal */}
         {selectedUser && (
-        <UserDetailModal
-          open={isUserDetailModalOpen}
-          onClose={() => setIsUserDetailModalOpen(false)}
-          selectedUser={selectedUser}
-        />
-      )}
+          <UserDetailModal
+            open={isUserDetailModalOpen}
+            onClose={() => setIsUserDetailModalOpen(false)}
+            selectedUser={selectedUser}
+          />
+        )}
         {/* Create User Modal */}
         <Modal
           title="Register New Customer"
@@ -382,24 +414,70 @@ export const UserComponent = () => {
             className="mt-4"
           >
             <Form.Item
-              name="name"
-              label="Full Name"
+              name="firstName"
+              label="First Name"
               rules={[{ required: true, message: "Please enter full name" }]}
             >
               <Input
                 prefix={<UserOutlined className="text-slate-400" />}
-                placeholder="John Doe"
+                placeholder="Jhon"
               />
             </Form.Item>
+            <Form.Item
+              name="lastName"
+              label="Last Name"
+              rules={[{ required: true, message: "Please enter full name" }]}
+            >
+              <Input
+                prefix={<UserOutlined className="text-slate-400" />}
+                placeholder="Doe"
+              />
+            </Form.Item>
+
             <Form.Item
               name="phoneNumber"
               label="Phone Number"
               rules={[{ required: true, validator: validateEthioPhone }]}
             >
               <Input
-                prefix={<PhoneOutlined className="text-slate-400" />}
-                placeholder="09 / 07..."
+                prefix={
+                  <div className="flex gap-2">
+                    <PhoneOutlined className="text-slate-400" />
+                    <span
+                      className={
+                        isDarkMode ? "text-slate-400" : "text-slate-900"
+                      }
+                    >
+                      +2519 |
+                    </span>
+                  </div>
+                }
               />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email (Optional)"
+              rules={[
+                { type: "email", message: "Please enter a valid email!" },
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined className="text-slate-400" />}
+                placeholder="johndoe@example.com"
+              />
+            </Form.Item>
+            <Form.Item
+              name="dateOfBirth"
+              label="Date of Birth"
+              rules={[
+                {
+                  required: true,
+                  type: "date",
+                  message: "Please enter a valid date!",
+                },
+              ]}
+            >
+              <DatePicker placeholder="yyyy-mm-dd" />
             </Form.Item>
             <Form.Item
               name="password"
@@ -411,6 +489,17 @@ export const UserComponent = () => {
                 placeholder="Minimum 6 characters"
               />
             </Form.Item>
+
+            <Form.Item
+              name="status"
+              label="Initial Status"
+              initialValue="Active"
+            >
+              <Select>
+                <Option value="Active">Active</Option>
+                <Option value="Inactive">Inactive</Option>
+              </Select>
+            </Form.Item>
           </Form>
         </Modal>
 
@@ -420,7 +509,7 @@ export const UserComponent = () => {
           open={isUpdateUserModalOpen}
           onCancel={() => setIsUpdateUserModalOpen(false)}
           onOk={() => updateUserForm.submit()}
-          okText="Update Details"
+          okText="Update User"
           confirmLoading={updateUserMutation.isPending}
         >
           <Form
@@ -430,30 +519,78 @@ export const UserComponent = () => {
             className="mt-4"
           >
             <Form.Item
-              name="name"
-              label="Full Name"
-              rules={[{ required: true }]}
+              name="firstName"
+              label="First Name"
+              rules={[{ required: true, message: "Please enter full name" }]}
             >
-              <Input />
+              <Input
+                prefix={<UserOutlined className="text-slate-400" />}
+                placeholder="Jhon"
+              />
             </Form.Item>
             <Form.Item
+              name="lastName"
+              label="Last Name"
+              rules={[{ required: true, message: "Please enter full name" }]}
+            >
+              <Input
+                name="lastName"
+                prefix={<UserOutlined className="text-slate-400" />}
+                placeholder="Doe"
+              />
+            </Form.Item>
+
+            <Form.Item
               name="phoneNumber"
-              label="Phone"
+              label="Phone Number"
               rules={[{ required: true, validator: validateEthioPhone }]}
             >
-              <Input />
+              <Input
+                prefix={
+                  <div className="flex gap-2">
+                    <PhoneOutlined className="text-slate-400" />
+                    <span className="text-slate-900">+2519 |</span>
+                  </div>
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email (Optional)"
+              rules={[
+                { type: "email", message: "Please enter a valid email!" },
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined className="text-slate-400" />}
+                placeholder="johndoe@example.com"
+              />
+            </Form.Item>
+            <Form.Item
+              name="dateOfBirth"
+              label="Date of Birth"
+              rules={[
+                {
+                  required: true,
+                  type: "date",
+                  message: "Please enter a valid date!",
+                },
+              ]}
+            >
+              <DatePicker placeholder="yyyy-mm-dd" />
             </Form.Item>
             <Form.Item
               name="password"
-              label="New Password"
+              label="Secure Password"
+              rules={[{ min: 6 }]}
             >
-              <Input.Password />
+              <Input.Password
+                prefix={<LockOutlined className="text-slate-400" />}
+                placeholder="Minimum 6 characters"
+              />
             </Form.Item>
-            <Form.Item
-              name="status"
-              label="Account Status"
-              rules={[{ required: true }]}
-            >
+
+            <Form.Item name="status" label="User Status" initialValue="Active">
               <Select>
                 <Option value="Active">Active</Option>
                 <Option value="Inactive">Inactive</Option>
@@ -476,13 +613,6 @@ export const UserComponent = () => {
             onFinish={handleCreateAccount}
             className="mt-4"
           >
-            <Form.Item
-              name="accountNumber"
-              label="Account Number"
-              rules={[{ required: true }]}
-            >
-              <Input placeholder="Enter unique account number" />
-            </Form.Item>
             <Form.Item
               name="accountType"
               label="Account Type"

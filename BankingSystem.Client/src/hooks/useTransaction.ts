@@ -23,7 +23,6 @@ export const useUserTransactions = (
     pageSize: number;
   }
 ) => {
-  console.log(params, "params ---> <----");
   return useQuery({
     queryKey: ["userTransactions", params, userId],
     queryFn: () => transactionService.getUserTransactions(userId, params),

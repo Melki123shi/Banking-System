@@ -69,6 +69,7 @@ public class AccountRepository : IAccountRepository
         var query = await _dbContext.Accounts
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .OrderBy(a => a.CreatedAt)
             .ToListAsync();
         var totalCount = await _dbContext.Accounts.CountAsync();
         return (query, totalCount);

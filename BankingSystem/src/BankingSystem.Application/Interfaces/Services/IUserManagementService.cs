@@ -10,6 +10,7 @@ public interface IUserManagementService
     Task<CreateUserResponse> CreateUserAsync(CreateUserRequest createUserRequest);
     Task<UserDetailsResponse> GetUserDetailsAsync(Guid userId);
     Task<PaginatedResponseDto<UserDetailsResponse>> GetPaginatedCustomersAsync(
+        UserSearchParams searchParams,
         int pageNumber,
         int pageSize
     );

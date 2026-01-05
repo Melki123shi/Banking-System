@@ -10,7 +10,6 @@ export const authService = {
     };
 
     const response = await api.post<LoginResponse>("auth/login", payload);
-    console.log(response, "response ---------->")
     return response.data;
   },
 

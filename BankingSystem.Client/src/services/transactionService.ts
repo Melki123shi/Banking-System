@@ -15,9 +15,7 @@ export const transactionService = {
     return response.data;
   },
   getUserTransactions: async (userId : string, params: TransactionSearchParams) => {
-    console.log(`aparam  ${params}`)
     const response = await api.get<PaginatedResponse<UserTransactionDetail>>(`transactions/${userId}?${buildParams(params)}`);
-    console.log(  response.data, "response data ---> <---")
     return response.data;
   }
 };

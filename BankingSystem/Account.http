@@ -3,7 +3,7 @@
 
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10
+GET {{BankingSystem_HostAddress}}/api/admin/accounts?pageNumber=1&pageSize=10&phoneNumber=+251918996677
 Accept: application/json
 Authorization: Bearer {{Admin_AccessToken}}
 
@@ -31,7 +31,7 @@ Content-Type: application/json
 # }
 
 ###
-GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=2&pageSize=5&accountNumber=Aed1234d23w
+GET {{BankingSystem_HostAddress}}/api/admin/transactions?pageNumber=1&pageSize=5&phoneNumber=+251918996677
 Authorization: Bearer {{Admin_AccessToken}}
 
 ###

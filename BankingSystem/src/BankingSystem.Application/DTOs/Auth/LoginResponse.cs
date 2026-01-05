@@ -6,5 +6,5 @@ public record class LoginResponse(
     string AccessToken,
     DateTime AccessTokenExpiresAt,
     string RefreshToken,
-    User user
+    UserDetailsResponse User
     );

@@ -15,6 +15,8 @@ export const AppHeader: React.FC = () => {
   const { mutate: logout, isPending } = useLogout();
   const user = useAuthStore((state) => state.user);
 
+  console.log("header user ------------> ", user)
+
   const profileMenu = [
     {
       key: "logout",

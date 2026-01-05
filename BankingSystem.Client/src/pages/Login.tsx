@@ -19,6 +19,8 @@ const LoginPage: React.FC = () => {
   const loginMutation = useLogin();
   const user = useAuthStore((state) => state.user);
 
+  console.log(user, "-------------------<>")
+
   useEffect(() => {
     if (!user) return;
 
@@ -95,7 +97,7 @@ const LoginPage: React.FC = () => {
             {" "}
             <p>
               {" "}
-              Demo: Customer (+251996670943 / 1234), <br /> Admin (+251998878956
+              Demo: Customer (+251996670943 / 1234), <br /> Admin (+251918996677
               / 1234){" "}
             </p>{" "}
           </div>

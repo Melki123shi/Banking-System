@@ -54,6 +54,19 @@ public class AuthService : IAuthService
             DateTime.UtcNow.AddDays(7)
         );
 
+        var userDetail = new UserDetailsResponse(
+            user.Id,
+            $"{user.FirstName} {user.LastName}",
+            user.PhoneNumber,
+            user.Email,
+            user.DateOfBirth,
+            user.Role,
+            user.IsActive,
+            user.CreatedAt,
+            user.UpdatedAt
+        );
+
+
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveAsync();
 
@@ -61,7 +74,7 @@ public class AuthService : IAuthService
             accessToken,
             accessTokenExpiresAt,
             refreshTokenValue,
-            user
+            userDetail
         );
     }
 

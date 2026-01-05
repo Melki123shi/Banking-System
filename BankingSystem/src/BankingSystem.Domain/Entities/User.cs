@@ -14,7 +14,7 @@ public class User
     [Required]
     public string HashedPassword { get; private set; } = null!; 
     public bool IsActive { get; private set; } = true;
-    public UserRole Role { get; private set; } = UserRole.Customer;
+    public UserRole Role { get; private set; } = UserRole.Admin;
     public ICollection<Account> Accounts { get; private set; } = new List<Account>();
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; private set; }

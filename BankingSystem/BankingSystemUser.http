@@ -16,10 +16,10 @@ Authorization: Bearer {{Admin_AccessToken}}
 Content-Type: application/json
 
 {
-    "FirstName": "Kebron",
-    "LastName": "Tesfaye",
-    "email": "kebron.tesfaye@gmail.com",
-    "phoneNumber": "+251998996677",
+    "FirstName": "Meriam",
+    "LastName": "Aduram",
+    "email": "meriam.aduram@gmail.com",
+    "phoneNumber": "+251918996677",
     "password": "1234",
     "dateOfBirth": "1995-05-15"
 }
@@ -41,8 +41,8 @@ POST {{BankingSystem_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-    "phoneNumber": "+251996670943",
-    "password": "4321"
+    "phoneNumber": "+251918996677",
+    "password": "1234"
 }
 
 ###

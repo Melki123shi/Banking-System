@@ -8,7 +8,7 @@ export interface Transaction {
     receiverAccountId?: string;
     receiver?: Account;
     amount: number;
-    type: 'Deposit' | 'Withdrawal' | 'Transfer' | 'Payment';
+    transactionType: 'Deposit' | 'Withdrawal' | 'Transfer' | 'Payment';
     status: 'Pending' | 'Completed' | 'Failed';
     description: string;
     createdAt: string;

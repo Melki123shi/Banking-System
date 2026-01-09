@@ -86,4 +86,38 @@ public class AccountRepository : IAccountRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task<int> GetTotalCountAsync()
+    {
+        return await _dbContext.Accounts.CountAsync();
+    }
+
+    public async Task<decimal> GetTotalBalanceAsync()
+    {
+        return await _dbContext.Accounts.SumAsync(a => a.Balance);
+    }
+
+    public async Task<int> GetActiveTotalCountAsync()
+    {
+        return await _dbContext.Accounts.CountAsync(a => a.Status == AccountStatus.active);
+    }
+
+    public async Task<decimal> GetActiveTotalBalanceAsync()
+    {
+        return await _dbContext.Accounts
+            .Where(a => a.Status == AccountStatus.active)
+            .SumAsync(a => a.Balance);
+    }
+
+    public async Task<int> GetInactiveTotalCountAsync()
+    {
+        return await _dbContext.Accounts.CountAsync(a => a.Status != AccountStatus.active);
+    }
+
+    public async Task<decimal> GetInactiveTotalBalanceAsync()
+    {
+        return await _dbContext.Accounts
+            .Where(a => a.Status != AccountStatus.active)
+            .SumAsync(a => a.Balance);
+    }
+
 }

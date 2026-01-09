@@ -30,9 +30,8 @@
   <ItemGroup>
     <Folder Include="Properties/src/" />
     <Folder Include="src/BankingSystem.API/Middleware/" />
-    <Folder Include="src/BankingSystem.Application/Mappings/" />
-    <Folder Include="src/BankingSystem.Application/UseCases/" />
     <Folder Include="src/BankingSystem.Application/Validators/" />
+    <Folder Include="src\BankingSystem.Domain\Common\" />
   </ItemGroup>
 
 </Project>

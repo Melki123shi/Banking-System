@@ -4,6 +4,8 @@ using BankingSystem.src.BankingSystem.Infrastructure.Persistence;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
+using BankingSystem.src.BankingSystem.Application.Services;
+using BankingSystem.src.BankingSystem.Domain.Common;
 
 namespace BankingSystem.src.BankingSystem.Infrastructure.Repositories;
 
@@ -150,5 +152,39 @@ public class TransactionRepository : ITransactionRepository
     {
         return await _dbContext.Transactions.CountAsync();
     }
+
+    public async Task<TransactionSummaryDto> GetTransactionSummaryAsync(
+       DateRange? range,
+       IReadOnlyCollection<TransactionType>? types,
+       CancellationToken ct)
+    {
+        var query = _dbContext.Transactions.AsQueryable();
+
+        if (range is not null)
+        {
+            query = query.Where(t =>
+                t.CreatedAt >= range.From &&
+                t.CreatedAt < range.To);
+        }
+
+        if (types is { Count: > 0 })
+        {
+            query = query.Where(t => types.Contains(t.Type));
+        }
+
+        var aggregates = await query
+            .GroupBy(t => new { t.Type, t.Status })
+            .Select(g => new
+            {
+                g.Key.Type,
+                g.Key.Status,
+                Count = g.Count(),
+                Amount = g.Sum(x => x.Amount)
+            })
+            .ToListAsync(ct);
+
+        return TransactionSummaryDto.FromAggregates(aggregates);
+    }
+
 
 }

@@ -60,3 +60,11 @@ Content-Type: application/json
 ###
 GET {{BankingSystem_HostAddress}}/api/admin/users/summary
 
+###
+GET {{BankingSystem_HostAddress}}/api/admin/transactions/summary
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 import { UserComponent } from "@/components/admin/UserComponent";
 import { AccountComponent } from "@/components/admin/AccountComponent";
-import { TransactionComponent } from "@/components/admin/TransactionComponent";
+import { TransactionComponent } from "@/components/admin/transactions/TransactionComponent";
 import { Space, Typography } from "antd";
 import { useAuthStore } from "@/stores/authStore";
 import { useThemeStore } from "@/stores/themeStore";

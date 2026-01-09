@@ -1,6 +1,6 @@
 import { apiClient as api } from "@/lib/axios";
 import type { Transaction } from "@/entities/transaction";
-import type { PaginatedResponse, TransactionSearchParams, UserTransactionDetail } from "@/lib/types";
+import type { GetTransctionsSummaryRequest, PaginatedResponse, TransactionSearchParams, TransactionSummaryDto, UserTransactionDetail } from "@/lib/types";
 
 const buildParams = (params: TransactionSearchParams) => new URLSearchParams({
   ...(params.name && { name: params.name }),
@@ -16,6 +16,10 @@ export const transactionService = {
   },
   getUserTransactions: async (userId : string, params: TransactionSearchParams) => {
     const response = await api.get<PaginatedResponse<UserTransactionDetail>>(`transactions/${userId}?${buildParams(params)}`);
+    return response.data;
+  },
+  getTransactionSummary: async (params: { transactionParams: GetTransctionsSummaryRequest }) => {
+    const response = await api.get<TransactionSummaryDto>(`admin/transactions/summary`, { params }); 
     return response.data;
   }
 };

@@ -5,7 +5,9 @@ using BankingSystem.src.BankingSystem.Application.Mappings;
 using BankingSystem.src.BankingSystem.Domain.Entities;
 using BankingSystem.src.BankingSystem.Application.DTOs.Transaction;
 using BankingSystem.src.BankingSystem.Application.DTOs;
-using BankingSystem.src.BankingSystem.Application.DTOs.Account;
+using BankingSystem.src.BankingSystem.Application.UseCases;
+using BankingSystem.src.BankingSystem.Domain.Enums;
+using BankingSystem.src.BankingSystem.Domain.Common;
 
 namespace BankingSystem.src.BankingSystem.Application.Services;
 
@@ -53,6 +55,8 @@ public class TransactionService : ITransactionService
         };
     }
 
+
+
     public async Task<PaginatedResponseDto<UserTransactionReponse>> GetUserTransactionsAsync(Guid userId, TransactionSearchParams searchParams)
     {
         var (items, total) = await _transactionRepository.GetTransactionsAsync(searchParams, userId);
@@ -67,8 +71,8 @@ public class TransactionService : ITransactionService
                     transaction.Type.ToString() == "Deposit" ? "IN" : "OUT",
                     transaction.SenderAccount?.AccountNumber ?? string.Empty,
                     (transaction.SenderAccount?.UserId == userId
-                        ? transaction.ReceiverAccount?.User.FirstName + " "  + transaction.ReceiverAccount?.User.LastName
-                        : transaction.SenderAccount?.User.FirstName + " "  + transaction.SenderAccount?.User.LastName) ?? string.Empty,
+                        ? transaction.ReceiverAccount?.User.FirstName + " " + transaction.ReceiverAccount?.User.LastName
+                        : transaction.SenderAccount?.User.FirstName + " " + transaction.SenderAccount?.User.LastName) ?? string.Empty,
                     (transaction.SenderAccount?.UserId == userId
                         ? transaction.ReceiverAccount?.AccountNumber
                         : transaction.SenderAccount?.AccountNumber) ?? string.Empty,
@@ -147,5 +151,37 @@ public class TransactionService : ITransactionService
     }
 
 
+    public async Task<TransactionSummaryDto> GetTransactionSummaryAsync(
+     GetTransactionsSummaryRequest request,
+     CancellationToken cancellationToken)
+    {
+        // Validate custom period
+        if (request.Period == SummaryPeriod.Custom)
+        {
+            if (!request.From.HasValue || !request.To.HasValue)
+                throw new ArgumentException("From and To are required for custom period");
+
+            if (request.To < request.From)
+                throw new ArgumentException("To must be greater than or equal to From");
+        }
+
+        // Resolve date range
+        DateRange? range = request.Period switch
+        {
+            SummaryPeriod.All => null,
+            SummaryPeriod.ThisWeek => DateRange.ThisWeek(),
+            SummaryPeriod.ThisMonth => DateRange.ThisMonth(),
+            SummaryPeriod.ThisYear => DateRange.ThisYear(),
+            SummaryPeriod.Custom => DateRange.Create(
+                request.From!.Value,
+                request.To!.Value),
+            _ => null
+        };
+
+        return await _transactionRepository.GetTransactionSummaryAsync(
+            range,
+            request.Types!,
+            cancellationToken);
+    }
 
 }

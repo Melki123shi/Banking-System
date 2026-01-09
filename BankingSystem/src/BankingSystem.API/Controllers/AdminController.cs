@@ -6,6 +6,8 @@ using BankingSystem.src.BankingSystem.Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BankingSystem.src.BankingSystem.Application.DTOs.Auth;
+using BankingSystem.src.BankingSystem.Application.Services;
+using BankingSystem.src.BankingSystem.Domain.Enums;
 namespace BankingSystem.src.BankingSystem.API.Controllers;
 
 [ApiController]
@@ -118,5 +120,24 @@ public class AdminController : ControllerBase
         var result = await _transferUseCase.TransferAsync(accountId, transferRequestDto);
         return Ok(result);
     }
+
+    [HttpGet("accounts/summary")]
+    public async Task<ActionResult<AccountSummaryDto>> GetAccountSummary()
+    {
+        var summary = await _accountService.GetAccountSummaryAsync();
+        return Ok(summary);
+    }
+    [HttpGet("transactions/summary")]
+    public async Task<ActionResult<TransactionSummaryDto>> GetSummary(
+        [FromQuery] GetTransactionsSummaryRequest request,
+        CancellationToken cancellationToken)
+    {
+        var summary = await _transactionService.GetTransactionSummaryAsync(
+            request,
+            cancellationToken);
+
+        return Ok(summary);
+    }
+
     
 }       

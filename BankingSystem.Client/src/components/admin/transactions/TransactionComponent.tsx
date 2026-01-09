@@ -1,28 +1,22 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DataTable } from "@/components/common/DataTable";
+import { Layout, Tag, Row, Col, Button, Dropdown, type MenuProps } from "antd";
 import {
-  Layout,
-  Card,
-  Statistic,
-  Tag,
-  Row,
-  Col,
-  Button,
-  Typography,
-} from "antd";
-import { DollarOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useTransactions } from "@/hooks/useTransaction";
-import SearchBar from "../common/SearchBar";
+  DollarOutlined,
+  MoneyCollectOutlined,
+  ReloadOutlined,
+  TransactionOutlined,
+} from "@ant-design/icons";
+import { useTransactions, useTransactionSummary } from "@/hooks/useTransaction";
+import { PeriodSummaryCard } from "./PeriodSummaryCard";
+import SearchBar from "@/components/common/SearchBar";
 import type { Transaction } from "@/entities/transaction";
 import type { ColumnsType } from "antd/es/table/interface";
-import { useGetUserSummary } from "@/hooks/useUser";
 import { useThemeStore } from "@/stores/themeStore";
+import type { TransactionType } from "@/lib/types";
 
-const { Text } = Typography;
-
-export const TransactionComponent = () => {
+export const TransactionComponent: React.FC = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +29,8 @@ export const TransactionComponent = () => {
     }, 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
+  const [selectedTransactionType, setSelectedTransactionType] =
+    useState<TransactionType>("All");
 
   const { data, isLoading } = useTransactions({
     name: undefined,
@@ -42,12 +38,9 @@ export const TransactionComponent = () => {
     pageNumber,
     pageSize,
   });
-  // const { data: userSummary } = useGetUserSummary();
 
   const transactions = data?.items ?? [];
   const total = data?.totalCount ?? 0;
-  // const totalInactiveUsers = userSummary?.inactiveCustomers;
-  // const totalActiveUsers = userSummary?.activeCustomers;
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   const transactionColumns: ColumnsType<Transaction> = [
@@ -72,6 +65,17 @@ export const TransactionComponent = () => {
           {type}
         </Tag>
       ),
+        filterMode: "menu",
+      filters: [
+        { text: "Deposit", value: "Deposit" },
+        { text: "Withdrawal", value: "Withdrawal" },
+        { text: "Transfer", value: "Transfer" },
+      ],
+      onFilter: (value, record) =>{ 
+        console.log(value, "<----- values", "types ---> ",record.transactionType?.toString(), "return value ----> ",record.transactionType === value);
+        console.log("record --------->",record)
+        return record.transactionType === value
+      },  
     },
     {
       title: "Amount",
@@ -116,23 +120,39 @@ export const TransactionComponent = () => {
       title: "Date",
       dataIndex: "completedAt",
       key: "completedAt",
-      // defaultSortOrder: "descend",
-      // sorter: {
-      //   compare: (a: any, b: any) =>
-      //     new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime(),
-      //   multiple: 1,
-      // },
+      defaultSortOrder: "descend",
+      sorter: {
+        compare: (a: any, b: any) =>
+          new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime(),
+        multiple: 1,
+      },
       render: (date: string) => new Date(date).toLocaleString(),
     },
   ];
 
-  const timeFrames = [
-  { title: "This Week" },
-  { title: "This Month" },
-  { title: "This Year" },
-];
+  const summaryParams =
+    selectedTransactionType === "All"
+      ? {}
+      : { types: [selectedTransactionType] as readonly TransactionType[] };
 
+  const summaries = {
+    ThisWeek: useTransactionSummary({
+      transactionParams: { period: "ThisWeek", ...summaryParams },
+    }).data,
+    ThisMonth: useTransactionSummary({
+      transactionParams: { period: "ThisMonth", ...summaryParams },
+    }).data,
+    ThisYear: useTransactionSummary({
+      transactionParams: { period: "ThisYear", ...summaryParams },
+    }).data,
+  };
 
+  const transactionTypes: MenuProps["items"] = [
+    { key: "All", label: "All Transactions", icon: <MoneyCollectOutlined /> },
+    { key: "Deposit", label: "Deposit", icon: <DollarOutlined /> },
+    { key: "Withdrawal", label: "Withdrawal", icon: <DollarOutlined /> },
+    { key: "Transfer", label: "Transfer", icon: <TransactionOutlined /> },
+  ];
   return (
     <Layout className="min-h-screen">
       <Layout.Content className="">
@@ -150,100 +170,40 @@ export const TransactionComponent = () => {
         </div>
 
         {/* Stats */}
-        <Row gutter={[16, 16]} className="mb-10">
-      <Col xs={24} sm={12} lg={6}>
-        <Card>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: isDarkMode ? "#dddbdbff" : "#141414",
-              marginBottom: 12,
-              display: "block",
-            }}
-          >
-            Total Transactions
-          </Text>
 
-          <Statistic
-            value={total}
-            prefix={<DollarOutlined />}
-            style={{ marginBottom: 16 }}
-          />
+        <Dropdown
+          getPopupContainer={() => document.body}
+          menu={{
+            items: transactionTypes,
+            onClick: (e) =>
+              setSelectedTransactionType(e.key as TransactionType),
+          }}
+        >
+          <Button className="mb-6">{selectedTransactionType}</Button>
+        </Dropdown>
 
-          <Card size="small">
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={12} md={8}>
-                {/* <Statistic
-                  title="Completed"
-                  value={totalActiveUsers}
-                  valueStyle={{ color: "#16a34a" }}
-                /> */}
-              </Col>
-              <Col xs={24} sm={12} md={8}>
-                {/* <Statistic
-                  title="Pending"
-                  value={totalInactiveUsers}
-                  valueStyle={{ color: "#f59e0b" }}
-                /> */}
-              </Col>
-              <Col xs={24} sm={12} md={8}>
-                <Statistic
-                  title="Failed"
-                  value={transactions.filter((t) => t.status === "Failed").length}
-                  valueStyle={{ color: "#dc2626" }}
-                />
-              </Col>
-            </Row>
-          </Card>
-        </Card>
-      </Col>
-    </Row>
-
-    {/* This Week / Month / Year Cards */}
-    <Row gutter={[16, 16]} className="mb-10">
-      {timeFrames.map((frame) => (
-        <Col key={frame.title} xs={24} sm={12} lg={6}>
-          <Card>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: 500,
-                color: isDarkMode ? "#dddbdbff" : "#141414",
-                marginBottom: 12,
-                display: "block",
-              }}
-            >
-              {frame.title}
-            </Text>
-
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={12} md={8}>
-                {/* <Statistic
-                  title="Completed"
-                  value={totalInactiveUsers}
-                  valueStyle={{ color: "#16a34a" }}
-                /> */}
-              </Col>
-              <Col xs={24} sm={12} md={8}>
-                <Statistic
-                  title="Pending"
-                  value={transactions.filter((t) => t.status === "Pending").length}
-                  valueStyle={{ color: "#f59e0b" }}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={8}>
-                <Statistic
-                  title="Failed"
-                  value={transactions.filter((t) => t.status === "Failed").length}
-                  valueStyle={{ color: "#dc2626" }}
-                />
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      ))}
-    </Row>
+          <Row gutter={[12, 12]} className="mb-24">
+            <PeriodSummaryCard
+              title={`${selectedTransactionType} Transactions Summary`}
+              summary={
+                useTransactionSummary({
+                  transactionParams: { period: "All", ...summaryParams },
+                }).data
+              }
+              selectedType={selectedTransactionType}
+            />
+          </Row>
+        <Row gutter={[16, 16]} className="mb-12">
+          {Object.entries(summaries).map(([key, summary]) => (
+            <Col key={key} xs={24} sm={12} lg={6}>
+              <PeriodSummaryCard
+                title={key.replace(/([A-Z])/g, " $1")}
+                summary={summary}
+                selectedType={selectedTransactionType}
+              />
+            </Col>
+          ))}
+        </Row>
 
         {/* Table */}
         <div className="flex justify-between">
@@ -260,7 +220,7 @@ export const TransactionComponent = () => {
         <DataTable
           title="Transactions Table"
           loading={isLoading}
-          dataSource={data?.items || []}
+          dataSource={transactions}
           columns={transactionColumns}
           rowKey="id"
           pagination={{

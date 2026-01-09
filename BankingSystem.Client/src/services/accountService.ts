@@ -2,7 +2,7 @@ import { apiClient as api } from "@/lib/axios";
 import type { Account } from "@/entities/account";
 import type { User } from "@/entities/user";
 import { AxiosError } from "axios";
-import type { PaginatedResponse } from "@/lib/types";
+import type { AccountSummary, PaginatedResponse } from "@/lib/types";
 
 const basePath = "admin/accounts";
 
@@ -57,6 +57,10 @@ export const accountService = {
   deleteAccount: async (accountId: string): Promise<void> => {
     await api.delete(`${basePath}/${accountId}`);
   },
+  getAccountSummary: async (): Promise<AccountSummary> => {
+    const response = await api.get<AccountSummary>(`${basePath}/summary`);
+    return response.data;
+  },
   withdraw: async (accountId: string, amount: number, description: string): Promise<Account> => {
     const response = await api.post<Account>(
       `${basePath}/${accountId}/withdraw`,
@@ -94,14 +98,4 @@ export const accountService = {
       throw error;
     }
   },
-
-  // updateAccountStatus: async (
-  //   accountId: string,
-  //   status: "Open" | "Closed" | "Frozen"
-  // ): Promise<Account> => {
-  //   const response = await api.patch<Account>(`/accounts/${accountId}/status`, {
-  //     status,
-  //   });
-  //   return response.data;
-  // },
 };

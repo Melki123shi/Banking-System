@@ -13,6 +13,7 @@ public interface IAccountService
     Task<UserDetailsResponse> GetUserByAccountIdAsync(Guid accountId);
     Task<List<AccountResponseDto>> GetAccountsByIdsAsync(IEnumerable<Guid> accountIds);
 
+    Task<AccountSummaryDto> GetAccountSummaryAsync();
 
     Task<PaginatedResponseDto<AccountResponseDto>> GetPaginatedAccountsAsync(int pageNumber, int pageSize);
     Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId);

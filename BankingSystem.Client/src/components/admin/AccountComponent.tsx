@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useAccountStore } from "@/stores/accountStore";
-import { useDeleteAccount, useGetAccounts } from "@/hooks/useAccount";
+import {
+  useAccountSummary,
+  useDeleteAccount,
+  useGetAccounts,
+} from "@/hooks/useAccount";
 import { DataTable } from "@/components/common/DataTable";
 import {
   Layout,
@@ -38,11 +42,8 @@ const { Option } = Select;
 export const AccountComponent = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const {
-    data,
-    isLoading,
-    refetch,
-  } = useGetAccounts(pageNumber, pageSize);
+  const { data, isLoading, refetch } = useGetAccounts(pageNumber, pageSize);
+  const { data: accountSummaryData } = useAccountSummary();
   const { error } = useTransferMoney();
   const setSelectedAccount = useAccountStore(
     (state) => state.setSelectedAccount
@@ -327,7 +328,7 @@ export const AccountComponent = () => {
             <Card className="shadow-sm">
               <Statistic
                 title="Total Accounts"
-                value={Array.isArray(accounts) ? accounts.length : 0}
+                value={accountSummaryData?.totalAccounts || 0}
                 prefix={<CreditCardOutlined />}
               />
             </Card>
@@ -337,11 +338,7 @@ export const AccountComponent = () => {
             <Card className="shadow-sm">
               <Statistic
                 title="Total Balance"
-                value={
-                  Array.isArray(accounts)
-                    ? accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0)
-                    : 0
-                }
+                value={accountSummaryData?.totalBalance || 0}
                 prefix={<DollarOutlined />}
               />
             </Card>
@@ -350,38 +347,26 @@ export const AccountComponent = () => {
 
         <Row className="mb-7" gutter={[16, 16]}>
           <Col xs={24} sm={12} md={6}>
-            <Card style={{
-                      backgroundColor: isDarkMode ? "#1a3d1aff" : "#b1f4cbff",
-                    }}>
+            <Card
+              style={{
+                backgroundColor: isDarkMode ? "#1a3d1aff" : "#b1f4cbff",
+              }}
+            >
               <h1 className="text-lg mb-2">Active Accounts</h1>
               <Row className="justify-between">
                 <Col xl={10} sm={12} md={6}>
-
-                    <Statistic
-                      title={`Counts ${isDarkMode}`} 
-                      value={
-                        Array.isArray(accounts)
-                          ? accounts.filter(
-                              (account) => account.status === "active"
-                            ).length
-                          : 0
-                      }
-                      prefix={<CreditCardOutlined />}
-                    />
+                  <Statistic
+                    title={`Counts`}
+                    value={accountSummaryData?.activeAccounts || 0}
+                    prefix={<CreditCardOutlined />}
+                  />
                 </Col>
                 <Col xl={10} sm={12} md={6}>
-
-                    <Statistic
-                      title="Balance"
-                      value={
-                        Array.isArray(accounts)
-                          ? accounts.filter(
-                              (account) => account.status === "active"
-                            ).length
-                          : 0
-                      }
-                      prefix={<DollarOutlined />}
-                    />
+                  <Statistic
+                    title="Balance"
+                    value={accountSummaryData?.activeBalance || 0}
+                    prefix={<DollarOutlined />}
+                  />
                 </Col>
               </Row>
             </Card>
@@ -389,7 +374,7 @@ export const AccountComponent = () => {
           <Col xs={24} sm={12} md={6}>
             <Card
               style={{
-                backgroundColor: isDarkMode ? "#821111ff" :  "#fbb7b7ff",
+                backgroundColor: isDarkMode ? "#821111ff" : "#fbb7b7ff",
               }}
             >
               <h1 className="text-lg mb-2">Inactive Accounts</h1>
@@ -397,26 +382,14 @@ export const AccountComponent = () => {
                 <Col xl={10} sm={12} md={6}>
                   <Statistic
                     title="Counts"
-                    value={
-                      Array.isArray(accounts)
-                        ? accounts.filter(
-                            (account) => account.status === "active"
-                          ).length
-                        : 0
-                    }
+                    value={accountSummaryData?.inactiveAccounts || 0}
                     prefix={<CreditCardOutlined />}
                   />
                 </Col>
                 <Col xl={10} sm={12} md={6}>
                   <Statistic
                     title="Balance"
-                    value={
-                      Array.isArray(accounts)
-                        ? accounts.filter(
-                            (account) => account.status === "active"
-                          ).length
-                        : 0
-                    }
+                    value={accountSummaryData?.inactiveBalance || 0}
                     prefix={<DollarOutlined />}
                   />
                 </Col>
@@ -425,24 +398,24 @@ export const AccountComponent = () => {
           </Col>
         </Row>
         {/* Accounts Table */}
-          <DataTable
+        <DataTable
           title="Accounts Table"
-            loading={isLoading}
-            dataSource={Array.isArray(accounts) ? accounts : []}
-            pagination={{
-              current: pageNumber,
-              pageSize: pageSize,
-              showSizeChanger: true,
-              total: data?.totalCount || 0,
-              onChange: (page, size) => {
-                setPageNumber(page);
-                setPageSize(size || 10);
-              },
-            }}
-            columns={accountColumns}
-            rowKey="id"
-          />
-  
+          loading={isLoading}
+          dataSource={Array.isArray(accounts) ? accounts : []}
+          pagination={{
+            current: pageNumber,
+            pageSize: pageSize,
+            showSizeChanger: true,
+            total: data?.totalCount || 0,
+            onChange: (page, size) => {
+              setPageNumber(page);
+              setPageSize(size || 10);
+            },
+          }}
+          columns={accountColumns}
+          rowKey="id"
+        />
+
         {/* Confirmation Modal */}
         <ConfirmationModal
           open={isConfirmModalOpen}
@@ -582,7 +555,6 @@ export const AccountComponent = () => {
           layout="vertical"
           onFinish={handleUpdateAccount}
         >
-
           <Form.Item
             name="accountType"
             label="Account Type"

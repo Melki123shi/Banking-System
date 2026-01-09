@@ -3,7 +3,6 @@ import type { User } from "@/entities/user";
 import type {
   PaginatedResponse,
   UpdateUserRequest,
-  UserSearchParams,
   UserSummary,
 } from "@/lib/types";
 
@@ -15,7 +14,6 @@ export const userService = {
     pageNumber: number,
     pageSize: number
   ): Promise<PaginatedResponse<User>> => {
-    console.log(phoneNumber);
     const response = await api.get<PaginatedResponse<User>>(
       `${basePath}?pageNumber=${pageNumber}&pageSize=${pageSize}${
         phoneNumber
@@ -23,7 +21,6 @@ export const userService = {
           : ""
       }`
     );
-    console.log(response.data, "response data");
     return response.data;
   },
   getDetails: async (id: string): Promise<User> => {

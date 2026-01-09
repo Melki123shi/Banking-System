@@ -225,5 +225,24 @@ public class AccountService : IAccountService
 
         return true;
     }
+
+    public async Task<AccountSummaryDto> GetAccountSummaryAsync()
+    {
+        int totalAccounts = await _accountRepository.GetTotalCountAsync();
+        decimal totalBalance = await _accountRepository.GetTotalBalanceAsync();
+        int activeAccounts = await _accountRepository.GetActiveTotalCountAsync();
+        decimal activeBalance = await _accountRepository.GetActiveTotalBalanceAsync();
+        int inactiveAccounts = await _accountRepository.GetInactiveTotalCountAsync();
+        decimal inactiveBalance = await _accountRepository.GetInactiveTotalBalanceAsync();
+
+        return new AccountSummaryDto(
+            totalAccounts,
+            totalBalance,
+            activeAccounts,
+            activeBalance,
+            inactiveAccounts,
+            inactiveBalance
+        );
+    }
 }
 

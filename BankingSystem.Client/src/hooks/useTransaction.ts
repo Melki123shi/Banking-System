@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { transactionService } from "@/services/transactionService";
+import type { GetTransctionsSummaryRequest } from "@/lib/types";
 
 export const useTransactions = (params: {
   name?: string;
@@ -29,3 +30,11 @@ export const useUserTransactions = (
     staleTime: 1000 * 60 * 5,
   });
 };
+
+export const useTransactionSummary = (params: { transactionParams: GetTransctionsSummaryRequest }) => {
+  return useQuery({
+    queryKey: ["transactionSummary", params],
+    queryFn: () => transactionService.getTransactionSummary(params),
+    staleTime: 1000 * 60 * 5,
+  });
+}

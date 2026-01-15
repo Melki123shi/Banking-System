@@ -81,16 +81,13 @@ export const AccountComponent = () => {
 
   const handleDeleteAccount = async () => {
     if (!pendingDeleteAccountId) return;
-    try {
-      await deleteAccountMutation.mutateAsync(pendingDeleteAccountId);
-      message.success("User deleted successfully");
-      refetch();
-    } catch {
-      message.error("Failed to delete account");
-    } finally {
-      setIsConfirmModalOpen(false);
-      setPendingDeleteAccountId(null);
-    }
+
+    await deleteAccountMutation.mutateAsync(pendingDeleteAccountId);
+    message.success("User deleted successfully");
+    refetch();
+
+    setIsConfirmModalOpen(false);
+    setPendingDeleteAccountId(null);
   };
 
   const handleUpdateAccount = async (values: any) => {
@@ -99,17 +96,12 @@ export const AccountComponent = () => {
       message.error("No account selected");
       return;
     }
-    try {
-      await updateAccountMutation.mutateAsync({
-        accountId: selectedAccount.id,
-        accountData: values,
-      });
-      message.success("Account updated successfully");
-      setIsUpdateAccountModalOpen(false);
-      updateAccountForm.resetFields();
-    } catch {
-      message.error("Failed to update account");
-    }
+    await updateAccountMutation.mutateAsync({
+      accountId: selectedAccount.id,
+      accountData: values,
+    });
+    setIsUpdateAccountModalOpen(false);
+    updateAccountForm.resetFields();
   };
 
   const handleDepositMoney = async (values: any) => {
@@ -118,17 +110,13 @@ export const AccountComponent = () => {
       message.error("No account selected");
       return;
     }
-    try {
-      await depositMoneyMutation.mutateAsync({
-        accountId: selectedAccount.id,
-        amount: values.amount,
-      });
-      message.success("Money deposited successfully");
-      setIsDepositModalOpen(false);
-      depositForm.resetFields();
-    } catch {
-      message.error("Failed to deposit money");
-    }
+
+    await depositMoneyMutation.mutateAsync({
+      accountId: selectedAccount.id,
+      amount: values.amount,
+    });
+    setIsDepositModalOpen(false);
+    depositForm.resetFields();
   };
 
   const handleWithdrawMoney = async (values: any) => {
@@ -137,18 +125,13 @@ export const AccountComponent = () => {
       message.error("No account selected");
       return;
     }
-    try {
-      await withdrawMoneyMutation.mutateAsync({
-        accountId: selectedAccount.id,
-        amount: values.amount,
-        description: values.description,
-      });
-      message.success("Money withdrawn successfully");
-      setIsWithdrawModalOpen(false);
-      withdrawForm.resetFields();
-    } catch {
-      message.error("Failed to withdraw money");
-    }
+    await withdrawMoneyMutation.mutateAsync({
+      accountId: selectedAccount.id,
+      amount: values.amount,
+      description: values.description,
+    });
+    setIsWithdrawModalOpen(false);
+    withdrawForm.resetFields();
   };
 
   const handleTransferMoney = async (values: any) => {
@@ -157,19 +140,15 @@ export const AccountComponent = () => {
       message.error("No account selected");
       return;
     }
-    try {
-      await transferMoneyMutation.mutateAsync({
-        fromAccountId: selectedAccount.id,
-        toAccountNumber: values.toAccountNumber,
-        amount: values.amount,
-        description: values.description,
-      });
-      message.success("Money transferred successfully");
-      setIsTransferModalOpen(false);
-      transferForm.resetFields();
-    } catch {
-      message.error(error?.message || "Failed to transfer money");
-    }
+    await transferMoneyMutation.mutateAsync({
+      fromAccountId: selectedAccount.id,
+      toAccountNumber: values.toAccountNumber,
+      amount: values.amount,
+      description: values.description,
+    });
+    
+    setIsTransferModalOpen(false);
+    transferForm.resetFields();
   };
 
   const accountColumns = [

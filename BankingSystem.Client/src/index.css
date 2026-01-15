@@ -85,3 +85,22 @@
 .sidebar::-webkit-scrollbar-thumb {
   border-radius: 3px;
 }
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 100;
+}
+
+.sidebar-resizer:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.dark-mode .sidebar-resizer:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+

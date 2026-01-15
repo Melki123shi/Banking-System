@@ -2,12 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import type { Account } from "@/entities/account";
 import { accountService } from "@/services/accountService";
-import type { AxiosError } from "axios";
-
-type ValidationErrorResponse = {
-  title?: string;
-  errors?: Record<string, string[]>;
-};
+import axios from "axios";
 
 export const useGetAccounts = (pageNumber: number, pageSize: number) => {
   return useQuery({
@@ -41,7 +36,15 @@ export const useCreateAccount = () => {
     mutationFn: accountService.createAccount,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      message.success("Account created successfully")
     },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
+    },  
   });
 };
 
@@ -59,18 +62,22 @@ export const useUpdateAccount = () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       message.success("Account updated successfully");
     },
-    onError: () => {
-      message.error("Failed to update account");
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
-}
+};
 
 export const useAccountSummary = () => {
   return useQuery({
     queryKey: ["accountSummary"],
     queryFn: () => accountService.getAccountSummary(),
   });
-}
+};
 
 /* ----------------------------------------
    Deposit Money
@@ -104,7 +111,7 @@ export const useWithdrawMoney = () => {
     mutationFn: ({
       accountId,
       amount,
-      description
+      description,
     }: {
       accountId: string;
       amount: number;
@@ -116,8 +123,12 @@ export const useWithdrawMoney = () => {
       queryClient.invalidateQueries({ queryKey: ["userTransactions"] });
       message.success("Withdrawal successful");
     },
-    onError: () => {
-      message.error("Withdrawal failed");
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };
@@ -133,29 +144,33 @@ export const useTransferMoney = () => {
       fromAccountId,
       toAccountNumber,
       amount,
-      description
+      description,
     }: {
       fromAccountId: string;
       toAccountNumber: string;
       amount: number;
       description: string;
     }) =>
-      accountService.transfer(fromAccountId, toAccountNumber, amount, description),
+      accountService.transfer(
+        fromAccountId,
+        toAccountNumber,
+        amount,
+        description
+      ),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["userTransactions"] });
+      message.success("Money transferred successfully")
     },
-    //! Error handling for validation errors
 
-    onError: (error: AxiosError<ValidationErrorResponse>) => {
-      const validationErrors = error.response?.data?.errors;
-
-      // Grab the first validation error message
-      validationErrors
-        ? Object.values(validationErrors).flat()[0]
-        : null;
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };
@@ -170,9 +185,14 @@ export const useDeleteAccount = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      message.success("User deleted successfully")
     },
-    onError: () => {
-      message.error("Failed to delete account");
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };

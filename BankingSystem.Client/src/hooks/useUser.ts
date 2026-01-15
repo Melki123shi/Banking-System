@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/services/userService";
 import { accountService } from "@/services/accountService";
 import type { User } from "@/entities/user";
+import { message } from "antd";
+import axios from "axios";
 
 export interface PaginatedResponse<T> {
   items: T[];
@@ -10,10 +12,15 @@ export interface PaginatedResponse<T> {
   totalCount: number;
 }
 
-export const useGetUsers = ( phoneNumber: string, pageNumber: number, pageSize: number) => {
+export const useGetUsers = (
+  phoneNumber: string,
+  pageNumber: number,
+  pageSize: number
+) => {
   return useQuery({
     queryKey: ["users", pageNumber, pageSize],
-    queryFn: () => userService.getPaginatedUsers(phoneNumber, pageNumber, pageSize),
+    queryFn: () =>
+      userService.getPaginatedUsers(phoneNumber, pageNumber, pageSize),
     retry: false,
     placeholderData: (previousData) => previousData,
   });
@@ -44,6 +51,14 @@ export const useCreateUser = () => {
     mutationFn: userService.createUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      message.success("User created successfully");
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };
@@ -54,6 +69,14 @@ export const useDeleteUser = () => {
     mutationFn: userService.RemoveUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      message.success("User deleted successfully");
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };
@@ -69,6 +92,14 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({
         queryKey: ["user", variables.id],
       });
+      message.success("User updated successfully");
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.error);
+      } else {
+        message.error("Unexpected error");
+      }
     },
   });
 };
@@ -79,4 +110,4 @@ export const useGetUserSummary = (users: User[]) => {
     queryFn: () => userService.GetSummary(),
     retry: false,
   });
-}
+};

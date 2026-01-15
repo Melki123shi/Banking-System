@@ -73,7 +73,7 @@ export const UserComponent = () => {
   const { data, isLoading, refetch } = useGetUsers(
     debouncedSearch,
     pageNumber,
-      pageSize
+    pageSize
   );
 
   // Mutations
@@ -107,29 +107,21 @@ export const UserComponent = () => {
 
   const handleDeleteUser = async () => {
     if (!pendingDeleteUserId) return;
-    try {
-      await deleteUserMutation.mutateAsync(pendingDeleteUserId);
-      message.success("User deleted successfully");
-      refetch();
-    } catch {
-      message.error("Failed to delete user");
-    } finally {
-      setIsConfirmModalOpen(false);
-      setPendingDeleteUserId(null);
-    }
+    await deleteUserMutation.mutateAsync(pendingDeleteUserId);
+    refetch();
+
+    setIsConfirmModalOpen(false);
+    setPendingDeleteUserId(null);
   };
 
   const handleCreateUser = async (values: any) => {
     values.phoneNumber = "+2519" + values.phoneNumber;
-    try {
-      await createUserMutation.mutateAsync(values);
-      message.success("User created successfully");
-      setIsCreateUserModalOpen(false);
-      createUserForm.resetFields();
-      refetch();
-    } catch {
-      message.error("Failed to create user");
-    }
+
+    await createUserMutation.mutateAsync(values);
+    setIsCreateUserModalOpen(false);
+
+    createUserForm.resetFields();
+    refetch();
   };
 
   const handleUpdateUser = async (values: any) => {
@@ -139,18 +131,14 @@ export const UserComponent = () => {
     values.isActive = values.status === "Active" ? true : false;
     values.phoneNumber = "+2519" + values.phoneNumber;
 
-    try {
-      await updateUserMutation.mutateAsync({
-        id: selectedUser.id,
-        data: values,
-      });
-      message.success("User updated successfully");
-      setIsUpdateUserModalOpen(false);
-      updateUserForm.resetFields();
-      refetch();
-    } catch {
-      message.error("Failed to update user");
-    }
+    await updateUserMutation.mutateAsync({
+      id: selectedUser.id,
+      data: values,
+    });
+
+    setIsUpdateUserModalOpen(false);
+    updateUserForm.resetFields();
+    refetch();
   };
 
   const handleCreateAccount = async (values: any) => {
@@ -158,14 +146,9 @@ export const UserComponent = () => {
     if (!selectedUser) return;
     values.userId = selectedUser.id;
 
-    try {
-      await createAccountMutation.mutateAsync(values);
-      message.success("Account created successfully");
-      setIsCreateAccountModalOpen(false);
-      createAccountForm.resetFields();
-    } catch {
-      message.error("Failed to create account");
-    }
+    await createAccountMutation.mutateAsync(values);
+    setIsCreateAccountModalOpen(false);
+    createAccountForm.resetFields();
   };
 
   /** ---------- Table columns ---------- **/

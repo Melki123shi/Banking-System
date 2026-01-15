@@ -42,6 +42,7 @@ export const TransactionComponent = () => {
     {
       title: "Name",
       dataIndex: "counterpartyName",
+      minWidth: 180,
       key: "counterpartyName",
       sorter: {
         compare: (a: any, b: any) =>
@@ -49,7 +50,7 @@ export const TransactionComponent = () => {
         multiple: 3,
       },
       render: (_: any, record: UserTransactionDetail) => {
-        const name = record.counterpartyName !== "" ? record.counterpartyName : "System";
+        const name = record.counterpartyName !== " " ? record.counterpartyName : "System";
         return (
           <Space>
             <Avatar
@@ -65,15 +66,16 @@ export const TransactionComponent = () => {
     },
     {
       title: "To Account",
+      minWidth: 200,
       dataIndex: "counterpartyAccountNumber",
       key: "counterpartyAccountNumber",
-      render: (v?: string) => v ?? "—",
+      render: (v?: string) => v !== "" ? v : "—"
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (v?: string) => v ?? "—",
+      render: (v?: string) => v !== ""? v : "—",
     },
     {
       title: "Type",
@@ -107,6 +109,7 @@ export const TransactionComponent = () => {
     },
     {
       title: "Amount",
+      minWidth: 100,
       dataIndex: "amount",
       key: "amount",
       render: (amount: number, record: any) => (
@@ -121,20 +124,15 @@ export const TransactionComponent = () => {
     },
     {
       title: "From Account",
+      minWidth: 200,
       dataIndex: "customerAccountNumber",
       key: "customerAccountNumber",
       render: (v?: string) => v ?? "—",
-      // filters: (accounts?.data ?? []).map((account) => ({
-      //   text: account.accountNumber,
-      //   value: account.accountNumber,
-      // })),
-      // filterMode: "menu",
-      // onFilter: (value: any, record: any) =>
-      //   record.customerAccountNumber === value,
     },
     {
       title: "Date",
       dataIndex: "date",
+      minWidth: 180,
       key: "date",
       render: (date: string) => new Date(date).toLocaleString(),
       defaultSortOrder: "descend",
@@ -154,13 +152,12 @@ export const TransactionComponent = () => {
         }}> Transactions </Title>
         <div className="flex justify-between">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          <Button onClick={() => setPageNumber(1)}>
+          <Button onClick={() => pageNumber != 1 ? setPageNumber(1) : setPageNumber(0)}>
             <ReloadOutlined />
             Refresh
           </Button>
         </div>
         {/* Table */}
-        <Card>
           <DataTable<UserTransactionDetail>
             title="Recent Transactions"
             loading={isLoading}
@@ -168,6 +165,7 @@ export const TransactionComponent = () => {
             columns={transactionColumns}
             rowKey="transactionId"
             pagination={{
+              showSizeChanger: true,
               current: pageNumber,
               pageSize,
               total: data?.totalCount || 0,
@@ -177,7 +175,6 @@ export const TransactionComponent = () => {
               },
             }}
           />
-        </Card>
       </Layout.Content>
     </Layout>
   );

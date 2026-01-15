@@ -36,6 +36,8 @@ import {
   useTransferMoney,
 } from "@/hooks/useAccount";
 import { useThemeStore } from "@/stores/themeStore";
+import type { Account } from "@/entities/account";
+import type { ColumnsType } from "antd/es/table";
 
 const { Option } = Select;
 
@@ -44,7 +46,6 @@ export const AccountComponent = () => {
   const [pageSize, setPageSize] = useState(10);
   const { data, isLoading, refetch } = useGetAccounts(pageNumber, pageSize);
   const { data: accountSummaryData } = useAccountSummary();
-  const { error } = useTransferMoney();
   const setSelectedAccount = useAccountStore(
     (state) => state.setSelectedAccount
   );
@@ -146,12 +147,12 @@ export const AccountComponent = () => {
       amount: values.amount,
       description: values.description,
     });
-    
+
     setIsTransferModalOpen(false);
     transferForm.resetFields();
   };
 
-  const accountColumns = [
+  const accountColumns : ColumnsType<Account> = [
     {
       title: "",
       render: (_: any, record: any) => (
@@ -182,11 +183,13 @@ export const AccountComponent = () => {
     },
     {
       title: "Account No.",
+      minWidth: 200,
       dataIndex: "accountNumber",
       key: "accountNumber",
     },
     {
       title: "Owner",
+      minWidth: 120,
       dataIndex: ["userName"],
       key: "user",
       render: (userName?: string) => userName ?? "—",
@@ -210,6 +213,7 @@ export const AccountComponent = () => {
     },
     {
       title: "Balance",
+      minWidth: 100,
       dataIndex: "balance",
       key: "balance",
       render: (balance: number) => <span>${balance?.toLocaleString()}</span>,
@@ -233,6 +237,7 @@ export const AccountComponent = () => {
     },
     {
       title: "Created At",
+      minWidth: 180,
       dataIndex: "createdAt",
       key: "createdAt",
       render: (createdAt: string) => new Date(createdAt).toLocaleString(),

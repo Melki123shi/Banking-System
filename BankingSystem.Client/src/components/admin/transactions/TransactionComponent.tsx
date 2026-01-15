@@ -46,6 +46,7 @@ export const TransactionComponent: React.FC = () => {
   const transactionColumns: ColumnsType<Transaction> = [
     {
       title: "Transaction ID",
+      minWidth: 200,
       dataIndex: "transactionId",
       key: "transactionId",
       render: (id: string) => (
@@ -79,6 +80,7 @@ export const TransactionComponent: React.FC = () => {
     },
     {
       title: "Amount",
+      minWidth: 100,
       dataIndex: "amount",
       key: "amount",
       render: (amount: number, record: any) => (
@@ -90,12 +92,14 @@ export const TransactionComponent: React.FC = () => {
     },
     {
       title: "Sender Account",
+      minWidth: 200,
       dataIndex: "senderAccountNumber",
       key: "senderAccountNumber",
       render: (value?: string) => value || "—",
     },
     {
       title: "Receiver Account",
+      minWidth: 200,
       dataIndex: "receiverAccountNumber",
       key: "receiverAccountNumber",
       render: (value?: string) => (value && value !== "-" ? value : "—"),
@@ -118,6 +122,7 @@ export const TransactionComponent: React.FC = () => {
     },
     {
       title: "Date",
+      minWidth: 180,
       dataIndex: "completedAt",
       key: "completedAt",
       defaultSortOrder: "descend",

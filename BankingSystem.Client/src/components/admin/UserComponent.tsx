@@ -205,6 +205,7 @@ export const UserComponent = () => {
     },
     {
       title: "Customer Name",
+      minWidth: 190,
       dataIndex: "name",
       key: "name",
       render: (text: string) => (
@@ -216,11 +217,13 @@ export const UserComponent = () => {
     },
     {
       title: "Phone Number",
+      minWidth: 120,
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
       title: "Accounts",
+      minWidth: 200,
       key: "accounts",
       render: (_: any, record: any) => <UserAccounts userId={record.id} />,
     },

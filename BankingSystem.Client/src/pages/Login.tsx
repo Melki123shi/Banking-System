@@ -113,7 +113,7 @@ const LoginPage: React.FC = () => {
             {" "}
             <p>
               {" "}
-              Demo: Customer (+251975357575 / 123456), <br /> Admin (18996677
+              Demo: Customer (+251998996677 / 123456), <br /> Admin (+251918996677
               / 1234){" "}
             </p>{" "}
           </div>

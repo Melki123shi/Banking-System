@@ -18,7 +18,6 @@ import { useWithdrawMoney } from "@/hooks/useAccount";
 import { useTransferMoney } from "@/hooks/useAccount";
 
 import { useState } from "react";
-import type { AxiosError } from "axios";
 
 const { Title, Text } = Typography;
 
@@ -45,18 +44,13 @@ export const AccountInfoCard = ({ account }: Props) => {
       message.error("No account selected");
       return;
     }
-    try {
-      await withdrawMoneyMutation.mutateAsync({
-        accountId: account.id,
-        amount: values.amount,
-        description: values.description,
-      });
-      message.success("Money withdrawn successfully");
-      setIsWithdrawModalOpen(false);
-      withdrawForm.resetFields();
-    } catch {
-      message.error("Failed to withdraw money");
-    }
+    await withdrawMoneyMutation.mutateAsync({
+      accountId: account.id,
+      amount: values.amount,
+      description: values.description,
+    });
+    setIsWithdrawModalOpen(false);
+    withdrawForm.resetFields();
   };
 
   const handleTransferMoney = async (values: any) => {
@@ -64,22 +58,15 @@ export const AccountInfoCard = ({ account }: Props) => {
       message.error("No account selected");
       return;
     }
-    try {
-      await transferMoneyMutation.mutateAsync({
-        fromAccountId: account.id,
-        toAccountNumber: values.toAccountNumber,
-        amount: values.amount,
-        description: values.description,
-      });
-      message.success("Money transferred successfully");
-      setIsTransferModalOpen(false);
-      transferForm.resetFields();
-    } catch (error: AxiosError | any) {
-      message.error(error?.message || "Failed to transfer money");
-    }
+    await transferMoneyMutation.mutateAsync({
+      fromAccountId: account.id,
+      toAccountNumber: values.toAccountNumber,
+      amount: values.amount,
+      description: values.description,
+    });
+    setIsTransferModalOpen(false);
+    transferForm.resetFields();
   };
-
-  // const handleAccountDetails = () 
 
   return (
     <Card
@@ -139,7 +126,9 @@ export const AccountInfoCard = ({ account }: Props) => {
             icon={<MinusOutlined />}
             onClick={() => {
               if (account.status.toString().toLowerCase() !== "active") {
-                return message.error("Cannot withdraw from an inactive account");
+                return message.error(
+                  "Cannot withdraw from an inactive account"
+                );
               }
               setSelectedAccount(account);
               setIsWithdrawModalOpen(true);
@@ -152,7 +141,9 @@ export const AccountInfoCard = ({ account }: Props) => {
             icon={<SwapOutlined />}
             onClick={() => {
               if (account.status.toString().toLowerCase() !== "active") {
-                return message.error("Cannot transfer from an inactive account");
+                return message.error(
+                  "Cannot transfer from an inactive account"
+                );
               }
               setSelectedAccount(account);
               setIsTransferModalOpen(true);
@@ -247,11 +238,7 @@ export const AccountInfoCard = ({ account }: Props) => {
               },
             ]}
           >
-            <InputNumber
-              style={{ width: "100%" }}
-              min={0}
-              prefix="ETB"
-            />
+            <InputNumber style={{ width: "100%" }} min={0} prefix="ETB" />
           </Form.Item>
           <Form.Item name="description" label="Description (Optional)">
             <Input.TextArea
